@@ -10,7 +10,7 @@ public:
 		for (auto& i : childNodes) {
 			BehaviourState nodeState = i->Execute(dt);
 			switch (nodeState) {
-				case Failure: continue;
+				case Failure:	;
 				case Success:
 				case Ongoing:
 				{

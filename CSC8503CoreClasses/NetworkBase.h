@@ -34,6 +34,23 @@ struct GamePacket {
 		return sizeof(GamePacket) + size;
 	}
 };
+struct StringPacket : public GamePacket {
+   
+
+					char stringData[256];
+
+					StringPacket(const std::string& message) {
+						type = BasicNetworkMessages::String_Message;
+						size = (short)message.length();
+						memcpy(stringData, message.data(), size);
+					}
+
+					std::string GetStringFromData() {
+						std::string realstring(stringData, size);
+						return realstring;
+					}
+};
+
 
 class PacketReceiver {
 public:
@@ -74,4 +91,22 @@ protected:
 	_ENetHost* netHandle;
 
 	std::multimap<int, PacketReceiver*> packetHandlers;
+};
+
+class TestPacketReceiver : public PacketReceiver {
+public:
+	TestPacketReceiver(std::string name)
+	{
+		this->name = name;
+	}
+	void ReceivePacket(int type, GamePacket* payload, int source) {
+		if (type == String_Message)
+		{
+			StringPacket* realPacket = (StringPacket*)payload;
+			std::string message = realPacket->GetStringFromData();
+			std::cout << name << " received message: " << message << std::endl;
+		}
+	}
+protected:
+	std::string name;
 };

@@ -9,7 +9,6 @@
 #include "StateGameObject.h"
 
 
-
 using namespace NCL;
 using namespace CSC8503;
 
@@ -131,6 +130,11 @@ void TutorialGame::UpdateGame(float dt) {
 
 			objClosest->GetRenderObject()->SetColour(Vector4(1, 0, 1, 1));
 		}
+	}
+
+	if (testStateObject)
+	{
+		testStateObject->Update(dt);
 	}
 
 	Debug::DrawLine(Vector3(), Vector3(0, 100, 0), Vector4(1, 0, 0, 1));
@@ -268,6 +272,7 @@ void TutorialGame::InitWorld() {
 
 	InitGameExamples();
 	InitDefaultFloor();
+	BridgeConstraintTest();
 }
 
 /*
@@ -414,6 +419,27 @@ GameObject* TutorialGame::AddBonusToWorld(const Vector3& position) {
 	return apple;
 }
 
+StateGameObject* TutorialGame::AddStateObjectToWorld(const Vector3& position)
+{
+	StateGameObject* apple = new StateGameObject();
+
+	SphereVolume* volume = new SphereVolume(0.5f);
+	apple->SetBoundingVolume((CollisionVolume*)volume);
+	apple->GetTransform()
+		.SetScale(Vector3(2, 2, 2))
+		.SetPosition(position);
+
+	apple->SetRenderObject(new RenderObject(&apple->GetTransform(), bonusMesh, nullptr, basicShader));
+	apple->SetPhysicsObject(new PhysicsObject(&apple->GetTransform(), apple->GetBoundingVolume()));
+
+	apple->GetPhysicsObject()->SetInverseMass(1.0f);
+	apple->GetPhysicsObject()->InitSphereInertia();
+
+	world->AddGameObject(apple);
+
+	return apple;
+}
+
 void TutorialGame::InitDefaultFloor() {
 	AddFloorToWorld(Vector3(0, -20, 0));
 }
@@ -422,6 +448,8 @@ void TutorialGame::InitGameExamples() {
 	AddPlayerToWorld(Vector3(0, 5, 0));
 	AddEnemyToWorld(Vector3(5, 5, 0));
 	AddBonusToWorld(Vector3(10, 5, 0));
+	testStateObject = AddStateObjectToWorld(Vector3(0, 10, 0));
+
 }
 
 void TutorialGame::InitSphereGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, float radius) {
@@ -546,4 +574,31 @@ void TutorialGame::MoveSelectedObject() {
 	}
 }
 
+void TutorialGame::BridgeConstraintTest()
+{
 
+	Vector3 cubeSize = Vector3(8, 8, 8);
+
+	float invCubeMass = 8;
+	int numLinks = 10;
+	float maxDistance = 30;
+	float cubeDistance = 20;
+
+	Vector3 startPos = Vector3(0, 500, 0);
+
+	GameObject* start = AddCubeToWorld(startPos + Vector3(0, 0, 0), cubeSize, 0);
+	GameObject* end = AddCubeToWorld(startPos+Vector3((numLinks+2)*cubeDistance,0,0), cubeSize, 0);
+
+	GameObject* previous = start;
+
+	for (int i = 0; i < numLinks; ++i)
+	{
+		GameObject* block = AddCubeToWorld(startPos + Vector3((i + 1) * cubeDistance, 0, 0), cubeSize, invCubeMass);
+		PositionConstraint* positionConstraint = new PositionConstraint(previous, block, maxDistance);
+		world->AddConstraint(positionConstraint);
+		previous = block;
+	}
+
+	PositionConstraint* constraint = new PositionConstraint(previous, end, maxDistance);
+	world->AddConstraint(constraint);
+}
