@@ -79,7 +79,16 @@ add_subdirectory(NCLCoreClasses)
 add_subdirectory(CSC8503CoreClasses)
 add_subdirectory(OpenGLRendering)
 add_subdirectory(CSC8503)
+add_subdirectory(External/imgui)
 if(USE_VULKAN)
     add_subdirectory(VulkanRendering)
 endif()
+
+# Append the ImGui sources directly to your main target
+target_sources(CSC8503 PRIVATE ${IMGUI_SOURCES})
+
+# Link the interface target for include directories
+target_link_libraries(CSC8503 PRIVATE Imgui opengl32.lib)
+
+
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT CSC8503)
