@@ -24,6 +24,8 @@
 #include "BehaviourSequence.h"
 #include "BehaviourAction.h"
 
+#include "PrisonEscape/Core/GameBase.h"
+
 using namespace NCL;
 using namespace CSC8503;
 
@@ -64,7 +66,9 @@ int main() {
 	w->ShowOSPointer(false);
 	w->LockMouseToWindow(true);
 
-	TutorialGame* g = new TutorialGame();
+	GameBase* game = new GameBase();
+	game->InitialiseGame();
+
 	w->GetTimer().GetTimeDeltaSeconds(); //Clear the timer so we don't get a larget first dt!
 	while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KeyCodes::ESCAPE)) {
 		float dt = w->GetTimer().GetTimeDeltaSeconds();
@@ -85,7 +89,7 @@ int main() {
 
 		w->SetTitle("Gametech frame time:" + std::to_string(1000.0f * dt));
 
-		g->UpdateGame(dt);
+		game->UpdateGame(dt);
 	}
 	Window::DestroyGameWindow();
 }

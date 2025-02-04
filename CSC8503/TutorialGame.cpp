@@ -7,6 +7,7 @@
 #include "PositionConstraint.h"
 #include "OrientationConstraint.h"
 #include "StateGameObject.h"
+#include "StateGameObject.h"
 
 
 using namespace NCL;

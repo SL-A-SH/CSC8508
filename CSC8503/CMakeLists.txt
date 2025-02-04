@@ -10,7 +10,11 @@ set(PROJECT_NAME CSC8503)
 #    "StateGameObject.h"
 #    "TutorialGame.h"
 #)
-file(GLOB Header_Files *.h)
+file(GLOB_RECURSE PRISON_ESCAPE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/prisonescape/core/*.*")
+source_group("PrisonEscape\\Core" FILES ${PRISON_ESCAPE_FILES})
+
+
+file(GLOB_RECURSE Header_Files *.h)
 source_group("Header Files" FILES ${Header_Files})
 
 
@@ -23,7 +27,7 @@ source_group("Header Files" FILES ${Header_Files})
 #    "StateGameObject.cpp"
 #    "TutorialGame.cpp"
 #)
-file(GLOB Source_Files *.cpp)
+file(GLOB_RECURSE Source_Files *.cpp)
 
 if(USE_VULKAN)
 	file(GLOB SHADER_FILES ${ASSET_ROOT}/Shaders/VK/*.*)
@@ -37,6 +41,7 @@ source_group("Source Files" FILES ${Source_Files})
 set(ALL_FILES
     ${Header_Files}
     ${Source_Files}
+      ${PRISON_ESCAPE_FILES}
 )
 
 if(USE_VULKAN)
@@ -196,6 +201,7 @@ endif()
 include_directories("../OpenGLRendering/")
 include_directories("../NCLCoreClasses/")
 include_directories("../CSC8503CoreClasses/")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}") 
 
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC NCLCoreClasses)
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC CSC8503CoreClasses)
