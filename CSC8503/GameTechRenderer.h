@@ -18,7 +18,8 @@ namespace NCL {
 			Mesh*		LoadMesh(const std::string& name);
 			Texture*	LoadTexture(const std::string& name);
 			Shader*		LoadShader(const std::string& vertex, const std::string& fragment);
-
+			void RenderUI(std::function<void()> callback);
+			void SetImguiCanvasFunc(std::function<void()> func);
 		protected:
 			void NewRenderLines();
 			void NewRenderText();
@@ -40,6 +41,11 @@ namespace NCL {
 
 			void SetDebugStringBufferSizes(size_t newVertCount);
 			void SetDebugLineBufferSizes(size_t newVertCount);
+			
+			
+			std::function<void()> mImguiCanvasFuncToRender = nullptr;
+			void SetupIMgui();
+
 
 			vector<const RenderObject*> activeObjects;
 

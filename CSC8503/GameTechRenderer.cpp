@@ -1,3 +1,7 @@
+
+#include "Win32Window.h"
+#include "imgui/imgui_impl_opengl3.h"
+#include "imgui/imgui_impl_win32.h"
 #include "GameTechRenderer.h"
 #include "GameObject.h"
 #include "RenderObject.h"
@@ -72,11 +76,28 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
 
 	SetDebugStringBufferSizes(10000);
 	SetDebugLineBufferSizes(1000);
+	SetupIMgui();
 }
 
 GameTechRenderer::~GameTechRenderer()	{
 	glDeleteTextures(1, &shadowTex);
 	glDeleteFramebuffers(1, &shadowFBO);
+}
+
+void GameTechRenderer::SetupIMgui()
+{
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+
+	// Setup Dear ImGui style
+	ImGui::StyleColorsDark();
+
+	// Setup Platform/Renderer backends
+	const HWND windowHandle = NCL::Win32Code::Win32Window::windowHandle;
+	ImGui_ImplWin32_InitForOpenGL(windowHandle);
+	ImGui_ImplOpenGL3_Init();
 }
 
 void GameTechRenderer::LoadSkybox() {
@@ -137,6 +158,7 @@ void GameTechRenderer::RenderFrame() {
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	RenderUI(mImguiCanvasFuncToRender);
 }
 
 void GameTechRenderer::BuildObjectList() {
@@ -494,6 +516,10 @@ void GameTechRenderer::SetDebugStringBufferSizes(size_t newVertCount) {
 		glBindVertexArray(0);
 	}
 }
+void GameTechRenderer::SetImguiCanvasFunc(std::function<void()> func) {
+	mImguiCanvasFuncToRender = func;
+}
+
 
 void GameTechRenderer::SetDebugLineBufferSizes(size_t newVertCount) {
 	if (newVertCount > lineCount) {
@@ -521,4 +547,38 @@ void GameTechRenderer::SetDebugLineBufferSizes(size_t newVertCount) {
 
 		glBindVertexArray(0);
 	}
+}
+
+
+void GameTechRenderer::	RenderUI(std::function<void()> callback) {
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
+
+
+		// Next window to be created will cover the entire screen
+		NCL::Maths::Vector2i windowSize = NCL::Window::GetWindow()->GetScreenSize();
+		int windowWidth = windowSize.x;
+		int windowHeight = windowSize.y;
+
+		ImVec2 size(windowWidth, windowHeight);
+		ImGui::SetNextWindowPos(ImVec2(0, 0));
+		ImGui::SetNextWindowSize(size);
+
+		ImGui::Begin("Background", NULL,
+			ImGuiWindowFlags_NoTitleBar |
+			ImGuiWindowFlags_NoMove |
+			ImGuiWindowFlags_NoBackground |
+			ImGuiWindowFlags_NoResize
+		);
+
+		if (callback != nullptr) {
+			callback();
+		}
+		//CLEAR
+
+		ImGui::End();
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	
 }

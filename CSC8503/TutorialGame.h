@@ -9,6 +9,8 @@
 
 #include "StateGameObject.h"
 
+#include <imgui/imgui.h>
+
 namespace NCL {
 	namespace CSC8503 {
 		class TutorialGame		{
@@ -44,6 +46,8 @@ namespace NCL {
 			void MoveSelectedObject();
 			void DebugObjectMovement();
 			void LockedObjectMovement();
+
+			void DrawCanvas();
 
 			GameObject* AddFloorToWorld(const Vector3& position);
 			GameObject* AddSphereToWorld(const Vector3& position, float radius, float inverseMass = 10.0f);
@@ -94,6 +98,8 @@ namespace NCL {
 
 			StateGameObject* AddStateObjectToWorld(const Vector3& position);
 			StateGameObject* testStateObject;
+
+			ImFont* mHeaderFont = nullptr;
 		};
 	}
 }
