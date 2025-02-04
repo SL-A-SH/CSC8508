@@ -6,10 +6,10 @@
 
 namespace NCL {
     namespace CSC8503 {
-        class PrisonGameManager {
+        class GameLevelManager {
         public:
-            PrisonGameManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer, PhysicsSystem* physics);
-            ~PrisonGameManager();
+            GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer, PhysicsSystem* physics);
+            ~GameLevelManager();
 
             virtual void UpdateGame(float dt);
 

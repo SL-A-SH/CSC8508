@@ -7,7 +7,7 @@
 #include "Debug.h"
 #include "PhysicsSystem.h"
 #include "GameBase.h"
-#include "PrisonGameManager.h"
+
 
 namespace NCL {
     namespace CSC8503 {
@@ -37,7 +37,7 @@ namespace NCL {
         private:
             GameWorld* world;
             PhysicsSystem* physics;
-            PrisonGameManager* gameManager;
+          
         };
 
         class PauseState : public GameState {

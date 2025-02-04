@@ -7,12 +7,12 @@ GamePlayState::GamePlayState()
 {
     world = GameBase::GetWorld();
     physics = new PhysicsSystem(*world);
-    gameManager = new PrisonGameManager(world, GameBase::GetRenderer(), physics);
+    
 }
 
 GamePlayState::~GamePlayState() {
     delete world;
-    delete gameManager;
+    
     delete physics;
 }
 
@@ -33,7 +33,7 @@ PushdownState::PushdownResult MenuState::OnUpdate(float dt, PushdownState** newS
 
 PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** newState) 
 {
-    gameManager->UpdateGame(dt);
+ 
 
     return PushdownResult::NoChange;
 }

@@ -10,6 +10,10 @@ set(PROJECT_NAME CSC8503)
 #    "StateGameObject.h"
 #    "TutorialGame.h"
 #)
+file(GLOB_RECURSE PRISON_ESCAPE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/prisonescape/core/*.*")
+source_group("PrisonEscape\\Core" FILES ${PRISON_ESCAPE_FILES})
+
+
 file(GLOB_RECURSE Header_Files *.h)
 source_group("Header Files" FILES ${Header_Files})
 
@@ -37,6 +41,7 @@ source_group("Source Files" FILES ${Source_Files})
 set(ALL_FILES
     ${Header_Files}
     ${Source_Files}
+      ${PRISON_ESCAPE_FILES}
 )
 
 if(USE_VULKAN)

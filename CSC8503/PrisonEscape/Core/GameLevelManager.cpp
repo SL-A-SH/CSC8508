@@ -1,25 +1,25 @@
-#include "PrisonGameManager.h"
+#include "GameLevelManager.h"
 
 using namespace NCL;
 using namespace CSC8503;
 
-PrisonGameManager::PrisonGameManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer, PhysicsSystem* existingPhysics)
+GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer, PhysicsSystem* existingPhysics)
 {
     world = existingWorld;
     renderer = existingRenderer;
     physics = existingPhysics;
 
-    // TODO: Initialize assets and level creation
+   
 }
 
-PrisonGameManager::~PrisonGameManager()
+GameLevelManager::~GameLevelManager()
 {
     delete world;
     delete renderer;
     delete physics;
 }
 
-void PrisonGameManager::UpdateGame(float dt)
+void GameLevelManager::UpdateGame(float dt)
 {
     // TODO: Level Updates
     // TODO: Remove Debug

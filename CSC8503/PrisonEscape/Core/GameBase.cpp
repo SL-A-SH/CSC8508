@@ -1,7 +1,12 @@
 #include "GameBase.h"
-
+#include "Level.h"
+#include "SampleLevel.h"
 using namespace NCL;
 using namespace CSC8503;
+
+
+
+
 
 GameTechRenderer* GameBase::renderer = nullptr;
 GameWorld* GameBase::world = nullptr;
@@ -10,6 +15,11 @@ GameBase::GameBase() {
     world = new GameWorld();
     renderer = new GameTechRenderer(*world);
     stateMachine = nullptr;
+
+
+    // CAN BE ANY WHERE IN THE GAME!!!
+	SampleLevel* level = new SampleLevel();
+	level->AddFloorToWorld(Vector3(0, 0, 0));
 }
 
 GameBase::~GameBase() {
@@ -28,3 +38,4 @@ void GameBase::UpdateGame(float dt) {
     renderer->Render();
     Debug::UpdateRenderables(dt);
 }
+
