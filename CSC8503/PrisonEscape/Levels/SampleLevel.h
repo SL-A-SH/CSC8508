@@ -1,20 +1,49 @@
+#include "../NCLCoreClasses/KeyboardMouseController.h"
+
 #pragma once
 
 #include "imgui/imgui.h"
+#include "Level.h"
+#include "GameBase.h"
+
+using namespace NCL; 
+
 class SampleLevel : public Level
 {
 public:
-    SampleLevel()
+	SampleLevel() :controller(*Window::GetKeyboard(), *Window::GetMouse())
     {
+        
         std::cout << "SampleLevel" << std::endl;
         ImGuiIO& imguiIO = ImGui::GetIO();
 
-        //second parameter is size
         mHeaderFont = imguiIO.Fonts->AddFontFromFileTTF("../Assets/Fonts/BebasNeue-Regular.ttf", 20.0f);
         imguiIO.Fonts->Build();
-        GameBase::GetRenderer()->SetImguiCanvasFunc(std::bind(&SampleLevel::DrawCanvas,this));
+        GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&SampleLevel::DrawCanvas,this));
+
+        GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetController(controller);
+
+        controller.MapAxis(0, "Sidestep");
+        controller.MapAxis(1, "UpDown");
+        controller.MapAxis(2, "Forward");
+
+        controller.MapAxis(3, "XLook");
+        controller.MapAxis(4, "YLook");
+
+
     }
     ~SampleLevel();
+
+	void Init() override
+	{
+        Level::Init();
+	}
+
+	void Update(float dt) override
+	{
+		std::cout << "SampleLevel Update" << std::endl;
+        GameBase::GetGameBase()->GetWorld()->GetMainCamera().UpdateCamera(dt);
+	}
 
     void DrawCanvas()
     {
@@ -30,4 +59,7 @@ public:
 
     ImFont* mHeaderFont = nullptr;
 
+	KeyboardMouseController controller;
+
 };
+

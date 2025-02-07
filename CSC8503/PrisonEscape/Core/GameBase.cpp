@@ -1,6 +1,5 @@
 #include "GameBase.h"
-#include "Level.h"
-#include "SampleLevel.h"
+#include "GameState.h"
 using namespace NCL;
 using namespace CSC8503;
 
@@ -10,16 +9,10 @@ using namespace CSC8503;
 
 GameTechRenderer* GameBase::renderer = nullptr;
 GameWorld* GameBase::world = nullptr;
+GameBase* GameBase::instance = nullptr;
 
 GameBase::GameBase() {
-    world = new GameWorld();
-    renderer = new GameTechRenderer(*world);
-    stateMachine = nullptr;
 
-
-    // CAN BE ANY WHERE IN THE GAME!!!
-	SampleLevel* level = new SampleLevel();
-	level->AddFloorToWorld(Vector3(0, 0, 0));
 }
 
 GameBase::~GameBase() {
@@ -29,13 +22,27 @@ GameBase::~GameBase() {
 }
 
 void GameBase::InitialiseGame() {
-    stateMachine = new PushdownMachine(new MenuState());
+    world = new GameWorld();
+    renderer = new GameTechRenderer(*world);
+    stateMachine = nullptr;
+	stateMachine = new PushdownMachine(new MenuState());
+    
+
 }
 
 void GameBase::UpdateGame(float dt) {
     renderer->Update(dt);
-    stateMachine->Update(dt);
     renderer->Render();
+	stateMachine->Update(dt);
     Debug::UpdateRenderables(dt);
 }
 
+
+GameBase* GameBase::GetGameBase()
+{
+	if (instance == nullptr)
+	{
+		instance = new GameBase();
+	}
+	return instance;
+}

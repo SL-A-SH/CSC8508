@@ -12,8 +12,7 @@ namespace NCL {
 		public:
 			Level();
 			~Level() {}
-		private:
-			void Init();
+			virtual void Update(float dt) = 0;
 
 		protected:
 			Mesh* capsuleMesh = nullptr;
@@ -27,6 +26,7 @@ namespace NCL {
 			Mesh* bonusMesh = nullptr;
 		public:
 
+			virtual void Init();
 			GameObject* AddFloorToWorld(const Vector3& position);
 			GameObject* AddSphereToWorld(const Vector3& position, float radius, float inverseMass = 10.0f);
 			GameObject* AddCubeToWorld(const Vector3& position, Vector3 dimensions, float inverseMass = 10.0f);

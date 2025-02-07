@@ -7,7 +7,7 @@
 #include "PositionConstraint.h"
 #include "OrientationConstraint.h"
 #include "StateGameObject.h"
-#include "GameBase.h"
+#include "PrisonEscape/Core/GameBase.h"
 #include "GameTechRenderer.h"
 
 
@@ -16,27 +16,27 @@ using namespace CSC8503;
 
 Level::Level()
 {
-	Init();
+	
 }
 void Level::Init()
 {
-	cubeMesh = GameBase::GetRenderer()->LoadMesh("cube.msh");
-	sphereMesh = GameBase::GetRenderer()->LoadMesh("sphere.msh");
-	catMesh = GameBase::GetRenderer()->LoadMesh("ORIGAMI_Chat.msh");
-	kittenMesh = GameBase::GetRenderer()->LoadMesh("Kitten.msh");
+	cubeMesh = GameBase::GetGameBase()->GetRenderer()->LoadMesh("cube.msh");
+	sphereMesh = GameBase::GetGameBase()->GetRenderer()->LoadMesh("sphere.msh");
+	catMesh = GameBase::GetGameBase()->GetRenderer()->LoadMesh("ORIGAMI_Chat.msh");
+	kittenMesh = GameBase::GetGameBase()->GetRenderer()->LoadMesh("Kitten.msh");
 
-	enemyMesh = GameBase::GetRenderer()->LoadMesh("Keeper.msh");
-	bonusMesh = GameBase::GetRenderer()->LoadMesh("19463_Kitten_Head_v1.msh");
-	capsuleMesh = GameBase::GetRenderer()->LoadMesh("capsule.msh");
+	enemyMesh = GameBase::GetGameBase()->GetRenderer()->LoadMesh("Keeper.msh");
+	bonusMesh = GameBase::GetGameBase()->GetRenderer()->LoadMesh("19463_Kitten_Head_v1.msh");
+	capsuleMesh = GameBase::GetGameBase()->GetRenderer()->LoadMesh("capsule.msh");
 
-	basicTex = GameBase::GetRenderer()->LoadTexture("checkerboard.png");
-	basicShader = GameBase::GetRenderer()->LoadShader("scene.vert", "scene.frag");
+	basicTex = GameBase::GetGameBase()->GetRenderer()->LoadTexture("checkerboard.png");
+	basicShader = GameBase::GetGameBase()->GetRenderer()->LoadShader("scene.vert", "scene.frag");
 
-	GameBase::GetWorld()->GetMainCamera().SetNearPlane(0.1f);
-	GameBase::GetWorld()->GetMainCamera().SetFarPlane(500.0f);
-	GameBase::GetWorld()->GetMainCamera().SetPitch(-15.0f);
-	GameBase::GetWorld()->GetMainCamera().SetYaw(315.0f);
-	GameBase::GetWorld()->GetMainCamera().SetPosition(Vector3(-60, 40, 60));
+	GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetNearPlane(0.1f);
+	GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetFarPlane(500.0f);
+	GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPitch(-15.0f);
+	GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetYaw(315.0f);
+	GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(Vector3(-60, 40, 60));
 
 }
 
@@ -56,7 +56,7 @@ GameObject* Level::AddFloorToWorld(const Vector3& position) {
 	floor->GetPhysicsObject()->SetInverseMass(0);
 	floor->GetPhysicsObject()->InitCubeInertia();
 
-	GameBase::GetWorld()->AddGameObject(floor);
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(floor);
 	std::cout << "Floor added to world" << std::endl;
 	return floor;
 }
@@ -85,7 +85,7 @@ GameObject* Level::AddSphereToWorld(const Vector3& position, float radius, float
 	sphere->GetPhysicsObject()->SetInverseMass(inverseMass);
 	sphere->GetPhysicsObject()->InitSphereInertia();
 
-	GameBase::GetWorld()->AddGameObject(sphere);
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(sphere);
 
 	return sphere;
 }
@@ -106,7 +106,7 @@ GameObject* Level::AddCubeToWorld(const Vector3& position, Vector3 dimensions, f
 	cube->GetPhysicsObject()->SetInverseMass(inverseMass);
 	cube->GetPhysicsObject()->InitCubeInertia();
 
-	GameBase::GetWorld()->AddGameObject(cube);
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(cube);
 
 	return cube;
 }
@@ -130,7 +130,7 @@ GameObject* Level::AddPlayerToWorld(const Vector3& position) {
 	character->GetPhysicsObject()->SetInverseMass(inverseMass);
 	character->GetPhysicsObject()->InitSphereInertia();
 
-	GameBase::GetWorld()->AddGameObject(character);
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(character);
 
 	return character;
 }
@@ -154,7 +154,7 @@ GameObject* Level::AddEnemyToWorld(const Vector3& position) {
 	character->GetPhysicsObject()->SetInverseMass(inverseMass);
 	character->GetPhysicsObject()->InitSphereInertia();
 
-	GameBase::GetWorld()->AddGameObject(character);
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(character);
 
 	return character;
 }
@@ -174,7 +174,7 @@ GameObject* Level::AddBonusToWorld(const Vector3& position) {
 	apple->GetPhysicsObject()->SetInverseMass(1.0f);
 	apple->GetPhysicsObject()->InitSphereInertia();
 
-	GameBase::GetWorld()->AddGameObject(apple);
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(apple);
 
 	return apple;
 }

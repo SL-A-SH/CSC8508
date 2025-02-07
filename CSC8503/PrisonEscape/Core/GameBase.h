@@ -2,8 +2,8 @@
 
 #include "GameTechRenderer.h"
 #include "PushdownMachine.h"
-#include "GameState.h"
 #include "GameWorld.h"
+
 
 namespace NCL {
     namespace CSC8503 {
@@ -17,11 +17,18 @@ namespace NCL {
 
             static GameTechRenderer* GetRenderer() { return renderer; }
             static GameWorld* GetWorld() { return world; }
+			static GameBase* GetGameBase();
+
+		
 
         protected:
             static GameTechRenderer* renderer;
             static GameWorld* world;
             PushdownMachine* stateMachine;
+
+            static GameBase* instance;
+
+
         };
     }
 }

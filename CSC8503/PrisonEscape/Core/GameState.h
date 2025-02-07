@@ -7,6 +7,7 @@
 #include "Debug.h"
 #include "PhysicsSystem.h"
 #include "GameBase.h"
+#include "GameLevelManager.h"
 
 
 namespace NCL {
@@ -37,6 +38,7 @@ namespace NCL {
         private:
             GameWorld* world;
             PhysicsSystem* physics;
+			GameLevelManager* manager;
           
         };
 

@@ -1,13 +1,14 @@
 #include "GameState.h"
-
+#include "PrisonEscape/Levels/SampleLevel.h"
+#include "GameLevelManager.h"
 using namespace NCL;
 using namespace CSC8503;
 
 GamePlayState::GamePlayState() 
 {
-    world = GameBase::GetWorld();
-    physics = new PhysicsSystem(*world);
-    
+
+	manager= new GameLevelManager(GameBase::GetGameBase()->GetWorld(), GameBase::GetGameBase()->GetRenderer());
+
 }
 
 GamePlayState::~GamePlayState() {
@@ -33,7 +34,7 @@ PushdownState::PushdownResult MenuState::OnUpdate(float dt, PushdownState** newS
 
 PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** newState) 
 {
- 
+    manager->GetCurrentLevel()->Update(dt);
 
     return PushdownResult::NoChange;
 }
