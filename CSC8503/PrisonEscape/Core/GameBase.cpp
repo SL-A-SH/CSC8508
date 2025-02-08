@@ -32,8 +32,8 @@ void GameBase::InitialiseGame() {
 
 void GameBase::UpdateGame(float dt) {
     renderer->Update(dt);
-    renderer->Render();
 	stateMachine->Update(dt);
+    renderer->Render();
     Debug::UpdateRenderables(dt);
 }
 
