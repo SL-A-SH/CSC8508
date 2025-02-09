@@ -1,4 +1,5 @@
 #pragma once
+#include "PushdownState.h" // Include the header file for PushdownState
 
 namespace NCL {
 	namespace CSC8503 {
@@ -11,6 +12,7 @@ namespace NCL {
 			~PushdownMachine();
 
 			bool Update(float dt);
+			bool PopState();
 
 		protected:
 			PushdownState* activeState;
@@ -20,4 +22,3 @@ namespace NCL {
 		};
 	}
 }
-

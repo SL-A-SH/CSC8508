@@ -6,9 +6,9 @@
 #include "Window.h"
 #include "Debug.h"
 #include "PhysicsSystem.h"
-#include "GameBase.h"
-#include "GameLevelManager.h"
-
+#include "../CSC8503/PrisonEscape/Core/GameBase.h"
+#include "../CSC8503/PrisonEscape/Core/GameLevelManager.h"
+#include "imgui/imgui.h"
 
 namespace NCL {
     namespace CSC8503 {
@@ -23,11 +23,7 @@ namespace NCL {
         class PauseState;
         class GameOverState;
 
-        class MenuState : public GameState {
-        public:
-            MenuState() {}
-            PushdownResult OnUpdate(float dt, PushdownState** newState) override;
-        };
+       
 
         class GamePlayState : public GameState {
         public:
