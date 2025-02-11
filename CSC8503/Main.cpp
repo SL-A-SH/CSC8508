@@ -45,23 +45,23 @@ The main function should look pretty familar to you!
 We make a window, and then go into a while loop that repeatedly
 runs our 'game' until we press escape. Instead of making a 'renderer'
 and updating it, we instead make a whole game, and repeatedly update that,
-instead. 
+instead.
 
 This time, we've added some extra functionality to the window class - we can
-hide or show the 
+hide or show the
 
 */
 int main() {
 	WindowInitialisation initInfo;
-	initInfo.width		= 1280;
-	initInfo.height		= 720;
+	initInfo.width = 1920;
+	initInfo.height = 1080;
 	initInfo.windowTitle = "CSC8503 Game technology!";
 
-	Window*w = Window::CreateGameWindow(initInfo);
+	Window* w = Window::CreateGameWindow(initInfo);
 
 	if (!w->HasInitialised()) {
 		return -1;
-	}	
+	}
 
 	w->ShowOSPointer(false);
 	w->LockMouseToWindow(true);

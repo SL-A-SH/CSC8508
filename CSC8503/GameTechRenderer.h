@@ -5,19 +5,19 @@
 #include "OGLMesh.h"
 
 #include "GameWorld.h"
-
+#include <iostream>
 namespace NCL {
 	namespace CSC8503 {
 		class RenderObject;
 
-		class GameTechRenderer : public OGLRenderer	{
+		class GameTechRenderer : public OGLRenderer {
 		public:
 			GameTechRenderer(GameWorld& world);
 			~GameTechRenderer();
 
-			Mesh*		LoadMesh(const std::string& name);
-			Texture*	LoadTexture(const std::string& name);
-			Shader*		LoadShader(const std::string& vertex, const std::string& fragment);
+			Mesh* LoadMesh(const std::string& name);
+			Texture* LoadTexture(const std::string& name);
+			Shader* LoadShader(const std::string& vertex, const std::string& fragment);
 			void RenderUI(std::function<void()> callback);
 			void SetImguiCanvasFunc(std::function<void()> func);
 		protected:
@@ -27,36 +27,36 @@ namespace NCL {
 
 			void RenderFrame()	override;
 
-			OGLShader*		defaultShader;
+			OGLShader* defaultShader;
 
-			GameWorld&	gameWorld;
+			GameWorld& gameWorld;
 
 			void BuildObjectList();
 			void SortObjectList();
 			void RenderShadowMap();
-			void RenderCamera(); 
+			void RenderCamera();
 			void RenderSkybox();
 
 			void LoadSkybox();
 
 			void SetDebugStringBufferSizes(size_t newVertCount);
 			void SetDebugLineBufferSizes(size_t newVertCount);
-			
-			
+
+
 			std::function<void()> mImguiCanvasFuncToRender = nullptr;
 			void SetupIMgui();
 
 
 			vector<const RenderObject*> activeObjects;
 
-			OGLShader*  debugShader;
-			OGLShader*  skyboxShader;
-			OGLMesh*	skyboxMesh;
-			OGLMesh*	debugTexMesh;
+			OGLShader* debugShader;
+			OGLShader* skyboxShader;
+			OGLMesh* skyboxMesh;
+			OGLMesh* debugTexMesh;
 			GLuint		skyboxTex;
 
 			//shadow mapping things
-			OGLShader*	shadowShader;
+			OGLShader* shadowShader;
 			GLuint		shadowTex;
 			GLuint		shadowFBO;
 			Matrix4     shadowMatrix;
