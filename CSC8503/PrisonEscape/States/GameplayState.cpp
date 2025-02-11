@@ -13,11 +13,20 @@ GamePlayState::GamePlayState()
 
 void GamePlayState::OnAwake()
 {
-	SampleLevel* level = new SampleLevel();
+	Level* level = new SampleLevel();
 	level->Init();
 	manager->AddLevel(level);
 	manager->SetCurrentLevel(level);
-	level->AddSphereToWorld(Vector3(0, 10, 0), 1.0f, 1.0f);
+
+	level->AddFloorToWorld(Vector3(0, 0, 0), Vector3(200, 0, 200), Vector4(0.5, 0.5, 0.5, 1));
+	level->_mPlayer = level->AddPlayerToWorld(Vector3(0, 50, 0));
+
+	//if(cameraAttached)
+	Vector3 playerPosition = level->_mPlayer->GetTransform().GetPosition();
+	GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(Vector3(playerPosition.x, playerPosition.y, playerPosition.z));
+	/*else {
+		world->GetMainCamera().SetPosition(Vector3(-150, 7, -150));
+	}*/
 }
 
 
@@ -31,7 +40,7 @@ GamePlayState::~GamePlayState() {
 
 PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** newState)
 {
-	manager->GetCurrentLevel()->Update(dt);
+	manager->UpdateGame(dt);
 
 	return PushdownResult::NoChange;
 }

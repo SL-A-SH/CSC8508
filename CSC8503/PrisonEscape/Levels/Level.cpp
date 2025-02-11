@@ -14,12 +14,13 @@
 using namespace NCL;
 using namespace CSC8503;
 
-Level::Level()
+Level::Level() :controller(*Window::GetKeyboard(), *Window::GetMouse())
 {
-	
+
 }
 void Level::Init()
 {
+	capsuleMesh = GameBase::GetGameBase()->GetRenderer()->LoadMesh("capsule.msh");
 	cubeMesh = GameBase::GetGameBase()->GetRenderer()->LoadMesh("cube.msh");
 	sphereMesh = GameBase::GetGameBase()->GetRenderer()->LoadMesh("sphere.msh");
 	catMesh = GameBase::GetGameBase()->GetRenderer()->LoadMesh("ORIGAMI_Chat.msh");
@@ -27,16 +28,17 @@ void Level::Init()
 
 	enemyMesh = GameBase::GetGameBase()->GetRenderer()->LoadMesh("Keeper.msh");
 	bonusMesh = GameBase::GetGameBase()->GetRenderer()->LoadMesh("19463_Kitten_Head_v1.msh");
-	capsuleMesh = GameBase::GetGameBase()->GetRenderer()->LoadMesh("capsule.msh");
 
 	basicTex = GameBase::GetGameBase()->GetRenderer()->LoadTexture("checkerboard.png");
 	basicShader = GameBase::GetGameBase()->GetRenderer()->LoadShader("scene.vert", "scene.frag");
 
 	GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetNearPlane(0.1f);
 	GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetFarPlane(500.0f);
-	GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPitch(-15.0f);
-	GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetYaw(315.0f);
-	GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(Vector3(-60, 40, 60));
+	GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPitch(-35.0f);
+	GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetYaw(0.0f);
+
+
+
 
 }
 
@@ -86,9 +88,34 @@ GameObject* Level::AddSphereToWorld(const Vector3& position, float radius, float
 	sphere->GetPhysicsObject()->InitSphereInertia();
 
 	GameBase::GetGameBase()->GetWorld()->AddGameObject(sphere);
-
+	std::cout << "Sphere added to world" << std::endl;
 	return sphere;
 }
+
+GameObject* Level::AddFloorToWorld(const Vector3& position, const Vector3& floorSize, const Vector4& color) {
+	GameObject* floor = new GameObject();
+
+	AABBVolume* volume = new AABBVolume(floorSize);
+	floor->SetBoundingVolume((CollisionVolume*)volume);
+
+	floor->GetTransform()
+		.SetScale(floorSize * 2.0f)
+		.SetPosition(position);
+
+	RenderObject* renderObject = new RenderObject(&floor->GetTransform(), cubeMesh, basicTex, basicShader);
+	renderObject->SetColour(color);
+	floor->SetRenderObject(renderObject);
+	floor->SetPhysicsObject(new PhysicsObject(&floor->GetTransform(), floor->GetBoundingVolume()));
+	floor->GetPhysicsObject()->SetInverseMass(0);
+	floor->GetPhysicsObject()->InitCubeInertia();
+
+
+
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(floor);
+
+	return floor;
+}
+
 
 GameObject* Level::AddCubeToWorld(const Vector3& position, Vector3 dimensions, float inverseMass) {
 	GameObject* cube = new GameObject();
@@ -124,14 +151,14 @@ GameObject* Level::AddPlayerToWorld(const Vector3& position) {
 		.SetScale(Vector3(meshSize, meshSize, meshSize))
 		.SetPosition(position);
 
-	character->SetRenderObject(new RenderObject(&character->GetTransform(), catMesh, nullptr, basicShader));
+	character->SetRenderObject(new RenderObject(&character->GetTransform(), capsuleMesh, nullptr, basicShader));
 	character->SetPhysicsObject(new PhysicsObject(&character->GetTransform(), character->GetBoundingVolume()));
 
 	character->GetPhysicsObject()->SetInverseMass(inverseMass);
 	character->GetPhysicsObject()->InitSphereInertia();
 
 	GameBase::GetGameBase()->GetWorld()->AddGameObject(character);
-
+	std::cout << "Player added to world" << std::endl;
 	return character;
 }
 
@@ -177,6 +204,81 @@ GameObject* Level::AddBonusToWorld(const Vector3& position) {
 	GameBase::GetGameBase()->GetWorld()->AddGameObject(apple);
 
 	return apple;
+}
+
+
+void Level::UpdatePlayerMovement(float dt) {
+	if (!_mPlayer) {
+		return;
+	}
+
+
+	std::cout << "Called";
+	// setting by default true since it's attached to the camera
+	if (true) {
+		Vector3 playerPosition = _mPlayer->GetTransform().GetPosition();
+		Camera& mainCamera = GameBase::GetGameBase()->GetWorld()->GetMainCamera();
+
+		static bool cameraAdjusted = false;
+		if (!cameraAdjusted) {
+			cameraAdjusted = true;
+		}
+
+		Vector3 cameraOffset(0, 60.0f, 50.0f);
+
+		mainCamera.SetPosition(playerPosition + cameraOffset);
+
+		float forward = controller.GetAxis(2);
+		float sidestep = -controller.GetAxis(0);
+
+		Vector3 currentVelocity = _mPlayer->GetPhysicsObject()->GetLinearVelocity();
+
+
+		Vector3 forwardVec(0, 0, 1);
+		Vector3 rightVec(1, 0, 0);
+
+		if (forward != 0.0f) {
+			forwardVec = -forwardVec;
+		}
+		if (sidestep != 0.0f) {
+			sidestep = -sidestep;
+		}
+
+		Vector3 movement(0, 0, 0);
+		if (forward != 0.0f) {
+			movement += forwardVec * forward * _mPlayerSpeed;
+		}
+		if (sidestep != 0.0f) {
+			movement += rightVec * sidestep * _mPlayerSpeed;
+		}
+
+		//if use gravity is true by def for now
+		if (true) {
+			if (fabs(currentVelocity.y) < 1.0f) {
+				static float lastJumpTime = -2.2f;
+				float currentTime = Window::GetTimer().GetTotalTimeSeconds();
+
+				if (Window::GetKeyboard()->KeyPressed(KeyCodes::SPACE) && (currentTime - lastJumpTime >= 2.2f)) {
+					movement.y += 10.0f;
+					currentVelocity.y = 35.0f;
+					lastJumpTime = currentTime;
+				}
+			}
+
+			currentVelocity.y -= 25.0f * dt;
+
+			_mPlayer->GetPhysicsObject()->SetLinearVelocity(Vector3(movement.x, currentVelocity.y, movement.z));
+		}
+		else {
+			_mPlayer->GetPhysicsObject()->SetLinearVelocity(movement);
+		}
+
+
+		Quaternion newOrientation = Quaternion::EulerAnglesToQuaternion(0, 180.0f, 0);
+		_mPlayer->GetTransform().SetOrientation(newOrientation);
+
+		return;
+	}
 }
 
 //StateGameObject* Level::AddStateObjectToWorld(const Vector3& position)

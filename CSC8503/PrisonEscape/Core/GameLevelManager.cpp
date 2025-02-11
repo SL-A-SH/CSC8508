@@ -8,12 +8,9 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	world = existingWorld;
 	renderer = existingRenderer;
 	physics = new PhysicsSystem(*world);
+	physics->UseGravity(true);
 	// Move to another place if needed
-	SampleLevel* level = new SampleLevel();
-	level->Init();
 
-	AddLevel(level);
-	SetCurrentLevel(level);
 
 
 }
@@ -28,5 +25,8 @@ void GameLevelManager::UpdateGame(float dt)
 {
 	// TODO: Level Updates
 	// TODO: Remove Debug
+	physics->Update(dt);
+
+	GetCurrentLevel()->Update(dt);
 	Debug::Print("LEVELS", Vector2(25, 30), Debug::WHITE);
 }

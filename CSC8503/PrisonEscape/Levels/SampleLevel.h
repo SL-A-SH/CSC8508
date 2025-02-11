@@ -1,7 +1,6 @@
-#include "../NCLCoreClasses/KeyboardMouseController.h"
 
 #pragma once
-
+#include "Vector.h"
 #include "imgui/imgui.h"
 #include "Level.h"
 #include "../CSC8503/PrisonEscape/Core/GameBase.h"
@@ -11,7 +10,7 @@ using namespace NCL;
 class SampleLevel : public Level
 {
 public:
-	SampleLevel() :controller(*Window::GetKeyboard(), *Window::GetMouse())
+	SampleLevel()
 	{
 
 		GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetController(controller);
@@ -34,8 +33,8 @@ public:
 
 	void Update(float dt) override
 	{
-		std::cout << "SampleLevel Update" << std::endl;
 		GameBase::GetGameBase()->GetWorld()->GetMainCamera().UpdateCamera(dt);
+		if (_mPlayer) 			UpdatePlayerMovement(dt);
 	}
 
 
@@ -55,7 +54,7 @@ public:
 
 	ImFont* mHeaderFont = nullptr;
 
-	KeyboardMouseController controller;
+
 
 };
 
