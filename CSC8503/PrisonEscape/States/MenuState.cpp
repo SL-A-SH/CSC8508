@@ -1,4 +1,5 @@
 #include "MenuState.h"
+#include "GamePlayState.h"
 #include <iostream>
 
 
@@ -11,34 +12,34 @@ void MenuState::OnAwake()
 	buttonFont = imguiIO.Fonts->AddFontFromFileTTF("../Assets/Fonts/BebasNeue-Regular.ttf", 30.0f, NULL, imguiIO.Fonts->GetGlyphRangesDefault());
 	imguiIO.Fonts->Build();
 	GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&MenuState::DrawCanvas, this));
+
 	Window::GetWindow()->ShowOSPointer(true);
 }
 
 PushdownState::PushdownResult MenuState::OnUpdate(float dt, PushdownState** newState)
 {
 	if (stateChangeAction) { // Check if the function pointer is set
-
 		stateChangeAction(newState);
 		stateChangeAction = nullptr; // Reset the function pointer
 		return PushdownResult::Push;
 	}
+	std::cout << "Drawing Canvas" << std::endl;
 	return PushdownResult::NoChange;
 }
 
 void MenuState::DrawCanvas()
 {
+
 	ImVec2 windowSize = ImGui::GetWindowSize();
 	ImGui::PushFont(buttonFont);
 	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .25f));
 	if (ImGui::Button("Single Player", ImVec2(windowSize.x * .3f, windowSize.y * .1f))) {
-
-
 		stateChangeAction = [](PushdownState** newState) {
 			*newState = new GamePlayState();
 			};
 		Window::GetWindow()->ShowOSPointer(false);
-
-		///POP MENU STATE HERE
+		// Unbind the current canvas function
+		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(nullptr);
 
 	}
 	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .45f));

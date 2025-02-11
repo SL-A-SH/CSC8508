@@ -11,44 +11,32 @@
 #include "imgui/imgui.h"
 
 namespace NCL {
-    namespace CSC8503 {
-        class GameState : public PushdownState {
-        public:
-            GameState() {}
-            virtual ~GameState() {}
-        };
+	namespace CSC8503 {
+		class GameState : public PushdownState {
+		public:
+			GameState() {}
+			virtual ~GameState() {}
+		};
 
-        class MenuState;
-        class GamePlayState;
-        class PauseState;
-        class GameOverState;
+		class MenuState;
+		class GamePlayState;
+		class PauseState;
+		class GameOverState;
 
-       
 
-        class GamePlayState : public GameState {
-        public:
-            GamePlayState();
-            ~GamePlayState();
-            PushdownResult OnUpdate(float dt, PushdownState** newState) override;
 
-        private:
-            GameWorld* world;
-            PhysicsSystem* physics;
-			GameLevelManager* manager;
-          
-        };
 
-        class PauseState : public GameState {
-        public:
-            PauseState() {}
-            PushdownResult OnUpdate(float dt, PushdownState** newState) override;
-        };
+		class PauseState : public GameState {
+		public:
+			PauseState() {}
+			PushdownResult OnUpdate(float dt, PushdownState** newState) override;
+		};
 
-        class GameOverState : public GameState {
-        public:
-            GameOverState() {
-            }
-            PushdownResult OnUpdate(float dt, PushdownState** newState) override;
-        };
-    }
+		class GameOverState : public GameState {
+		public:
+			GameOverState() {
+			}
+			PushdownResult OnUpdate(float dt, PushdownState** newState) override;
+		};
+	}
 }
