@@ -127,7 +127,7 @@ GameObject* Player::AddFloorToWorld(const Vector3& position, const Vector3& floo
 	floor->GetPhysicsObject()->SetInverseMass(0);
 	floor->GetPhysicsObject()->InitCubeInertia();
 
-	floor->SetAsFloor(true);
+	/*floor->SetAsFloor(true);*/
 
 	world->AddGameObject(floor);
 
