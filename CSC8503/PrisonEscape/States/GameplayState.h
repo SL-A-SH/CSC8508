@@ -5,19 +5,21 @@
 #include "PhysicsSystem.h"
 #include "GameState.h"
 #include "../CSC8503/PrisonEscape/Core/GameLevelManager.h"
+#include "../CSC8503/PrisonEscape/Prefabs/Player/PlayerOne.h" 
 
 namespace NCL {
 	namespace CSC8503 {
 		class GamePlayState : public GameState {
+
 		public:
 			GamePlayState();
 			~GamePlayState();
+
 			void OnAwake() override;
 			PushdownResult OnUpdate(float dt, PushdownState** newState) override;
 
 		private:
 			GameLevelManager* manager;
-
 		};
 	}
 }

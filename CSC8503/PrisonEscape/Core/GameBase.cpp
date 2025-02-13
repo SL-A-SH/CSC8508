@@ -1,19 +1,16 @@
 #include "GameBase.h"
 #include "../CSC8503/PrisonEscape/States/GameState.h"
 #include "../CSC8503/PrisonEscape/States/MenuState.h"
+
 using namespace NCL;
 using namespace CSC8503;
-
-
-
-
 
 GameTechRenderer* GameBase::renderer = nullptr;
 GameWorld* GameBase::world = nullptr;
 GameBase* GameBase::instance = nullptr;
 
-GameBase::GameBase() {
-
+GameBase::GameBase()
+{
 }
 
 GameBase::~GameBase() {
@@ -27,8 +24,6 @@ void GameBase::InitialiseGame() {
 	renderer = new GameTechRenderer(*world);
 	stateMachine = nullptr;
 	stateMachine = new PushdownMachine(new MenuState());
-
-
 }
 
 void GameBase::UpdateGame(float dt) {
@@ -37,7 +32,6 @@ void GameBase::UpdateGame(float dt) {
 	renderer->Render();
 	Debug::UpdateRenderables(dt);
 }
-
 
 GameBase* GameBase::GetGameBase()
 {

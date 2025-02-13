@@ -8,6 +8,7 @@
 namespace NCL {
 	namespace CSC8503 {
 		class GameBase {
+
 		public:
 			GameBase();
 			~GameBase();
@@ -15,21 +16,18 @@ namespace NCL {
 			virtual void UpdateGame(float dt);
 			void InitialiseGame();
 
+		protected:
+			static GameTechRenderer* renderer;
+			static GameWorld* world;
+			static GameBase* instance;
+
+			PushdownMachine* stateMachine;
+
+		public:
 			static GameTechRenderer* GetRenderer() { return renderer; }
 			static GameWorld* GetWorld() { return world; }
 			static GameBase* GetGameBase();
 			static PushdownMachine* GetStateMachine() { return instance->stateMachine; }
-
-
-
-		protected:
-			static GameTechRenderer* renderer;
-			static GameWorld* world;
-			PushdownMachine* stateMachine;
-
-			static GameBase* instance;
-
-
 		};
 	}
 }

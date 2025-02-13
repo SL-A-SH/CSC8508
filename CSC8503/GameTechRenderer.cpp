@@ -76,7 +76,7 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
 
 	SetDebugStringBufferSizes(10000);
 	SetDebugLineBufferSizes(1000);
-	SetupIMgui();
+	SetupImgui();
 }
 
 GameTechRenderer::~GameTechRenderer() {
@@ -84,7 +84,7 @@ GameTechRenderer::~GameTechRenderer() {
 	glDeleteFramebuffers(1, &shadowFBO);
 }
 
-void GameTechRenderer::SetupIMgui()
+void GameTechRenderer::SetupImgui()
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();

@@ -1,5 +1,5 @@
-
 #pragma once
+
 #include "../CSC8503/PrisonEscape/Core/GameLevelManager.h"
 #include "PushdownState.h"
 #include "GameWorld.h"
@@ -11,12 +11,14 @@
 
 namespace NCL {
 	namespace CSC8503 {
-
 		class MenuState : public GameState {
+
 		public:
 			MenuState() {}
+
 			PushdownResult OnUpdate(float dt, PushdownState** newState) override;
 			void OnAwake() override;
+
 			void DrawCanvas();
 			void DrawOptions();
 
@@ -24,9 +26,7 @@ namespace NCL {
 			ImFont* buttonFont = nullptr;
 
 		private:
-
-			std::function<void(PushdownState**)> stateChangeAction = nullptr; // Add this function pointer
-
+			std::function<void(PushdownState**)> stateChangeAction = nullptr;
 		};
 	}
 }

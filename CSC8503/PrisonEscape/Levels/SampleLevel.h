@@ -1,5 +1,5 @@
-
 #pragma once
+
 #include "Vector.h"
 #include "imgui/imgui.h"
 #include "Level.h"
@@ -10,33 +10,12 @@ using namespace NCL;
 class SampleLevel : public Level
 {
 public:
-	SampleLevel()
-	{
-
-		GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetController(controller);
-
-		controller.MapAxis(0, "Sidestep");
-		controller.MapAxis(1, "UpDown");
-		controller.MapAxis(2, "Forward");
-
-		controller.MapAxis(3, "XLook");
-		controller.MapAxis(4, "YLook");
-
-
-	}
+	SampleLevel();
 	~SampleLevel();
 
-	void Init() override
-	{
-		Level::Init();
-	}
+	void Init() override;
 
-	void Update(float dt) override
-	{
-		GameBase::GetGameBase()->GetWorld()->GetMainCamera().UpdateCamera(dt);
-		if (_mPlayer) 			UpdatePlayerMovement(dt);
-	}
-
+	void Update(float dt) override;
 
 	void DrawPause()
 	{
@@ -50,11 +29,7 @@ public:
 		}
 	}
 
-
-
 	ImFont* mHeaderFont = nullptr;
-
-
 
 };
 

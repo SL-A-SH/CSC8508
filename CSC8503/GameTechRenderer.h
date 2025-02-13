@@ -44,7 +44,7 @@ namespace NCL {
 
 
 			std::function<void()> mImguiCanvasFuncToRender = nullptr;
-			void SetupIMgui();
+			void SetupImgui();
 
 
 			vector<const RenderObject*> activeObjects;
