@@ -4,6 +4,7 @@
 #include "Mesh.h"
 #include "Texture.h"
 #include "Shader.h"
+#include "imgui/imgui.h"
 
 namespace NCL {
 	namespace CSC8503 {
@@ -21,6 +22,7 @@ namespace NCL {
 		private:
 			Mesh* cubeMesh = nullptr;
 			Texture* basicTex = nullptr;
+			Texture* pauseButton = nullptr;
 			Shader* basicShader = nullptr;
 
 			PlayerOne* playerOne = nullptr;
@@ -34,6 +36,16 @@ namespace NCL {
 
 		public:
 			PlayerOne* GetPlayerOne() const { return playerOne; }
+
+
+#pragma region UI
+
+		public:
+			void DrawPauseButton();
+			void DrawPauseMenu();
+
+#pragma endregion
+
 		};
 	}
 }

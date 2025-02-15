@@ -40,6 +40,7 @@ void Level::InitializeAssets()
 
 	basicTex = GameBase::GetGameBase()->GetRenderer()->LoadTexture("checkerboard.png");
 	basicShader = GameBase::GetGameBase()->GetRenderer()->LoadShader("scene.vert", "scene.frag");
+	pauseButton = GameBase::GetGameBase()->GetRenderer()->LoadTexture("pauseButton.png");
 }
 
 void Level::InitializeLevel()
@@ -75,3 +76,17 @@ GameObject* Level::AddFloorToWorld(const Vector3& position, const Vector3& floor
 
 	return floor;
 }
+
+
+#pragma region UI
+
+void Level::DrawPauseButton()
+{
+	//ImVec2 windowSize = ImGui::GetWindowSize();
+	//ImGui::SetCursorPos(ImVec2(windowSize.x * .9f, windowSize.y * .05f));
+	//if (ImGui::ImageButton(reinterpret_cast<void*>(pauseButton->GetAssetID()), )
+	//{
+	//	GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&Level::DrawPauseMenu, this));
+	//}
+}
+#pragma endregion

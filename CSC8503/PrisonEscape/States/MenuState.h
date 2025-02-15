@@ -19,11 +19,16 @@ namespace NCL {
 			PushdownResult OnUpdate(float dt, PushdownState** newState) override;
 			void OnAwake() override;
 
-			void DrawCanvas();
-			void DrawOptions();
+			void DrawMainMenuPanel();
+			void DrawSettingPanel();
+			void DrawAudioSettingPanel();
+			void DrawVideoSettingPanel();
 
 			ImFont* menuHeading = nullptr;
 			ImFont* buttonFont = nullptr;
+			ImFont* headerFont = nullptr;
+
+			int volume;
 
 		private:
 			std::function<void(PushdownState**)> stateChangeAction = nullptr;

@@ -10,9 +10,10 @@ void MenuState::OnAwake()
 {
 	ImGuiIO& imguiIO = ImGui::GetIO();
 	buttonFont = imguiIO.Fonts->AddFontFromFileTTF("../Assets/Fonts/BebasNeue-Regular.ttf", 30.0f, NULL, imguiIO.Fonts->GetGlyphRangesDefault());
+	headerFont = imguiIO.Fonts->AddFontFromFileTTF("../Assets/Fonts/BebasNeue-Regular.ttf", 60.0f, NULL, imguiIO.Fonts->GetGlyphRangesDefault());
 	imguiIO.Fonts->Build();
 
-	GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&MenuState::DrawCanvas, this));
+	GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&MenuState::DrawMainMenuPanel, this));
 	Window::GetWindow()->ShowOSPointer(true);
 }
 
@@ -27,56 +28,126 @@ PushdownState::PushdownResult MenuState::OnUpdate(float dt, PushdownState** newS
 	return PushdownResult::NoChange;
 }
 
-void MenuState::DrawCanvas()
+void MenuState::DrawMainMenuPanel()
 {
 	ImVec2 windowSize = ImGui::GetWindowSize();
+
+
+	ImGui::PushFont(headerFont);
+	ImGui::SetCursorPos(ImVec2(windowSize.x * .45f, windowSize.y * .10f));
+	ImGui::TextColored(ImVec4(0, 1, 1, 1), "RACECAR");
+	ImGui::PopFont();
+
+
 	ImGui::PushFont(buttonFont);
 	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .25f));
 
 	if (ImGui::Button("Single Player", ImVec2(windowSize.x * .3f, windowSize.y * .1f))) {
-		stateChangeAction = [](PushdownState** newState) {
-			*newState = new GamePlayState();
-		};
+		stateChangeAction = [](PushdownState** newState) {	*newState = new GamePlayState();	};
 		Window::GetWindow()->ShowOSPointer(false);
 		// Unbind the current canvas function
 		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(nullptr);
-
 	}
 
 	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .45f));
-
 	if (ImGui::Button("Multiplayer", ImVec2(windowSize.x * .3f, windowSize.y * .1f))) {
-
+		//MULTIPLAYER STATE
 	}
 
 	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .65f));
-
 	if (ImGui::Button("Settings", ImVec2(windowSize.x * .3f, windowSize.y * .1f))) {
 		ImGui::SetCursorPos(ImVec2(windowSize.x * .2f, windowSize.y * .1f));
 		ImGui::TextColored(ImVec4(1, 0, 0, 1), "I See you like touching buttons!!!! oh my my!");
-		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&MenuState::DrawOptions, this));
+		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&MenuState::DrawSettingPanel, this));
 	}
 
 	ImGui::PopFont();
 }
 
-void MenuState::DrawOptions()
+void MenuState::DrawSettingPanel()
 {
 
 	ImVec2 windowSize = ImGui::GetWindowSize();
-	ImGui::PushFont(buttonFont);
-	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .55f));
-	ImGui::TextColored(ImVec4(1, 0, 0, 1), "Settings");
+	ImGui::PushFont(headerFont);
+	ImGui::SetCursorPos(ImVec2(windowSize.x * .45f, windowSize.y * .10f));
+	ImGui::TextColored(ImVec4(0, 1, 1, 1), "Settings");
+	ImGui::PopFont();
 
+	ImGui::PushFont(buttonFont);
+
+	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .25f));
 	if (ImGui::Button("Audio", ImVec2(windowSize.x * .3f, windowSize.y * .1f))) {
-		ImGui::SetCursorPos(ImVec2(windowSize.x * .2f, windowSize.y * .1f));
-		//GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&MenuState::DrawOptions, this));
+		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&MenuState::DrawAudioSettingPanel, this));
 	}
 
+	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .45f));
 	if (ImGui::Button("Graphic", ImVec2(windowSize.x * .3f, windowSize.y * .1f))) {
 		ImGui::SetCursorPos(ImVec2(windowSize.x * .2f, windowSize.y * .1f));
-		//GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&MenuState::DrawOptions, this));
+		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&MenuState::DrawVideoSettingPanel, this));
+	}
+
+	ImGui::SetNextItemWidth(windowSize.x * .05f);
+	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .65f));
+
+	if (ImGui::Button("Back", ImVec2(windowSize.x * .3f, windowSize.y * .1f)))
+	{
+		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&MenuState::DrawMainMenuPanel, this));
 	}
 
 	ImGui::PopFont();
+}
+
+void MenuState::DrawAudioSettingPanel()
+{
+	//GameBase::GetGameBase()->GetAudio()->masterVolume
+	ImVec2 windowSize = ImGui::GetWindowSize();
+	ImGui::PushFont(headerFont);
+	ImGui::SetCursorPos(ImVec2(windowSize.x * .425f, windowSize.y * .10f));
+	ImGui::TextColored(ImVec4(0, 1, 1, 1), "Audio Settings");
+	ImGui::PopFont();
+
+	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .36f));
+	ImGui::Text("Master Volume"); // Draw the label first
+	ImGui::SameLine();
+	ImGui::SetCursorPos(ImVec2(windowSize.x * .5f, windowSize.y * .35f));
+
+	ImGui::SetNextItemWidth(windowSize.x * .2f);
+	ImGui::SliderInt("##", &volume, 0, 100);
+
+	ImGui::SetNextItemWidth(windowSize.x * .05f);
+	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .65f));
+
+	if (ImGui::Button("Back", ImVec2(windowSize.x * .3f, windowSize.y * .1f)))
+	{
+		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&MenuState::DrawSettingPanel, this));
+	}
+	std::cout << volume << std::endl;
+}
+
+void MenuState::DrawVideoSettingPanel()
+{
+	//GameBase::GetGameBase()->GetAudio()->masterVolume
+	ImVec2 windowSize = ImGui::GetWindowSize();
+	ImGui::PushFont(headerFont);
+	ImGui::SetCursorPos(ImVec2(windowSize.x * .425f, windowSize.y * .10f));
+	ImGui::TextColored(ImVec4(0, 1, 1, 1), "Video Settings");
+	ImGui::PopFont();
+
+	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .36f));
+	ImGui::Text("Brightness");
+	ImGui::SameLine();
+	ImGui::SetCursorPos(ImVec2(windowSize.x * .5f, windowSize.y * .35f));
+
+	ImGui::SetNextItemWidth(windowSize.x * .2f);
+	//Brighness slider update this later
+	ImGui::SliderInt("##", &volume, 0, 100);
+
+	ImGui::SetNextItemWidth(windowSize.x * .05f);
+	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .65f));
+
+	if (ImGui::Button("Back", ImVec2(windowSize.x * .3f, windowSize.y * .1f)))
+	{
+		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&MenuState::DrawSettingPanel, this));
+	}
+	//std::cout << volume << std::endl;
 }
