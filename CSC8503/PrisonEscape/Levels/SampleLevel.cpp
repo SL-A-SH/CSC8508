@@ -2,7 +2,7 @@
 
 SampleLevel::SampleLevel()
 {
-	
+
 }
 
 SampleLevel::~SampleLevel()
@@ -16,7 +16,8 @@ void SampleLevel::Init()
 }
 
 void SampleLevel::Update(float dt)
-{	
+{
 	GameBase::GetGameBase()->GetWorld()->GetMainCamera().UpdateCamera(dt);
 	Level::Update(dt);
+
 }

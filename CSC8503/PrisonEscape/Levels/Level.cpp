@@ -24,6 +24,8 @@ void Level::Init()
 	InitializeAssets();
 	InitializeLevel();
 	SetCameraAttributes();
+
+	GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&Level::DrawPauseButton, this));
 }
 
 void Level::Update(float dt)
@@ -32,6 +34,8 @@ void Level::Update(float dt)
 	{
 		playerOne->UpdatePlayerMovement(dt);
 	}
+
+
 }
 
 void Level::InitializeAssets()
@@ -40,7 +44,7 @@ void Level::InitializeAssets()
 
 	basicTex = GameBase::GetGameBase()->GetRenderer()->LoadTexture("checkerboard.png");
 	basicShader = GameBase::GetGameBase()->GetRenderer()->LoadShader("scene.vert", "scene.frag");
-	pauseButton = GameBase::GetGameBase()->GetRenderer()->LoadTexture("pauseButton.png");
+	pauseButton = GameBase::GetGameBase()->GetRenderer()->LoadTexture("pausebutton.png");
 }
 
 void Level::InitializeLevel()
@@ -82,11 +86,20 @@ GameObject* Level::AddFloorToWorld(const Vector3& position, const Vector3& floor
 
 void Level::DrawPauseButton()
 {
-	//ImVec2 windowSize = ImGui::GetWindowSize();
-	//ImGui::SetCursorPos(ImVec2(windowSize.x * .9f, windowSize.y * .05f));
-	//if (ImGui::ImageButton(reinterpret_cast<void*>(pauseButton->GetAssetID()), )
-	//{
-	//	GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&Level::DrawPauseMenu, this));
-	//}
+	ImVec2 windowSize = ImGui::GetWindowSize();
+	ImGui::SetCursorPos(ImVec2(windowSize.x * .9f, windowSize.y * .05f));
+
+
+	GLuint texID = ((OGLTexture*)pauseButton)->GetObjectID();
+
+	if (ImGui::ImageButton("Test", texID, ImVec2(100, 100)))
+	{
+		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&Level::DrawPauseMenu, this));
+	}
+}
+
+void Level::DrawPauseMenu()
+{
+	std::cout << "Pause Menu" << std::endl;
 }
 #pragma endregion
