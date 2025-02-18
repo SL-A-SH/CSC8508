@@ -1,6 +1,6 @@
 #pragma once
 
-#include "PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h
+#include "PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
 
 namespace NCL {
 	namespace CSC8503 {
@@ -8,6 +8,6 @@ namespace NCL {
 		public:
 			PatrollingEnemy();
 			~PatrollingEnemy();
-		}
+		};
 	}
 }
