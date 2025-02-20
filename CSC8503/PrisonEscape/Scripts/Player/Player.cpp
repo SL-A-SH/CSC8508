@@ -62,6 +62,7 @@ GameObject* Player::AddPlayerToWorld(const Vector3& position) {
 
 void Player::UpdateGame(float dt) {
 	UpdatePlayerMovement(dt);
+
 }
 
 void Player::UpdatePlayerMovement(float dt) {
@@ -131,6 +132,12 @@ void Player::UpdatePlayerMovement(float dt) {
 
 		Quaternion newOrientation = Quaternion::EulerAnglesToQuaternion(0, 180.0f, 0);
 		_mPlayer->GetTransform().SetOrientation(newOrientation);
+
+		if (Window::GetKeyboard()->KeyPressed(KeyCodes::V)) {
+			Vector3 position = _mPlayer->GetTransform().GetPosition();
+			std::cout << "Player position: " << position.x << ", " << position.y << ", " << position.z << std::endl;
+
+		}
 
 		return;
 	}

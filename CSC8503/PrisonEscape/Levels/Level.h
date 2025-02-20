@@ -18,7 +18,7 @@ namespace NCL {
 
 			virtual void Update(float dt);
 
-		private:
+		protected:
 			Mesh* cubeMesh = nullptr;
 			Texture* basicTex = nullptr;
 			Shader* basicShader = nullptr;
