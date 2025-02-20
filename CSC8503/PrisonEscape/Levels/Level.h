@@ -18,7 +18,7 @@ namespace NCL {
 
 			virtual void Update(float dt);
 
-		private:
+		protected:
 			Mesh* cubeMesh = nullptr;
 			Texture* basicTex = nullptr;
 			Shader* basicShader = nullptr;
@@ -31,6 +31,7 @@ namespace NCL {
 			void SetCameraAttributes();
 
 			GameObject* AddFloorToWorld(const Vector3& position, const Vector3& floorSize, const Vector4& color);
+
 
 		public:
 			PlayerOne* GetPlayerOne() const { return playerOne; }

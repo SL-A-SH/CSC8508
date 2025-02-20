@@ -44,7 +44,7 @@ void Level::InitializeAssets()
 
 void Level::InitializeLevel()
 {
-	AddFloorToWorld(Vector3(0, 0, 0), Vector3(200, 0, 200), Vector4(0.5, 0.5, 0.5, 1));
+	AddFloorToWorld(Vector3(0, 0, 0), Vector3(200, 2, 200), Vector4(0.5, 0.5, 0.5, 1));
 	playerOne->SpawnPlayer(Vector3(0, 50, 0));
 }
 

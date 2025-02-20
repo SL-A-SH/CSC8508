@@ -1,5 +1,6 @@
 #include "GameplayState.h"
 #include "PrisonEscape/Levels/SampleLevel.h"
+#include "PrisonEscape/Levels/LevelT.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -11,7 +12,7 @@ GamePlayState::GamePlayState()
 
 void GamePlayState::OnAwake()
 {
-	Level* level = new SampleLevel();
+	Level* level = new LevelT();
 	level->Init();
 
 	Vector3 playerPosition = level->GetPlayerOne()->GetTransform().GetPosition();

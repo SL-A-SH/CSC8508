@@ -43,6 +43,12 @@ namespace NCL {
 			Vector4 GetColour() const {
 				return colour;
 			}
+			void SetVisible(bool visible) {
+				this->visible = visible;
+			}
+			bool IsVisible() const {
+				return visible;
+			}
 
 		protected:
 			Mesh*		mesh;
@@ -50,6 +56,7 @@ namespace NCL {
 			Shader*		shader;
 			Transform*	transform;
 			Vector4		colour;
+			bool visible;
 		};
 	}
 }

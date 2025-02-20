@@ -98,6 +98,9 @@ namespace NCL::Maths {
         T& operator[](int i) {
             return ((T*)this)[i];
         }
+        T Length() const {
+            return std::sqrt(x * x + y * y + z * z);
+        }
     };
 
     template <typename T>
@@ -243,7 +246,20 @@ namespace NCL::Maths {
         }
         return a;
     }
+    template <typename T, uint32_t n>
+    constexpr bool operator==(const VectorTemplate<T, n>& a, const VectorTemplate<T, n>& b) {
+        for (int i = 0; i < n; ++i) {
+            if (a[i] != b[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
 
+    template <typename T, uint32_t n>
+    constexpr bool operator!=(const VectorTemplate<T, n>& a, const VectorTemplate<T, n>& b) {
+        return !(a == b);
+    }
 
 
     namespace Vector {
@@ -327,5 +343,8 @@ namespace NCL::Maths {
             }
             return output;
         }
+
+        
+
     }
 }
