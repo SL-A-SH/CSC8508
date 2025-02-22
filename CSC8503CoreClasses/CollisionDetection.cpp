@@ -330,10 +330,49 @@ bool CollisionDetection::AABBSphereIntersection(const AABBVolume& volumeA, const
 /// needs definition
 /// </summary>
 
-bool  CollisionDetection::OBBSphereIntersection(const OBBVolume& volumeA, const Transform& worldTransformA,
-	const SphereVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo) {
+bool CollisionDetection::OBBSphereIntersection(
+	const OBBVolume& volumeA, const Transform& worldTransformA,
+	const SphereVolume& volumeB, const Transform& worldTransformB,
+	CollisionInfo& collisionInfo) {
+
+	// Get OBB properties
+	Vector3 obbCenter = worldTransformA.GetPosition();
+	Matrix3 obbRotation = Quaternion::RotationMatrix<Matrix3>(worldTransformA.GetOrientation());
+	Vector3 obbHalfSize = volumeA.GetHalfDimensions();
+
+	// Get Sphere properties
+	Vector3 sphereCenter = worldTransformB.GetPosition();
+	float sphereRadius = volumeB.GetRadius();
+
+	// Transform sphere center into OBB local space
+	Vector3 localSphereCenter = Vector::Transpose((obbRotation) * (sphereCenter - obbCenter));
+
+	// Find the closest point on the OBB to the sphere center
+	Vector3 closestPoint = Vector::Clamp(localSphereCenter, -obbHalfSize, obbHalfSize);
+
+	// Transform back to world space
+	Vector3 worldClosestPoint = obbCenter + (obbRotation * closestPoint);
+
+	// Compute vector from closest point to sphere center
+	Vector3 closestToSphere = sphereCenter - worldClosestPoint;
+	float distanceSquared = Vector::Dot(closestToSphere, closestToSphere);
+
+	// Check if within collision distance
+	if (distanceSquared < (sphereRadius * sphereRadius)) {
+		float distance = sqrt(distanceSquared);
+		Vector3 normal = Vector::Normalise(closestToSphere);
+		float penetration = sphereRadius - distance;
+
+		Vector3 localA = worldClosestPoint - obbCenter;  // Local to OBB
+		Vector3 localB = -normal * sphereRadius;         // Local to Sphere
+
+		collisionInfo.AddContactPoint(localA, localB, normal, penetration);
+		return true;
+	}
+
 	return false;
 }
+
 
 /// <summary> 
 /// needs definition
@@ -426,7 +465,6 @@ bool CollisionDetection::OBBIntersection(
 
 	collisionInfo.AddContactPoint(Vector3(), Vector3(), bestAxis, penetration);
 	return true;
-
 }
 
 
