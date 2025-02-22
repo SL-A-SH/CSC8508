@@ -33,9 +33,9 @@ namespace NCL {
 			Vector3 lastCameraPosition;
 			Vector3 lastCameraOrientation;
 
-			Mesh* capsuleMesh = nullptr;
-
+			Mesh* _mPlayerMesh = nullptr;
 			Shader* basicShader = nullptr;
+
 		};
 	}
 }

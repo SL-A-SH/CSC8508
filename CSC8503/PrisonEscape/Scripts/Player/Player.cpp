@@ -22,13 +22,13 @@ Player::Player() : controller(*Window::GetKeyboard(), *Window::GetMouse())
 
 Player::~Player()
 {
-	capsuleMesh = nullptr;
-	basicShader = nullptr;
+	delete(_mPlayer);
+	delete(basicShader);
 }
 
 void Player::InitializeAssets()
 {
-	capsuleMesh = GameBase::GetGameBase()->GetRenderer()->LoadMesh("capsule.msh");
+	_mPlayerMesh = GameBase::GetGameBase()->GetRenderer()->LoadMesh("Male_Guard.msh");
 
 	basicShader = GameBase::GetGameBase()->GetRenderer()->LoadShader("scene.vert", "scene.frag");
 }
@@ -45,18 +45,19 @@ GameObject* Player::AddPlayerToWorld(const Vector3& position) {
 	_mPlayer = new GameObject();
 	SphereVolume* volume = new SphereVolume(1.0f);
 
+
 	_mPlayer->SetBoundingVolume((CollisionVolume*)volume);
 
-	_mPlayer->GetTransform().SetScale(Vector3(meshSize, meshSize, meshSize)).SetPosition(position);
+	_mPlayer->GetTransform().SetScale(Vector3(meshSize, meshSize, meshSize) * 10.0f).SetPosition(position);
 
-	_mPlayer->SetRenderObject(new RenderObject(&_mPlayer->GetTransform(), capsuleMesh, nullptr, basicShader));
+	_mPlayer->SetRenderObject(new RenderObject(&_mPlayer->GetTransform(), _mPlayerMesh, nullptr, basicShader));
 	_mPlayer->SetPhysicsObject(new PhysicsObject(&_mPlayer->GetTransform(), _mPlayer->GetBoundingVolume()));
 
 	_mPlayer->GetPhysicsObject()->SetInverseMass(inverseMass);
 	_mPlayer->GetPhysicsObject()->InitSphereInertia();
 
 	GameBase::GetGameBase()->GetWorld()->AddGameObject(_mPlayer);
-	std::cout << "Player added to world" << std::endl;
+
 	return _mPlayer;
 }
 
