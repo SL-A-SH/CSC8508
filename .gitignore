@@ -34,3 +34,4 @@ lib/
 *.so
 *.dylib
 *.pdb
+CSC8503/imgui.ini
