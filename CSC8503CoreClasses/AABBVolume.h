@@ -3,12 +3,12 @@
 
 namespace NCL {
 	using namespace NCL::Maths;
-	class AABBVolume : CollisionVolume
+	class AABBVolume : public CollisionVolume
 	{
 	public:
 		AABBVolume(const Vector3& halfDims) {
-			type		= VolumeType::AABB;
-			halfSizes	= halfDims;
+			type = VolumeType::AABB;
+			halfSizes = halfDims;
 		}
 		~AABBVolume() {
 
