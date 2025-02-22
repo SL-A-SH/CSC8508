@@ -6,7 +6,7 @@ namespace NCL {
 	namespace CSC8503 {
 		class PatrollingEnemy : public PatrolEnemy {
 		public:
-			PatrollingEnemy();
+			PatrollingEnemy(GameWorld* world);
 			~PatrollingEnemy();
 		};
 	}

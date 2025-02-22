@@ -3,7 +3,7 @@
 using namespace NCL;
 using namespace CSC8503;
 
-PatrollingEnemy::PatrollingEnemy() : PatrolEnemy(){
+PatrollingEnemy::PatrollingEnemy(GameWorld* world) : PatrolEnemy(world) {
 
 }
 
