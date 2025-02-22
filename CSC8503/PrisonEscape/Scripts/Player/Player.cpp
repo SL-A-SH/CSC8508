@@ -75,11 +75,6 @@ void Player::UpdatePlayerMovement(float dt) {
 		Vector3 playerPosition = _mPlayer->GetTransform().GetPosition();
 		Camera& mainCamera = GameBase::GetGameBase()->GetWorld()->GetMainCamera();
 
-		static bool cameraAdjusted = false;
-		if (!cameraAdjusted) {
-			cameraAdjusted = true;
-		}
-
 		Vector3 cameraOffset(0, 60.0f, 50.0f);
 
 		mainCamera.SetPosition(playerPosition + cameraOffset);
@@ -130,8 +125,6 @@ void Player::UpdatePlayerMovement(float dt) {
 		}
 
 
-		Quaternion newOrientation = Quaternion::EulerAnglesToQuaternion(0, 180.0f, 0);
-		_mPlayer->GetTransform().SetOrientation(newOrientation);
 
 		return;
 	}
