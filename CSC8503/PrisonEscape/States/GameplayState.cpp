@@ -11,9 +11,8 @@ GamePlayState::GamePlayState()
 
 void GamePlayState::OnAwake()
 {
-	Level* level = new SampleLevel();
+	SampleLevel* level = new SampleLevel();
 	level->Init();
-
 	Vector3 playerPosition = level->GetPlayerOne()->GetTransform().GetPosition();
 	GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(Vector3(playerPosition.x, playerPosition.y, playerPosition.z));
 
