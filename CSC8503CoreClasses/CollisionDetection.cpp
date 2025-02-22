@@ -209,6 +209,17 @@ bool CollisionDetection::ObjectIntersection(GameObject* a, GameObject* b, Collis
 		return AABBCapsuleIntersection((CapsuleVolume&)*volB, transformB, (AABBVolume&)*volA, transformA, collisionInfo);
 	}
 
+	//OBB vs AABB
+	if (volA->type == VolumeType::OBB && volB->type == VolumeType::AABB) {
+		return OBBAABBIntersection((OBBVolume&)*volA, transformA, (AABBVolume&)*volB, transformB, collisionInfo);
+	}
+
+	if (volA->type == VolumeType::AABB && volB->type == VolumeType::OBB) {
+		collisionInfo.a = b;
+		collisionInfo.b = a;
+		return OBBAABBIntersection((OBBVolume&)*volB, transformB, (AABBVolume&)*volA, transformA, collisionInfo);
+	}
+
 
 
 	return false;
@@ -373,7 +384,6 @@ bool CollisionDetection::OBBSphereIntersection(
 	return false;
 }
 
-
 /// <summary> 
 /// needs definition
 /// </summary>
@@ -388,7 +398,6 @@ bool CollisionDetection::SphereCapsuleIntersection(
 	const SphereVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo) {
 	return false;
 }
-
 
 /// <summary>
 /// needs definition
@@ -468,7 +477,6 @@ bool CollisionDetection::OBBIntersection(
 }
 
 
-
 bool CollisionDetection::CheckAxis(const Vector3& axis, float halfSizeA, const Vector3* axesB,
 	const Vector3& halfSizeB, const Vector3& delta,
 	float& penetration, Vector3& bestAxis) {
@@ -490,6 +498,32 @@ bool CollisionDetection::CheckAxis(const Vector3& axis, float halfSizeA, const V
 	}
 	return true;
 
+}
+
+
+
+bool CollisionDetection::OBBAABBIntersection(const OBBVolume& obb, const Transform& obbTransform,
+	const AABBVolume& aabb, const Transform& aabbTransform,
+	CollisionInfo& collisionInfo) {
+	// Step 1: Transform OBB into the AABB's local space
+	Vector3 aabbPosition = aabbTransform.GetPosition();
+	Quaternion aabbOrientation = aabbTransform.GetOrientation();
+	Matrix3 inverseAABBTransform = Quaternion::RotationMatrix<Matrix3>(aabbOrientation.Conjugate());
+
+	// Get OBB position relative to AABB's position
+	Vector3 localOBBPosition = inverseAABBTransform * (obbTransform.GetPosition() - aabbPosition);
+
+	// Step 2: Perform AABB-AABB collision test after transformation
+	Vector3 obbHalfDimensions = obb.GetHalfDimensions();
+	Vector3 aabbHalfDimensions = aabb.GetHalfDimensions();
+
+	// Check for overlap
+	bool overlap = AABBTest(localOBBPosition, Vector3(0, 0, 0), obbHalfDimensions, aabbHalfDimensions);
+	if (overlap) {
+		collisionInfo.AddContactPoint(Vector3(), Vector3(), Vector3(0, 1, 0), 0.0f); // Add some example contact info
+		return true;
+	}
+	return false;
 }
 
 
