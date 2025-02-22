@@ -23,6 +23,7 @@ namespace NCL {
 			void DrawSettingPanel();
 			void DrawAudioSettingPanel();
 			void DrawVideoSettingPanel();
+			void DrawMultiplayerPanel();
 
 			ImFont* menuHeading = nullptr;
 			ImFont* buttonFont = nullptr;

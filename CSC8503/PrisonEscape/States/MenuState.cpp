@@ -51,7 +51,7 @@ void MenuState::DrawMainMenuPanel()
 
 	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .45f));
 	if (ImGui::Button("Multiplayer", ImVec2(windowSize.x * .3f, windowSize.y * .1f))) {
-		//MULTIPLAYER STATE
+		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&MenuState::DrawMultiplayerPanel, this));
 	}
 
 	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .65f));
@@ -150,4 +150,12 @@ void MenuState::DrawVideoSettingPanel()
 		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&MenuState::DrawSettingPanel, this));
 	}
 	//std::cout << volume << std::endl;
+}
+
+void MenuState::DrawMultiplayerPanel()
+{
+	ImVec2 windowSize = ImGui::GetWindowSize();
+	ImGui::PushFont(headerFont);
+	ImGui::TextColored(ImVec4(0, 1, 1, 1), "World Rich Replied to Mails:");
+	ImGui::PopFont();
 }
