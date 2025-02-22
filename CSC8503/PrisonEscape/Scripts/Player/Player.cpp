@@ -42,7 +42,7 @@ GameObject* Player::AddPlayerToWorld(const Vector3& position) {
 	float meshSize = 1.0f;
 	float inverseMass = 0.5f;
 
-	_mPlayer = new GameObject();
+	_mPlayer = new GameObject("player");
 	SphereVolume* volume = new SphereVolume(1.0f);
 
 

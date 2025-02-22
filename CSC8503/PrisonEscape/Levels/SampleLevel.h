@@ -6,6 +6,7 @@
 #include "../CSC8503/PrisonEscape/Core/GameBase.h"
 
 using namespace NCL;
+using namespace CSC8503;
 
 class SampleLevel : public Level
 {
@@ -20,6 +21,6 @@ public:
 
 
 	ImFont* mHeaderFont = nullptr;
-
+	GameObject* CreateRandomColorCube(Vector3 position);
 };
 

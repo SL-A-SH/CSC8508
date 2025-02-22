@@ -92,13 +92,16 @@ namespace NCL::Maths {
 		VectorTemplate<T, 3>(VectorTemplate<T, 4> v) : x(v[0]), y(v[1]), z(v[2]) {
 		}
 
-		T operator[](int i) const {
-			return ((T*)this)[i];
-		}
-		T& operator[](int i) {
-			return ((T*)this)[i];
-		}
-	};
+        T operator[](int i) const {
+            return ((T*)this)[i];
+        }
+        T& operator[](int i) {
+            return ((T*)this)[i];
+        }
+        T Length() const {
+            return std::sqrt(x * x + y * y + z * z);
+        }
+    };
 
 	template <typename T>
 	struct VectorTemplate<T, 4> {
@@ -236,14 +239,27 @@ namespace NCL::Maths {
 		return a;
 	}
 
-	template <typename T, uint32_t n>
-	inline VectorTemplate<T, n>& operator/=(VectorTemplate<T, n>& a, const T& b) {
-		for (int i = 0; i < n; ++i) {
-			a[i] = a[i] / b;
-		}
-		return a;
-	}
+    template <typename T, uint32_t n>
+    inline VectorTemplate<T, n>& operator/=(VectorTemplate<T, n>& a, const T& b) {
+        for (int i = 0; i < n; ++i) {
+            a[i] = a[i] / b;
+        }
+        return a;
+    }
+    template <typename T, uint32_t n>
+    constexpr bool operator==(const VectorTemplate<T, n>& a, const VectorTemplate<T, n>& b) {
+        for (int i = 0; i < n; ++i) {
+            if (a[i] != b[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
 
+    template <typename T, uint32_t n>
+    constexpr bool operator!=(const VectorTemplate<T, n>& a, const VectorTemplate<T, n>& b) {
+        return !(a == b);
+    }
 
 
 	namespace Vector {
