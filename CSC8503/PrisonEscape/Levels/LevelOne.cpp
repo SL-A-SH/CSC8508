@@ -33,7 +33,7 @@ void LevelOne::Init()
 
 	// button
 	button = new Button();
-	button->spawnButton(Vector3(-100, 0, -52));
+	button->spawnButton(Vector3(-100, 0, -38));
 
 	// for this level, button can only be activated by the movable box
 	button->SetBoxActivated(true);
@@ -111,6 +111,11 @@ GameObject* LevelOne::AddObstacleToWorld(Vector3 dimensions, const Vector3& posi
 	GameBase::GetGameBase()->GetWorld()->AddGameObject(path);
 
 	return path;
+}
+
+
+void LevelOne::openExit() {
+
 }
 
 

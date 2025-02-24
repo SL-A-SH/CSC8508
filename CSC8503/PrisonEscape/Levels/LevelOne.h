@@ -40,5 +40,9 @@ private:
 	GameObject* AddWallToWorld(Vector3 wallSize, const Vector3& position);
 	GameObject* AddObstacleToWorld(Vector3 size, const Vector3& position);
 	GameObject* AddBoxToWorld(const Vector3& position, Vector3 dimensions, const std::string name, float inverseMass = 10.0f);
-};
+
+	// maybe add levelComplete boolean into level.cpp to keep track of level progress
+	void openExit();
+};	
+
 

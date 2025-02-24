@@ -30,7 +30,7 @@ void Button::spawnButton(Vector3 position) {
 
 void Button::pressDownButton() {
 	if (!pressed) {
-		buttonObject->GetTransform().SetPosition(buttonObject->GetTransform().GetPosition() + Vector3(0, -1, 0)); // Move down slightly
+		buttonObject->GetTransform().SetPosition(buttonObject->GetTransform().GetPosition() + Vector3(0, -1.5, 0)); 
 		pressed = true;
 	}
 }
@@ -59,13 +59,15 @@ GameObject* Button::AddButtonToWorld(Vector3 size, const Vector3& position, cons
 		.SetScale(size * 2.0f)
 		.SetPosition(position);
 
+	RenderObject* renderObject = new RenderObject(&button->GetTransform(), buttonMesh, nullptr, basicShader);
+	renderObject->SetColour(Vector4(1, 0, 0, 1)); // Set to red
 
-	button->SetRenderObject(new RenderObject(&button->GetTransform(), buttonMesh, nullptr, basicShader));
+	button->SetRenderObject(renderObject); 
+
 	button->SetPhysicsObject(new PhysicsObject(&button->GetTransform(), button->GetBoundingVolume()));
 
 	button->GetPhysicsObject()->SetInverseMass(0);
 	button->GetPhysicsObject()->InitCubeInertia();
-
 
 	GameBase::GetGameBase()->GetWorld()->AddGameObject(button);
 
