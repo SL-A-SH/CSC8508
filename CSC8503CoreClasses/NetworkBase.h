@@ -14,6 +14,7 @@ enum BasicNetworkMessages {
 	Received_State, //received from a client, informs that its received packet n
 	Player_Connected,
 	Player_Disconnected,
+	Player_ID_Assignment,
 	Shutdown
 };
 
@@ -34,21 +35,30 @@ struct GamePacket {
 		return sizeof(GamePacket) + size;
 	}
 };
+
+struct PlayerIDPacket : public GamePacket {
+	int playerID;
+
+	PlayerIDPacket(int id) {
+		type = Player_ID_Assignment;
+		size = sizeof(PlayerIDPacket) - sizeof(GamePacket);
+		playerID = id;
+	}
+};
+
 struct StringPacket : public GamePacket {
-   
+	char stringData[256];
 
-					char stringData[256];
+	StringPacket(const std::string& message) {
+		type = BasicNetworkMessages::String_Message;
+		size = (short)message.length();
+		memcpy(stringData, message.data(), size);
+	}
 
-					StringPacket(const std::string& message) {
-						type = BasicNetworkMessages::String_Message;
-						size = (short)message.length();
-						memcpy(stringData, message.data(), size);
-					}
-
-					std::string GetStringFromData() {
-						std::string realstring(stringData, size);
-						return realstring;
-					}
+	std::string GetStringFromData() {
+		std::string realstring(stringData, size);
+		return realstring;
+	}
 };
 
 
@@ -69,6 +79,9 @@ public:
 	void RegisterPacketHandler(int msgID, PacketReceiver* receiver) {
 		packetHandlers.insert(std::make_pair(msgID, receiver));
 	}
+
+	_ENetHost* netHandle;
+
 protected:
 	NetworkBase();
 	~NetworkBase();
@@ -87,8 +100,6 @@ protected:
 		last	= range.second;
 		return true;
 	}
-
-	_ENetHost* netHandle;
 
 	std::multimap<int, PacketReceiver*> packetHandlers;
 };
