@@ -124,7 +124,11 @@ void Player::UpdatePlayerMovement(float dt) {
 			_mPlayer->GetPhysicsObject()->SetLinearVelocity(movement);
 		}
 
+		if (Window::GetKeyboard()->KeyPressed(KeyCodes::V)) {
+			Vector3 position = _mPlayer->GetTransform().GetPosition();
+			std::cout << "Player position: " << position.x << ", " << position.y << ", " << position.z << std::endl;
 
+		}
 
 		return;
 	}
