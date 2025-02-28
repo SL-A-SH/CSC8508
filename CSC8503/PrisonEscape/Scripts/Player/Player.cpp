@@ -25,43 +25,18 @@ Player::~Player()
 	mesh = nullptr;
 	basicShader = nullptr;
 	material = nullptr;
+	idleAnim = nullptr;
 }
 
 void Player::InitializeAssets()
 {
 	mesh = GameBase::GetGameBase()->GetRenderer()->LoadMesh("Max/Rig_Maximilian.msh");
-	
-	material = new MeshMaterial("Max/Rig_Maximilian.mat");
+
+	idleAnim = new MeshAnimation("Max/PassiveIdle.anm");
 
 	basicShader = GameBase::GetGameBase()->GetRenderer()->LoadShader("scene.vert", "scene.frag");
 }
 
-void Player::SpawnPlayer(Vector3 position)
-{
-	_mPlayer = AddPlayerToWorld(position);
-}
-
-GameObject* Player::AddPlayerToWorld(const Vector3& position) {
-	float meshSize = 1.0f;
-	float inverseMass = 0.5f;
-
-	_mPlayer = new GameObject();
-	SphereVolume* volume = new SphereVolume(1.0f);
-
-	_mPlayer->SetBoundingVolume((CollisionVolume*)volume);
-
-	_mPlayer->GetTransform().SetScale(Vector3(meshSize, meshSize, meshSize)).SetPosition(position);
-
-	_mPlayer->SetRenderObject(new RenderObject(&_mPlayer->GetTransform(), mesh, material, basicShader));
-	_mPlayer->SetPhysicsObject(new PhysicsObject(&_mPlayer->GetTransform(), _mPlayer->GetBoundingVolume()));
-
-	_mPlayer->GetPhysicsObject()->SetInverseMass(inverseMass);
-	_mPlayer->GetPhysicsObject()->InitSphereInertia();
-
-	GameBase::GetGameBase()->GetWorld()->AddGameObject(_mPlayer);
-	std::cout << "Player added to world" << std::endl;
-	return _mPlayer;
-}
 
 void Player::UpdateGame(float dt) {
 	UpdatePlayerMovement(dt);

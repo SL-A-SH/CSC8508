@@ -64,7 +64,7 @@ GameObject* Level::AddFloorToWorld(const Vector3& position, const Vector3& floor
 
 	floor->GetTransform().SetScale(floorSize * 2.0f).SetPosition(position);
 
-	RenderObject* renderObject = new RenderObject(&floor->GetTransform(), cubeMesh, basicTex, basicShader);
+	RenderObject* renderObject = new RenderObject(&floor->GetTransform(), cubeMesh, basicTex, basicTex, basicShader);
 	renderObject->SetColour(color);
 	floor->SetRenderObject(renderObject);
 	floor->SetPhysicsObject(new PhysicsObject(&floor->GetTransform(), floor->GetBoundingVolume()));

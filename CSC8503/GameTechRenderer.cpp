@@ -272,8 +272,8 @@ void GameTechRenderer::RenderCamera() {
 		OGLShader* shader = (OGLShader*)(*i).GetShader();
 		UseShader(*shader);
 
-		if ((*i).GetDefaultTexture()) {
-			BindTextureToShader(*(OGLTexture*)(*i).GetDefaultTexture(), "mainTex", 0);
+		if ((*i).GetNormal()) {
+			BindTextureToShader(*(OGLTexture*)(*i).GetNormal(), "mainTex", 0);
 		}
 
 		if (activeShader != shader) {
@@ -318,7 +318,7 @@ void GameTechRenderer::RenderCamera() {
 
 		glUniform1i(hasVColLocation, !(*i).GetMesh()->GetColourData().empty());
 
-		glUniform1i(hasTexLocation, (OGLTexture*)(*i).GetDefaultTexture() ? 1 : 0);
+		glUniform1i(hasTexLocation, (OGLTexture*)(*i).GetNormal() ? 1 : 0);
 
 		BindMesh((OGLMesh&)*(*i).GetMesh());
 		size_t layerCount = (*i).GetMesh()->GetSubMeshCount();
@@ -334,6 +334,31 @@ Mesh* GameTechRenderer::LoadMesh(const std::string& name) {
 	mesh->SetPrimitiveType(GeometryPrimitive::Triangles);
 	mesh->UploadToGPU();
 	return mesh;
+}
+
+void GameTechRenderer::LoadMeshes(std::unordered_map<string, Mesh*>& meshMap, const std::vector<std::string>& details) {
+	std::vector<OGLMesh*> meshes;
+	for (int i = 0; i < details.size(); i += 3) {
+		meshes.push_back(new OGLMesh());
+	}
+	std::thread loadingThreads[4];
+	int split = details.size() / 12;
+	for (int i = 0; i < 4; i++) {
+		loadingThreads[i] = std::thread([meshes, details, i, split] {
+			int endPoint = i == 3 ? details.size() / 3 : split * (i + 1);
+			for (int j = split * i; j < endPoint; j++) {
+				MshLoader::LoadMesh(details[(j * 3) + 1], *meshes[j]);
+				meshes[j]->SetPrimitiveType(GeometryPrimitive::Triangles);
+			}
+			});
+	}
+	for (int i = 0; i < 4; i++) {
+		loadingThreads[i].join();
+	}
+	for (int i = 0; i < meshes.size(); i++) {
+		meshes[i]->UploadToGPU();
+		meshMap[details[i * 3]] = meshes[i];
+	}
 }
 
 void GameTechRenderer::NewRenderLines() {
@@ -474,9 +499,56 @@ Texture* GameTechRenderer::LoadTexture(const std::string& name) {
 	return OGLTexture::TextureFromFile(name).release();
 }
 
+GLuint GameTechRenderer::LoadTextureGetID(const std::string& name) {
+	if (mLoadedTextures.find(name) != mLoadedTextures.end()) {
+		return mLoadedTextures[name];
+	}
+	Texture* texture = LoadTexture(name);
+	return ((OGLTexture*)texture)->GetObjectID();
+}
+
 Shader* GameTechRenderer::LoadShader(const std::string& vertex, const std::string& fragment) {
 	return new OGLShader(vertex, fragment);
 }
+
+MeshMaterial* GameTechRenderer::LoadMaterial(const std::string& name) {
+	return new MeshMaterial(name);
+}
+
+std::vector<int> GameTechRenderer::LoadMeshMaterial(Mesh& mesh, MeshMaterial& material) {
+	std::vector<int> matTextures = std::vector<int>();
+	for (int i = 0; i < mesh.GetSubMeshCount(); ++i) {
+		const MeshMaterialEntry* matEntry = material.GetMaterialForLayer(i);
+		const string* filename = nullptr;
+		matEntry->GetEntry("Diffuse", &filename);
+		GLuint texID = 0;
+		
+		if (filename) {
+			string path = *filename;
+			std::cout << path << std::endl;
+			texID = LoadTextureGetID(path.c_str());
+			std::cout << texID << std::endl;
+		}
+		matTextures.emplace_back(texID);
+		filename = nullptr;
+		matEntry->GetEntry("Normal", &filename);
+		texID = 0;
+
+		if (filename) {
+			string path = *filename;
+			std::cout << path << std::endl;
+			texID = LoadTextureGetID(path.c_str());
+			std::cout << texID << std::endl;
+		}
+		matTextures.emplace_back(texID);
+	}
+	return matTextures;
+}
+
+MeshAnimation* GameTechRenderer::LoadAnimation(const std::string& name) {
+	return  new MeshAnimation(name);
+}
+
 
 void GameTechRenderer::SetDebugStringBufferSizes(size_t newVertCount) {
 	if (newVertCount > textCount) {

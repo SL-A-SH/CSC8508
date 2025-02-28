@@ -6,6 +6,7 @@
 #include "Window.h"
 #include "Vector.h"
 #include "MeshMaterial.h"
+#include "MeshAnimation.h"
 
 namespace NCL {
 	namespace CSC8503 {
@@ -37,8 +38,14 @@ namespace NCL {
 			Mesh* mesh = nullptr;
 
 			MeshMaterial* material = nullptr;
+			Texture* normal = nullptr;
+			Texture* albedo = nullptr;
+
+			MeshAnimation* idleAnim = nullptr;
 
 			Shader* basicShader = nullptr;
+
+			
 		};
 	}
 }
