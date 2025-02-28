@@ -1,7 +1,7 @@
 #include "Player.h"
 #include "PhysicsObject.h"
 #include "RenderObject.h"
-
+#include "MeshMaterial.h"
 #include "PrisonEscape/Core/GameBase.h"
 
 Player::Player() : controller(*Window::GetKeyboard(), *Window::GetMouse())
@@ -22,13 +22,16 @@ Player::Player() : controller(*Window::GetKeyboard(), *Window::GetMouse())
 
 Player::~Player()
 {
-	capsuleMesh = nullptr;
+	mesh = nullptr;
 	basicShader = nullptr;
+	material = nullptr;
 }
 
 void Player::InitializeAssets()
 {
-	capsuleMesh = GameBase::GetGameBase()->GetRenderer()->LoadMesh("capsule.msh");
+	mesh = GameBase::GetGameBase()->GetRenderer()->LoadMesh("Max/Rig_Maximilian.msh");
+	
+	material = new MeshMaterial("Max/Rig_Maximilian.mat");
 
 	basicShader = GameBase::GetGameBase()->GetRenderer()->LoadShader("scene.vert", "scene.frag");
 }
@@ -49,7 +52,7 @@ GameObject* Player::AddPlayerToWorld(const Vector3& position) {
 
 	_mPlayer->GetTransform().SetScale(Vector3(meshSize, meshSize, meshSize)).SetPosition(position);
 
-	_mPlayer->SetRenderObject(new RenderObject(&_mPlayer->GetTransform(), capsuleMesh, nullptr, basicShader));
+	_mPlayer->SetRenderObject(new RenderObject(&_mPlayer->GetTransform(), mesh, material, basicShader));
 	_mPlayer->SetPhysicsObject(new PhysicsObject(&_mPlayer->GetTransform(), _mPlayer->GetBoundingVolume()));
 
 	_mPlayer->GetPhysicsObject()->SetInverseMass(inverseMass);

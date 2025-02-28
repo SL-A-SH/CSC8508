@@ -5,6 +5,7 @@
 #include "PhysicsSystem.h"
 #include "Window.h"
 #include "Vector.h"
+#include "MeshMaterial.h"
 
 namespace NCL {
 	namespace CSC8503 {
@@ -33,7 +34,9 @@ namespace NCL {
 			Vector3 lastCameraPosition;
 			Vector3 lastCameraOrientation;
 
-			Mesh* capsuleMesh = nullptr;
+			Mesh* mesh = nullptr;
+
+			MeshMaterial* material = nullptr;
 
 			Shader* basicShader = nullptr;
 		};
