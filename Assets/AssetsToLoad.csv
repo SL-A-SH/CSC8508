@@ -1,5 +1,0 @@
-﻿anim,PlayerIdle,Max/Idle.anm
-anim,PlayerWalk,Max/Walk2.anm
-anim,PlayerSprint,Max/Walk2.anm
-mat,Player,Max/Rig_Maximilian.mat
-mesh,Player,Max/Rig_Maximilian.msh
