@@ -6,15 +6,15 @@
 
 namespace NCL {
 	namespace CSC8503 {
-		class PlayerOne : public Player {
+		class PlayerTwo : public Player {
 		public:
-			PlayerOne();
-			~PlayerOne();
+			PlayerTwo();
+			~PlayerTwo();
 
 			void UpdatePlayerMovement(float dt) override;
 
 		private:
-			float playerSpeed = 10.0f;
+			float playerSpeed = 100.0f;
 
 		public:
 			float GetPlayerSpeed() const { return playerSpeed; }

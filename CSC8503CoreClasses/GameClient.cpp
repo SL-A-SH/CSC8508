@@ -12,33 +12,53 @@ GameClient::~GameClient() {
 }
 
 bool GameClient::Connect(uint8_t a, uint8_t b, uint8_t c, uint8_t d, int portNum) {
+	if (!netHandle) {
+		std::cout << "Client network handle not initialized!\n";
+		return false;
+	}
+
 	ENetAddress address;
 	address.port = portNum;
-	address.host = (d << 24) | (c << 16) | (b << 8) | a;
+	address.host = (d << 24) | (c << 16) | (b << 8) | (a);
+
+	std::cout << "Attempting to connect to " << (int)a << "." << (int)b << "." << (int)c << "." << (int)d << ":" << portNum << "\n";
 
 	netPeer = enet_host_connect(netHandle, &address, 2, 0);
+
+	if (!netPeer) {
+		std::cout << "Failed to create network peer!\n";
+		return false;
+	}
+
+	// Wait for connection success/failure
+	ENetEvent event;
+	std::cout << "Waiting for connection response...\n";
+
+	// Wait up to 5 seconds for the connection to succeed
+	if (enet_host_service(netHandle, &event, 5000) > 0 &&
+		event.type == ENET_EVENT_TYPE_CONNECT) {
+		std::cout << "Connection established!\n";
+		return true;
+	}
+
+	std::cout << "Connection timed out!\n";
+	enet_peer_reset(netPeer);
 	return false;
 }
 
 void GameClient::UpdateClient() {
-
 	if (netHandle == nullptr) {
 		return;
 	}
-
+	// Handle all incoming packets
 	ENetEvent event;
 	while (enet_host_service(netHandle, &event, 0) > 0) {
-		switch (event.type) {
-		case ENET_EVENT_TYPE_CONNECT: {
-			std::cout << "Client: Connected to server!" << std::endl;
-		} break;
-		case ENET_EVENT_TYPE_RECEIVE: {
+		if (event.type == ENET_EVENT_TYPE_CONNECT) {
+			std::cout << "Connected to server!" << std::endl;
+		}
+		else if (event.type == ENET_EVENT_TYPE_RECEIVE) {
 			GamePacket* packet = (GamePacket*)event.packet->data;
-			ProcessPacket(packet, 0);
-		} break;
-		case ENET_EVENT_TYPE_DISCONNECT: {
-			std::cout << "Client: Disconnected from server!" << std::endl;
-		} break;
+			ProcessPacket(packet);
 		}
 		enet_packet_destroy(event.packet);
 	}

@@ -43,7 +43,7 @@ void MenuState::DrawMainMenuPanel()
 	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .25f));
 
 	if (ImGui::Button("Single Player", ImVec2(windowSize.x * .3f, windowSize.y * .1f))) {
-		stateChangeAction = [](PushdownState** newState) {	*newState = new GamePlayState();	};
+		stateChangeAction = [](PushdownState** newState) {	*newState = new GamePlayState(false, false);	};
 		Window::GetWindow()->ShowOSPointer(false);
 		// Unbind the current canvas function
 		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(nullptr);
@@ -156,6 +156,35 @@ void MenuState::DrawMultiplayerPanel()
 {
 	ImVec2 windowSize = ImGui::GetWindowSize();
 	ImGui::PushFont(headerFont);
-	ImGui::TextColored(ImVec4(0, 1, 1, 1), "World Rich Replied to Mails:");
+	ImGui::SetCursorPos(ImVec2(windowSize.x * .45f, windowSize.y * .10f));
+	ImGui::TextColored(ImVec4(0, 1, 1, 1), "Multiplayer");
+	ImGui::PopFont();
+
+	ImGui::PushFont(buttonFont);
+
+	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .25f));
+	if (ImGui::Button("Host", ImVec2(windowSize.x * .3f, windowSize.y * .1f))) {
+		stateChangeAction = [](PushdownState** newState) {	*newState = new GamePlayState(true, true);	};
+		Window::GetWindow()->ShowOSPointer(false);
+		// Unbind the current canvas function
+		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(nullptr);
+	}
+
+	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .45f));
+	if (ImGui::Button("Join", ImVec2(windowSize.x * .3f, windowSize.y * .1f))) {
+		stateChangeAction = [](PushdownState** newState) {	*newState = new GamePlayState(true, false);	};
+		Window::GetWindow()->ShowOSPointer(false);
+		// Unbind the current canvas function
+		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(nullptr);
+	}
+
+	ImGui::SetNextItemWidth(windowSize.x * .05f);
+	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .65f));
+
+	if (ImGui::Button("Back", ImVec2(windowSize.x * .3f, windowSize.y * .1f)))
+	{
+		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&MenuState::DrawMainMenuPanel, this));
+	}
+
 	ImGui::PopFont();
 }
