@@ -119,7 +119,7 @@ GameObject* Level::AddMeshToWorldPosition(const Vector3& position, Mesh* mesh, c
 
 	object->GetTransform().SetScale(volumeSize).SetPosition(position);
 
-	RenderObject* renderObject = new RenderObject(&object->GetTransform(), cubeMesh, basicTex, basicShader);
+	RenderObject* renderObject = new RenderObject(&object->GetTransform(), mesh, basicTex, basicShader);
 
 	object->SetRenderObject(renderObject);
 	object->SetPhysicsObject(new PhysicsObject(&object->GetTransform(), object->GetBoundingVolume()));
