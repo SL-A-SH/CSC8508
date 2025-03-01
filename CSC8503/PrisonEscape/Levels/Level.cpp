@@ -24,6 +24,8 @@ void Level::Init()
 	InitializeAssets();
 	InitializeLevel();
 	SetCameraAttributes();
+
+	GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&Level::DrawPauseButton, this));
 }
 
 void Level::Update(float dt)
@@ -32,20 +34,25 @@ void Level::Update(float dt)
 	{
 		playerOne->UpdatePlayerMovement(dt);
 	}
+
+
 }
 
 void Level::InitializeAssets()
 {
 	cubeMesh = GameBase::GetGameBase()->GetRenderer()->LoadMesh("cube.msh");
-
+	kittenMesh = GameBase::GetGameBase()->GetRenderer()->LoadMesh("kitten.msh");
 	basicTex = GameBase::GetGameBase()->GetRenderer()->LoadTexture("checkerboard.png");
 	basicShader = GameBase::GetGameBase()->GetRenderer()->LoadShader("scene.vert", "scene.frag");
+	pauseButton = GameBase::GetGameBase()->GetRenderer()->LoadTexture("pausebutton.png");
+
 }
 
 void Level::InitializeLevel()
 {
-	AddFloorToWorld(Vector3(0, 0, 0), Vector3(200, 0, 200), Vector4(0.5, 0.5, 0.5, 1));
+	AddFloorToWorld(Vector3(0, 0, 0), Vector3(200, 2, 200), Vector4(0.5, 0.5, 0.5, 1));
 	playerOne->SpawnPlayer(Vector3(0, 50, 0));
+	AddMeshToWorldPosition(Vector3(10, 10, 0), kittenMesh, Vector3(1, 1, 1), VolumeType::Sphere, Vector3(1, 1, 1));
 }
 
 void Level::SetCameraAttributes()
@@ -75,3 +82,103 @@ GameObject* Level::AddFloorToWorld(const Vector3& position, const Vector3& floor
 
 	return floor;
 }
+
+GameObject* Level::AddMeshToWorldPosition(const Vector3& position, Mesh* mesh, const Vector3& meshSize, VolumeType type, const Vector3& volumeSize, const float& inverseMass)
+{
+	GameObject* object = new GameObject();
+
+	CollisionVolume* volume = nullptr;
+
+	switch (type)
+	{
+	case NCL::VolumeType::AABB:
+		volume = new AABBVolume(volumeSize);
+		break;
+	case NCL::VolumeType::OBB:
+		volume = new OBBVolume(volumeSize);
+		break;
+	case NCL::VolumeType::Sphere:
+		volume = new SphereVolume(volumeSize.x);
+		break;
+	case NCL::VolumeType::Mesh:
+		//maybe define later
+		break;
+	case NCL::VolumeType::Capsule:
+		volume = new CapsuleVolume(volumeSize.x, volumeSize.y);
+		break;
+	case NCL::VolumeType::Compound:
+		//maybe define later
+		break;
+	case NCL::VolumeType::Invalid:
+
+		break;
+	default:
+		break;
+	}
+	object->SetBoundingVolume((CollisionVolume*)volume);
+
+	object->GetTransform().SetScale(volumeSize).SetPosition(position);
+
+	RenderObject* renderObject = new RenderObject(&object->GetTransform(), mesh, basicTex, basicShader);
+
+	object->SetRenderObject(renderObject);
+	object->SetPhysicsObject(new PhysicsObject(&object->GetTransform(), object->GetBoundingVolume()));
+
+	switch (type)
+	{
+	case NCL::VolumeType::AABB:
+		object->GetPhysicsObject()->InitCubeInertia();
+		break;
+	case NCL::VolumeType::OBB:
+		object->GetPhysicsObject()->InitSphereInertia();
+		break;
+	case NCL::VolumeType::Sphere:
+		object->GetPhysicsObject()->InitSphereInertia();
+		break;
+	case NCL::VolumeType::Mesh:
+		//maybe define later
+		break;
+	case NCL::VolumeType::Capsule:
+		object->GetPhysicsObject()->InitSphereInertia();
+		break;
+	case NCL::VolumeType::Compound:
+		//maybe define later
+		break;
+	case NCL::VolumeType::Invalid:
+
+		break;
+	default:
+		break;
+	}
+	object->GetPhysicsObject()->SetInverseMass(inverseMass);
+
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(object);
+
+	return object;
+}
+
+
+
+
+
+#pragma region UI
+
+void Level::DrawPauseButton()
+{
+	ImVec2 windowSize = ImGui::GetWindowSize();
+	ImGui::SetCursorPos(ImVec2(windowSize.x * .9f, windowSize.y * .05f));
+
+
+	GLuint texID = ((OGLTexture*)pauseButton)->GetObjectID();
+
+	if (ImGui::ImageButton("Test", texID, ImVec2(100, 100)))
+	{
+		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&Level::DrawPauseMenu, this));
+	}
+}
+
+void Level::DrawPauseMenu()
+{
+	std::cout << "Pause Menu" << std::endl;
+}
+#pragma endregion
