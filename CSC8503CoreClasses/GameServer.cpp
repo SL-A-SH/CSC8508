@@ -79,6 +79,10 @@ void GameServer::UpdateServer() {
 			enet_peer_send(p, 0, dataPacket);
 
 			std::cout << "Server: Assigned ID " << newPlayerID << " to new client\n";
+
+			if (onPlayerConnected) {
+				onPlayerConnected(newPlayerID);
+			}
 		}
 		else if (type == ENetEventType::ENET_EVENT_TYPE_DISCONNECT) {
 			std::cout << "Server: A client has disconnected" << std::endl;

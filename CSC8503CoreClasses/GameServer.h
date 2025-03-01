@@ -21,6 +21,11 @@ namespace NCL {
 
 			virtual void UpdateServer();
 
+			typedef std::function<void(int playerID)> PlayerConnectionCallback;
+			void SetPlayerConnectedCallback(PlayerConnectionCallback callback) {
+				onPlayerConnected = callback;
+			}
+
 		protected:
 			int			port;
 			int			clientMax;
@@ -32,6 +37,7 @@ namespace NCL {
 
 		private:
 			int nextPlayerID = 2;  // Start from 2 since server is 1
+			PlayerConnectionCallback onPlayerConnected;
 		};
 	}
 }

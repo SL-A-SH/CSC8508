@@ -56,6 +56,7 @@ int main() {
 	initInfo.width = 1920;
 	initInfo.height = 1080;
 	initInfo.windowTitle = "CSC8503 Game technology!";
+	initInfo.fullScreen = false;
 
 	Window* w = Window::CreateGameWindow(initInfo);
 

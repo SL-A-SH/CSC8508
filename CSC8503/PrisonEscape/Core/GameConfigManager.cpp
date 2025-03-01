@@ -91,7 +91,6 @@ void GameConfigManager::CreateClient()
 		}
 
 		networkConfig.playerID = 0;
-		networkConfig.client->RegisterPacketHandler(Player_ID_Assignment, this);
 	}
 	catch (const std::exception& e) {
 		std::cout << "Client connection failed: " << e.what() << "\n";
@@ -99,14 +98,5 @@ void GameConfigManager::CreateClient()
 		networkConfig.client = nullptr;
 		networkConfig.isMultiplayer = false;
 		std::cout << "Falling back to single player mode\n";
-	}
-}
-
-void GameConfigManager::ReceivePacket(int type, GamePacket* packet, int source)
-{
-	if (type == Player_ID_Assignment) {
-		PlayerIDPacket* idPacket = (PlayerIDPacket*)packet;
-		networkConfig.playerID = idPacket->playerID;
-		std::cout << "Received player ID from server: " << networkConfig.playerID << "\n";
 	}
 }

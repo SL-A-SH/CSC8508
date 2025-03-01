@@ -22,6 +22,9 @@ namespace NCL {
 		private:
 			GameLevelManager* manager;
 			GameConfigManager* gameConfig;
+
+		public:
+			GameConfigManager* GetGameConfig() const { return gameConfig; }
 		};
 	}
 }

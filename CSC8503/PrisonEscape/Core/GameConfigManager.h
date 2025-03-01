@@ -1,6 +1,5 @@
 #pragma once
 
-#include "NetworkBase.h"
 #include "GameServer.h"
 #include "GameClient.h"
 #include "GameTechRenderer.h"
@@ -8,7 +7,7 @@
 namespace NCL {
 	namespace CSC8503 {
 
-		class GameConfigManager: public PacketReceiver {
+		class GameConfigManager {
 		private:
 			struct NetworkConfig {
 				bool isMultiplayer = false;
@@ -26,8 +25,6 @@ namespace NCL {
 			void InitNetwork();
 			void CreateServer();
 			void CreateClient();
-
-			void ReceivePacket(int type, GamePacket* packet, int source) override;
 
 			NetworkConfig networkConfig;
 		};

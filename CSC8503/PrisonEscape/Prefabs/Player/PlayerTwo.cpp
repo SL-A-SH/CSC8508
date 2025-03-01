@@ -1,4 +1,4 @@
-#include "PlayerOne.h"
+#include "PlayerTwo.h"
 #include "PhysicsObject.h"
 
 #include "PrisonEscape/Core/GameBase.h"
@@ -6,27 +6,26 @@
 using namespace NCL;
 using namespace CSC8503;
 
-PlayerOne::PlayerOne() : Player()
-{
-	
-}
-
-PlayerOne::~PlayerOne()
+PlayerTwo::PlayerTwo() : Player()
 {
 
 }
 
-void PlayerOne::UpdatePlayerMovement(float dt) {
+PlayerTwo::~PlayerTwo()
+{
+
+}
+
+void PlayerTwo::UpdatePlayerMovement(float dt) {
     if (!playerObject) {
         return;
     }
 
     GameConfigManager* config = GameBase::GetGameBase()->GetGameConfig();
-    bool isMultiplayer = config && config->networkConfig.isMultiplayer;
-    bool isServer = config && config->networkConfig.isMultiplayer && config->networkConfig.isServer;
+    bool isClient = config && config->networkConfig.isMultiplayer && !config->networkConfig.isServer;
 
-    // If we're the server or in single player, PlayerOne should be controlled locally
-    if (isServer || !isMultiplayer) {
+    // If we're the client, PlayerTwo should be controlled locally
+    if (isClient) {
         Vector3 playerPosition = playerObject->GetTransform().GetPosition();
         Camera& mainCamera = GameBase::GetGameBase()->GetWorld()->GetMainCamera();
 
@@ -41,33 +40,27 @@ void PlayerOne::UpdatePlayerMovement(float dt) {
         Vector3 forwardVec(0, 0, 1);
         Vector3 rightVec(1, 0, 0);
 
-        if (forward != 0.0f) 
-        {
+        if (forward != 0.0f) {
             forwardVec = -forwardVec;
         }
-        if (sidestep != 0.0f) 
-        {
+        if (sidestep != 0.0f) {
             sidestep = -sidestep;
         }
 
         Vector3 movement(0, 0, 0);
-        if (forward != 0.0f) 
-        {
+        if (forward != 0.0f) {
             movement += forwardVec * forward * GetPlayerSpeed();
         }
-        if (sidestep != 0.0f) 
-        {
+        if (sidestep != 0.0f) {
             movement += rightVec * sidestep * GetPlayerSpeed();
         }
 
-        if (useGravity) 
-        {
+        if (useGravity) {
             if (fabs(currentVelocity.y) < 1.0f) {
                 static float lastJumpTime = -2.2f;
                 float currentTime = Window::GetTimer().GetTotalTimeSeconds();
 
-                if (Window::GetKeyboard()->KeyPressed(KeyCodes::SPACE) && (currentTime - lastJumpTime >= 2.2f)) 
-                {
+                if (Window::GetKeyboard()->KeyPressed(KeyCodes::SPACE) && (currentTime - lastJumpTime >= 2.2f)) {
                     movement.y += 10.0f;
                     currentVelocity.y = 35.0f;
                     lastJumpTime = currentTime;
@@ -77,8 +70,7 @@ void PlayerOne::UpdatePlayerMovement(float dt) {
             currentVelocity.y -= 25.0f * dt;
             playerObject->GetPhysicsObject()->SetLinearVelocity(Vector3(movement.x, currentVelocity.y, movement.z));
         }
-        else 
-        {
+        else {
             playerObject->GetPhysicsObject()->SetLinearVelocity(movement);
         }
     }
