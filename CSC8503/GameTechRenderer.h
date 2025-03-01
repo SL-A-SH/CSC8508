@@ -42,6 +42,8 @@ namespace NCL {
 			void SetDebugStringBufferSizes(size_t newVertCount);
 			void SetDebugLineBufferSizes(size_t newVertCount);
 
+			void AddToGBuffer();
+
 
 			std::function<void()> mImguiCanvasFuncToRender = nullptr;
 			void SetupImgui();

@@ -52,7 +52,7 @@ GameObject* Player::AddPlayerToWorld(const Vector3& position) {
 
 	_mPlayer->GetTransform().SetScale(Vector3(meshSize, meshSize, meshSize)).SetPosition(position);
 
-	_mPlayer->SetRenderObject(new RenderObject(&_mPlayer->GetTransform(), mesh, material, basicShader));
+	_mPlayer->SetRenderObject(new RenderObject(&_mPlayer->GetTransform(), mesh, nullptr, basicShader));
 	_mPlayer->SetPhysicsObject(new PhysicsObject(&_mPlayer->GetTransform(), _mPlayer->GetBoundingVolume()));
 
 	_mPlayer->GetPhysicsObject()->SetInverseMass(inverseMass);

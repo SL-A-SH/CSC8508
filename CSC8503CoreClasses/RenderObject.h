@@ -2,6 +2,7 @@
 #include "Texture.h"
 #include "Shader.h"
 #include "Mesh.h"
+#include "../CSC8503/AnimationObject.h"
 
 namespace NCL {
 	using namespace NCL::Rendering;
@@ -13,15 +14,32 @@ namespace NCL {
 		class RenderObject
 		{
 		public:
-			RenderObject(Transform* parentTransform, Mesh* mesh, Texture* tex, Shader* shader);
+			RenderObject(Transform* parentTransform, Mesh* mesh, Texture* defaultTexture, Shader* shader);
+			RenderObject(Transform* parentTransform, Mesh* mesh, Texture* albedo, Texture* normal, Shader* shader);
+
 			~RenderObject();
 
 			void SetDefaultTexture(Texture* t) {
-				texture = t;
+				defaultTexture = t;
 			}
 
 			Texture* GetDefaultTexture() const {
-				return texture;
+				return defaultTexture;
+			}
+
+			void SetNormalTexture(Texture* t) {
+				normalTexture = t;
+			}
+
+			Texture* GetNormalTexture() const {
+				return normalTexture;
+			}
+			void SetAlbedoTexture(Texture* t) {
+				albedoTexture = t;
+			}
+
+			Texture* GetAlbedoTexture() const {
+				return albedoTexture;
 			}
 
 			Mesh*	GetMesh() const {
@@ -46,10 +64,19 @@ namespace NCL {
 
 		protected:
 			Mesh*		mesh;
-			Texture*	texture;
+
+			Texture*	defaultTexture;
+			Texture*	normalTexture;
+			Texture*	albedoTexture;
+
 			Shader*		shader;
 			Transform*	transform;
 			Vector4		colour;
+
+			AnimationObject* animationObject = nullptr;
+			int currentFrame;
+
+			std::vector<int> matTextures;
 		};
 	}
 }

@@ -177,7 +177,6 @@ void GameTechRenderer::BuildObjectList() {
 }
 
 void GameTechRenderer::SortObjectList() {
-
 }
 
 void GameTechRenderer::RenderShadowMap() {

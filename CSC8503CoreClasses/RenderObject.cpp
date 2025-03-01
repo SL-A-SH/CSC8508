@@ -10,9 +10,29 @@ RenderObject::RenderObject(Transform* parentTransform, Mesh* mesh, Texture* tex,
 	}
 	this->transform	= parentTransform;
 	this->mesh		= mesh;
-	this->texture	= tex;
+	this->defaultTexture	= tex;
+	this->albedoTexture = nullptr;
+	this->normalTexture = nullptr;
 	this->shader	= shader;
 	this->colour	= Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	currentFrame = 0
+}
+
+RenderObject::RenderObject(Transform* parentTransform, Mesh* mesh, Texture* albedo, Texture* normal, Shader* shader)
+{
+
+	this->transform = parentTransform;
+	this->mesh = mesh;
+	this->albedoTexture = albedoTexture;
+	this->normalTexture = normalTexture;
+	this->defaultTexture = nullptr;
+	this->shader = shader;
+	this->colour = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	currentFrame = 0;
+
+	vector<uint64_t> matTextures = {};
 }
 
 RenderObject::~RenderObject() {
