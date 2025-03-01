@@ -3,6 +3,7 @@
 ################################################################################
 
 *.vsidx
+*.sln
 *.ipch
 *.db
 /.vs/CSC8503/FileContentIndex/read.lock
@@ -15,7 +16,6 @@ CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
 Makefile
-*.sln
 *.vcxproj
 *.vcxproj.filters
 *.vcxproj.user
