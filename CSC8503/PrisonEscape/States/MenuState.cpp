@@ -2,189 +2,110 @@
 #include "GamePlayState.h"
 #include <iostream>
 
+#include "PrisonEscape/Core/ImGuiManager.h"
 
 using namespace NCL;
 using namespace CSC8503;
 
-void MenuState::OnAwake()
-{
-	ImGuiIO& imguiIO = ImGui::GetIO();
-	buttonFont = imguiIO.Fonts->AddFontFromFileTTF("../Assets/Fonts/BebasNeue-Regular.ttf", 30.0f, NULL, imguiIO.Fonts->GetGlyphRangesDefault());
-	headerFont = imguiIO.Fonts->AddFontFromFileTTF("../Assets/Fonts/BebasNeue-Regular.ttf", 60.0f, NULL, imguiIO.Fonts->GetGlyphRangesDefault());
-	imguiIO.Fonts->Build();
-
-	GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&MenuState::DrawMainMenuPanel, this));
-	Window::GetWindow()->ShowOSPointer(true);
+void MenuState::OnAwake() {
+    ImGuiManager::Initialize();
+    GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&MenuState::DrawMainMenuPanel, this));
+    Window::GetWindow()->ShowOSPointer(true);
 }
 
-PushdownState::PushdownResult MenuState::OnUpdate(float dt, PushdownState** newState)
-{
-	if (stateChangeAction) { // Check if the function pointer is set
-		stateChangeAction(newState);
-		stateChangeAction = nullptr; // Reset the function pointer
-		return PushdownResult::Push;
-	}
-
-	return PushdownResult::NoChange;
+PushdownState::PushdownResult MenuState::OnUpdate(float dt, PushdownState** newState) {
+    if (stateChangeAction) {
+        stateChangeAction(newState);
+        stateChangeAction = nullptr;
+        return PushdownResult::Push;
+    }
+    return PushdownResult::NoChange;
 }
 
-void MenuState::DrawMainMenuPanel()
-{
-	ImVec2 windowSize = ImGui::GetWindowSize();
+void MenuState::DrawMainMenuPanel() {
+    std::vector<PanelButton> buttons = {
+        {"Single Player", [this]() {
+            stateChangeAction = [](PushdownState** newState) { *newState = new GamePlayState(false, false); };
+            Window::GetWindow()->ShowOSPointer(false);
+            GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(nullptr);
+        }, 0.25f},
+        {"Multiplayer", [this]() {
+            GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(
+                std::bind(&MenuState::DrawMultiplayerPanel, this));
+        }, 0.45f},
+        {"Settings", [this]() {
+            GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(
+                std::bind(&MenuState::DrawSettingPanel, this));
+        }, 0.65f}
+    };
 
-
-	ImGui::PushFont(headerFont);
-	ImGui::SetCursorPos(ImVec2(windowSize.x * .45f, windowSize.y * .10f));
-	ImGui::TextColored(ImVec4(0, 1, 1, 1), "RACECAR");
-	ImGui::PopFont();
-
-
-	ImGui::PushFont(buttonFont);
-	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .25f));
-
-	if (ImGui::Button("Single Player", ImVec2(windowSize.x * .3f, windowSize.y * .1f))) {
-		stateChangeAction = [](PushdownState** newState) {	*newState = new GamePlayState(false, false);	};
-		Window::GetWindow()->ShowOSPointer(false);
-		// Unbind the current canvas function
-		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(nullptr);
-	}
-
-	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .45f));
-	if (ImGui::Button("Multiplayer", ImVec2(windowSize.x * .3f, windowSize.y * .1f))) {
-		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&MenuState::DrawMultiplayerPanel, this));
-	}
-
-	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .65f));
-	if (ImGui::Button("Settings", ImVec2(windowSize.x * .3f, windowSize.y * .1f))) {
-		ImGui::SetCursorPos(ImVec2(windowSize.x * .2f, windowSize.y * .1f));
-		ImGui::TextColored(ImVec4(1, 0, 0, 1), "I See you like touching buttons!!!! oh my my!");
-		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&MenuState::DrawSettingPanel, this));
-	}
-
-	ImGui::PopFont();
+    ImGuiManager::DrawPanel("PRISON ESCAPE", buttons);
 }
 
-void MenuState::DrawSettingPanel()
-{
+void MenuState::DrawSettingPanel() {
+    std::vector<PanelButton> buttons = {
+        {"Audio", [this]() {
+            GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(
+                std::bind(&MenuState::DrawAudioSettingPanel, this));
+        }, 0.25f},
+        {"Graphic", [this]() {
+            GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(
+                std::bind(&MenuState::DrawVideoSettingPanel, this));
+        }, 0.45f}
+    };
 
-	ImVec2 windowSize = ImGui::GetWindowSize();
-	ImGui::PushFont(headerFont);
-	ImGui::SetCursorPos(ImVec2(windowSize.x * .45f, windowSize.y * .10f));
-	ImGui::TextColored(ImVec4(0, 1, 1, 1), "Settings");
-	ImGui::PopFont();
+    auto backCallback = [this]() {
+        GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(
+            std::bind(&MenuState::DrawMainMenuPanel, this));
+        };
 
-	ImGui::PushFont(buttonFont);
-
-	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .25f));
-	if (ImGui::Button("Audio", ImVec2(windowSize.x * .3f, windowSize.y * .1f))) {
-		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&MenuState::DrawAudioSettingPanel, this));
-	}
-
-	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .45f));
-	if (ImGui::Button("Graphic", ImVec2(windowSize.x * .3f, windowSize.y * .1f))) {
-		ImGui::SetCursorPos(ImVec2(windowSize.x * .2f, windowSize.y * .1f));
-		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&MenuState::DrawVideoSettingPanel, this));
-	}
-
-	ImGui::SetNextItemWidth(windowSize.x * .05f);
-	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .65f));
-
-	if (ImGui::Button("Back", ImVec2(windowSize.x * .3f, windowSize.y * .1f)))
-	{
-		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&MenuState::DrawMainMenuPanel, this));
-	}
-
-	ImGui::PopFont();
+    ImGuiManager::DrawPanel("Settings", buttons, {}, backCallback);
 }
 
-void MenuState::DrawAudioSettingPanel()
-{
-	//GameBase::GetGameBase()->GetAudio()->masterVolume
-	ImVec2 windowSize = ImGui::GetWindowSize();
-	ImGui::PushFont(headerFont);
-	ImGui::SetCursorPos(ImVec2(windowSize.x * .425f, windowSize.y * .10f));
-	ImGui::TextColored(ImVec4(0, 1, 1, 1), "Audio Settings");
-	ImGui::PopFont();
+void MenuState::DrawAudioSettingPanel() {
+    std::vector<PanelSlider> sliders = {
+        {"Master Volume", &volume, 0, 100, 0.36f}
+    };
 
-	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .36f));
-	ImGui::Text("Master Volume"); // Draw the label first
-	ImGui::SameLine();
-	ImGui::SetCursorPos(ImVec2(windowSize.x * .5f, windowSize.y * .35f));
+    auto backCallback = [this]() {
+        GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(
+            std::bind(&MenuState::DrawSettingPanel, this));
+        };
 
-	ImGui::SetNextItemWidth(windowSize.x * .2f);
-	ImGui::SliderInt("##", &volume, 0, 100);
-
-	ImGui::SetNextItemWidth(windowSize.x * .05f);
-	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .65f));
-
-	if (ImGui::Button("Back", ImVec2(windowSize.x * .3f, windowSize.y * .1f)))
-	{
-		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&MenuState::DrawSettingPanel, this));
-	}
-	std::cout << volume << std::endl;
+    ImGuiManager::DrawPanel("Audio Settings", {}, sliders, backCallback);
 }
 
-void MenuState::DrawVideoSettingPanel()
-{
-	//GameBase::GetGameBase()->GetAudio()->masterVolume
-	ImVec2 windowSize = ImGui::GetWindowSize();
-	ImGui::PushFont(headerFont);
-	ImGui::SetCursorPos(ImVec2(windowSize.x * .425f, windowSize.y * .10f));
-	ImGui::TextColored(ImVec4(0, 1, 1, 1), "Video Settings");
-	ImGui::PopFont();
+void MenuState::DrawVideoSettingPanel() {
+    std::vector<PanelSlider> sliders = {
+        {"Brightness", &brightness, 0, 100, 0.36f}
+    };
 
-	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .36f));
-	ImGui::Text("Brightness");
-	ImGui::SameLine();
-	ImGui::SetCursorPos(ImVec2(windowSize.x * .5f, windowSize.y * .35f));
+    auto backCallback = [this]() {
+        GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(
+            std::bind(&MenuState::DrawSettingPanel, this));
+        };
 
-	ImGui::SetNextItemWidth(windowSize.x * .2f);
-	//Brighness slider update this later
-	ImGui::SliderInt("##", &volume, 0, 100);
-
-	ImGui::SetNextItemWidth(windowSize.x * .05f);
-	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .65f));
-
-	if (ImGui::Button("Back", ImVec2(windowSize.x * .3f, windowSize.y * .1f)))
-	{
-		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&MenuState::DrawSettingPanel, this));
-	}
-	//std::cout << volume << std::endl;
+    ImGuiManager::DrawPanel("Video Settings", {}, sliders, backCallback);
 }
 
-void MenuState::DrawMultiplayerPanel()
-{
-	ImVec2 windowSize = ImGui::GetWindowSize();
-	ImGui::PushFont(headerFont);
-	ImGui::SetCursorPos(ImVec2(windowSize.x * .45f, windowSize.y * .10f));
-	ImGui::TextColored(ImVec4(0, 1, 1, 1), "Multiplayer");
-	ImGui::PopFont();
+void MenuState::DrawMultiplayerPanel() {
+    std::vector<PanelButton> buttons = {
+        {"Host", [this]() {
+            stateChangeAction = [](PushdownState** newState) { *newState = new GamePlayState(true, true); };
+            Window::GetWindow()->ShowOSPointer(false);
+            GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(nullptr);
+        }, 0.25f},
+        {"Join", [this]() {
+            stateChangeAction = [](PushdownState** newState) { *newState = new GamePlayState(true, false); };
+            Window::GetWindow()->ShowOSPointer(false);
+            GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(nullptr);
+        }, 0.45f}
+    };
 
-	ImGui::PushFont(buttonFont);
+    auto backCallback = [this]() {
+        GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(
+            std::bind(&MenuState::DrawMainMenuPanel, this));
+        };
 
-	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .25f));
-	if (ImGui::Button("Host", ImVec2(windowSize.x * .3f, windowSize.y * .1f))) {
-		stateChangeAction = [](PushdownState** newState) {	*newState = new GamePlayState(true, true);	};
-		Window::GetWindow()->ShowOSPointer(false);
-		// Unbind the current canvas function
-		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(nullptr);
-	}
-
-	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .45f));
-	if (ImGui::Button("Join", ImVec2(windowSize.x * .3f, windowSize.y * .1f))) {
-		stateChangeAction = [](PushdownState** newState) {	*newState = new GamePlayState(true, false);	};
-		Window::GetWindow()->ShowOSPointer(false);
-		// Unbind the current canvas function
-		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(nullptr);
-	}
-
-	ImGui::SetNextItemWidth(windowSize.x * .05f);
-	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .65f));
-
-	if (ImGui::Button("Back", ImVec2(windowSize.x * .3f, windowSize.y * .1f)))
-	{
-		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&MenuState::DrawMainMenuPanel, this));
-	}
-
-	ImGui::PopFont();
+    ImGuiManager::DrawPanel("Multiplayer", buttons, {}, backCallback);
 }

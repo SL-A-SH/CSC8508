@@ -25,14 +25,10 @@ namespace NCL {
 			void DrawVideoSettingPanel();
 			void DrawMultiplayerPanel();
 
-			ImFont* menuHeading = nullptr;
-			ImFont* buttonFont = nullptr;
-			ImFont* headerFont = nullptr;
-
-			int volume;
-
 		private:
 			std::function<void(PushdownState**)> stateChangeAction = nullptr;
+			int volume = 50;
+            int brightness = 50;
 		};
 	}
 }
