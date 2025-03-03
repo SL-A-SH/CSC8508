@@ -27,10 +27,10 @@ namespace NCL {
 			static ImFont* GetHeaderFont() { return headerFont; }
 
 			static void DrawPanel(
-				const std::string& title,
-				const std::vector<PanelButton>& buttons,
+				const std::string& title = "",
+				const std::vector<PanelButton>& buttons = {},
 				const std::vector<PanelSlider>& sliders = {},
-				std::function<void()> backCallback = nullptr, const std::string& footer = "##"
+				std::function<void()> backCallback = nullptr, const std::string& footer = ""
 			);
 
 		private:
