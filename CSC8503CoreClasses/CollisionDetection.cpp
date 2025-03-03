@@ -9,13 +9,13 @@
 
 using namespace NCL;
 
-bool CollisionDetection::RayPlaneIntersection(const Ray&r, const Plane&p, RayCollision& collisions) {
+bool CollisionDetection::RayPlaneIntersection(const Ray& r, const Plane& p, RayCollision& collisions) {
 	float ln = Vector::Dot(p.GetNormal(), r.GetDirection());
 
 	if (ln == 0.0f) {
 		return false; //direction vectors are perpendicular!
 	}
-	
+
 	Vector3 planePoint = p.GetPointOnPlane();
 
 	Vector3 pointDir = planePoint - r.GetPosition();
@@ -27,22 +27,22 @@ bool CollisionDetection::RayPlaneIntersection(const Ray&r, const Plane&p, RayCol
 	return true;
 }
 
-bool CollisionDetection::RayIntersection(const Ray& r,GameObject& object, RayCollision& collision) {
+bool CollisionDetection::RayIntersection(const Ray& r, GameObject& object, RayCollision& collision) {
 	bool hasCollided = false;
 
 	const Transform& worldTransform = object.GetTransform();
-	const CollisionVolume* volume	= object.GetBoundingVolume();
+	const CollisionVolume* volume = object.GetBoundingVolume();
 
 	if (!volume) {
 		return false;
 	}
 
 	switch (volume->type) {
-		case VolumeType::AABB:		hasCollided = RayAABBIntersection(r, worldTransform, (const AABBVolume&)*volume	, collision); break;
-		case VolumeType::OBB:		hasCollided = RayOBBIntersection(r, worldTransform, (const OBBVolume&)*volume	, collision); break;
-		case VolumeType::Sphere:	hasCollided = RaySphereIntersection(r, worldTransform, (const SphereVolume&)*volume	, collision); break;
+	case VolumeType::AABB:		hasCollided = RayAABBIntersection(r, worldTransform, (const AABBVolume&)*volume, collision); break;
+	case VolumeType::OBB:		hasCollided = RayOBBIntersection(r, worldTransform, (const OBBVolume&)*volume, collision); break;
+	case VolumeType::Sphere:	hasCollided = RaySphereIntersection(r, worldTransform, (const SphereVolume&)*volume, collision); break;
 
-		case VolumeType::Capsule:	hasCollided = RayCapsuleIntersection(r, worldTransform, (const CapsuleVolume&)*volume, collision); break;
+	case VolumeType::Capsule:	hasCollided = RayCapsuleIntersection(r, worldTransform, (const CapsuleVolume&)*volume, collision); break;
 	}
 
 	return hasCollided;
@@ -209,6 +209,19 @@ bool CollisionDetection::ObjectIntersection(GameObject* a, GameObject* b, Collis
 		return AABBCapsuleIntersection((CapsuleVolume&)*volB, transformB, (AABBVolume&)*volA, transformA, collisionInfo);
 	}
 
+	//OBB vs AABB
+	if (volA->type == VolumeType::OBB && volB->type == VolumeType::AABB) {
+		return OBBAABBIntersection((OBBVolume&)*volA, transformA, (AABBVolume&)*volB, transformB, collisionInfo);
+	}
+
+	if (volA->type == VolumeType::AABB && volB->type == VolumeType::OBB) {
+		collisionInfo.a = b;
+		collisionInfo.b = a;
+		return OBBAABBIntersection((OBBVolume&)*volB, transformB, (AABBVolume&)*volA, transformA, collisionInfo);
+	}
+
+
+
 	return false;
 }
 
@@ -260,10 +273,10 @@ bool CollisionDetection::AABBIntersection(const AABBVolume& volumeA, const Trans
 		};
 		float penetration = FLT_MAX;
 		Vector3 bestAxis;
-		
+
 		for (int i = 0; i < 6; ++i)
 		{
-			
+
 			if (distance[i] < penetration)
 			{
 				penetration = distance[i];
@@ -297,7 +310,7 @@ bool CollisionDetection::SphereIntersection(const SphereVolume& volumeA, const T
 		return true;
 	}
 	return false;
-} 
+}
 
 //AABB - Sphere Collision
 bool CollisionDetection::AABBSphereIntersection(const AABBVolume& volumeA, const Transform& worldTransformA,
@@ -317,17 +330,63 @@ bool CollisionDetection::AABBSphereIntersection(const AABBVolume& volumeA, const
 		float penetration = volumeB.GetRadius() - distance;
 		Vector3 localA = Vector3();
 		Vector3 localB = -collisionNormal * volumeB.GetRadius();
-		collisionInfo.AddContactPoint(localA, localB, collisionNormal,penetration);
+		collisionInfo.AddContactPoint(localA, localB, collisionNormal, penetration);
 		return true;
 	}
 	return false;
 }
 
-bool  CollisionDetection::OBBSphereIntersection(const OBBVolume& volumeA, const Transform& worldTransformA,
-	const SphereVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo) {
+
+/// <summary>
+/// needs definition
+/// </summary>
+
+bool CollisionDetection::OBBSphereIntersection(
+	const OBBVolume& volumeA, const Transform& worldTransformA,
+	const SphereVolume& volumeB, const Transform& worldTransformB,
+	CollisionInfo& collisionInfo) {
+
+	// Get OBB properties
+	Vector3 obbCenter = worldTransformA.GetPosition();
+	Matrix3 obbRotation = Quaternion::RotationMatrix<Matrix3>(worldTransformA.GetOrientation());
+	Vector3 obbHalfSize = volumeA.GetHalfDimensions();
+
+	// Get Sphere properties
+	Vector3 sphereCenter = worldTransformB.GetPosition();
+	float sphereRadius = volumeB.GetRadius();
+
+	// Transform sphere center into OBB local space
+	Vector3 localSphereCenter = Vector::Transpose((obbRotation) * (sphereCenter - obbCenter));
+
+	// Find the closest point on the OBB to the sphere center
+	Vector3 closestPoint = Vector::Clamp(localSphereCenter, -obbHalfSize, obbHalfSize);
+
+	// Transform back to world space
+	Vector3 worldClosestPoint = obbCenter + (obbRotation * closestPoint);
+
+	// Compute vector from closest point to sphere center
+	Vector3 closestToSphere = sphereCenter - worldClosestPoint;
+	float distanceSquared = Vector::Dot(closestToSphere, closestToSphere);
+
+	// Check if within collision distance
+	if (distanceSquared < (sphereRadius * sphereRadius)) {
+		float distance = sqrt(distanceSquared);
+		Vector3 normal = Vector::Normalise(closestToSphere);
+		float penetration = sphereRadius - distance;
+
+		Vector3 localA = worldClosestPoint - obbCenter;  // Local to OBB
+		Vector3 localB = -normal * sphereRadius;         // Local to Sphere
+
+		collisionInfo.AddContactPoint(localA, localB, normal, penetration);
+		return true;
+	}
+
 	return false;
 }
 
+/// <summary> 
+/// needs definition
+/// </summary>
 bool CollisionDetection::AABBCapsuleIntersection(
 	const CapsuleVolume& volumeA, const Transform& worldTransformA,
 	const AABBVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo) {
@@ -340,14 +399,137 @@ bool CollisionDetection::SphereCapsuleIntersection(
 	return false;
 }
 
-bool CollisionDetection::OBBIntersection(const OBBVolume& volumeA, const Transform& worldTransformA,
-	const OBBVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo) {
+/// <summary>
+/// needs definition
+/// </summary>
+bool CollisionDetection::OBBIntersection(
+	const OBBVolume& volumeA, const Transform& transformA,
+	const OBBVolume& volumeB, const Transform& transformB,
+	CollisionInfo& collisionInfo) {
+	Vector3 posA = transformA.GetPosition();
+	Vector3 posB = transformB.GetPosition();
+
+	// Get half dimensions for each box
+	Vector3 halfSizeA = volumeA.GetHalfDimensions();
+	Vector3 halfSizeB = volumeB.GetHalfDimensions();
+
+	// Get local axes via quaternion rotation matrices
+	Matrix3 orientA = Quaternion::RotationMatrix<Matrix3>(transformA.GetOrientation());
+	Matrix3 orientB = Quaternion::RotationMatrix<Matrix3>(transformB.GetOrientation());
+
+	Vector3 axesA[3] = { orientA.GetColumn(0), orientA.GetColumn(1), orientA.GetColumn(2) };
+	Vector3 axesB[3] = { orientB.GetColumn(0), orientB.GetColumn(1), orientB.GetColumn(2) };
+
+	// Compute vector from A to B
+	Vector3 delta = posB - posA;
+
+	// Begin with a very large penetration value
+	float penetration = FLT_MAX;
+	Vector3 bestAxis;
+
+	// --- Check principal axes of box A ---
+	for (int i = 0; i < 3; ++i) {
+		// Use the i-th axis of A; its half-extent is halfSizeA[i]
+		if (!CheckAxis(axesA[i], halfSizeA[i], axesB, halfSizeB, delta, penetration, bestAxis))
+			return false; // Separating axis found
+	}
+
+	// --- Check principal axes of box B ---
+	for (int i = 0; i < 3; ++i) {
+		if (!CheckAxis(axesB[i], halfSizeB[i], axesA, halfSizeA, delta, penetration, bestAxis))
+			return false;
+	}
+
+	// --- Check cross-product axes (9 axes) ---
+	for (int i = 0; i < 3; ++i) {
+		for (int j = 0; j < 3; ++j) {
+			Vector3 axis = Vector::Cross(axesA[i], axesB[j]);
+			if (Vector::LengthSquared(axis) < 0.0001f)
+				continue; // Skip near-zero length axes
+
+			Vector::Normalise(axis);
+
+			// For an arbitrary axis, compute effective (projected) half extents:
+			float projA = fabs(Vector::Dot(axesA[0], axis)) * halfSizeA.x +
+				fabs(Vector::Dot(axesA[1], axis)) * halfSizeA.y +
+				fabs(Vector::Dot(axesA[2], axis)) * halfSizeA.z;
+			float projB = fabs(Vector::Dot(axesB[0], axis)) * halfSizeB.x +
+				fabs(Vector::Dot(axesB[1], axis)) * halfSizeB.y +
+				fabs(Vector::Dot(axesB[2], axis)) * halfSizeB.z;
+
+			float distance = fabs(Vector::Dot(delta, axis));
+			float overlap = projA + projB - distance;
+
+			if (overlap < 0)
+				return false; // Separating axis found
+
+			if (overlap < penetration) {
+				penetration = overlap;
+				bestAxis = axis;
+			}
+		}
+	}
+
+	// If no separating axis was found, add the contact point using bestAxis and penetration.
+
+	collisionInfo.AddContactPoint(Vector3(), Vector3(), bestAxis, penetration);
+	return true;
+}
+
+
+bool CollisionDetection::CheckAxis(const Vector3& axis, float halfSizeA, const Vector3* axesB,
+	const Vector3& halfSizeB, const Vector3& delta,
+	float& penetration, Vector3& bestAxis) {
+
+	float projA = halfSizeA;
+
+	float projB = fabs(Vector::Dot(axesB[0] * halfSizeB.x, axis)) +
+		fabs(Vector::Dot(axesB[1] * halfSizeB.y, axis)) +
+		fabs(Vector::Dot(axesB[2] * halfSizeB.z, axis));
+
+	float distance = fabs(Vector::Dot(delta, axis));
+	float overlap = projA + projB - distance;
+
+	if (overlap < 0) return false; // Separating axis found
+
+	if (overlap < penetration) {
+		penetration = overlap;
+		bestAxis = axis;
+	}
+	return true;
+
+}
+
+
+
+bool CollisionDetection::OBBAABBIntersection(const OBBVolume& obb, const Transform& obbTransform,
+	const AABBVolume& aabb, const Transform& aabbTransform,
+	CollisionInfo& collisionInfo) {
+	// Step 1: Transform OBB into the AABB's local space
+	Vector3 aabbPosition = aabbTransform.GetPosition();
+	Quaternion aabbOrientation = aabbTransform.GetOrientation();
+	Matrix3 inverseAABBTransform = Quaternion::RotationMatrix<Matrix3>(aabbOrientation.Conjugate());
+
+	// Get OBB position relative to AABB's position
+	Vector3 localOBBPosition = inverseAABBTransform * (obbTransform.GetPosition() - aabbPosition);
+
+	// Step 2: Perform AABB-AABB collision test after transformation
+	Vector3 obbHalfDimensions = obb.GetHalfDimensions();
+	Vector3 aabbHalfDimensions = aabb.GetHalfDimensions();
+
+	// Check for overlap
+	bool overlap = AABBTest(localOBBPosition, Vector3(0, 0, 0), obbHalfDimensions, aabbHalfDimensions);
+	if (overlap) {
+		collisionInfo.AddContactPoint(Vector3(), Vector3(), Vector3(0, 1, 0), 0.0f); // Add some example contact info
+		return true;
+	}
 	return false;
 }
 
-Matrix4 GenerateInverseView(const Camera &c) {
+
+Matrix4 GenerateInverseView(const Camera& c) {
 	float pitch = c.GetPitch();
-	float yaw	= c.GetYaw();
+	float yaw = c.GetYaw();
 	Vector3 position = c.GetPosition();
 
 	Matrix4 iview =
@@ -365,7 +547,7 @@ Matrix4 GenerateInverseProjection(float aspect, float fov, float nearPlane, floa
 
 	Matrix4 m;
 
-	float h = 1.0f / tan(fov*PI_OVER_360);
+	float h = 1.0f / tan(fov * PI_OVER_360);
 
 	m.array[0][0] = aspect / h;
 	m.array[1][1] = tan(fov * PI_OVER_360);
@@ -382,15 +564,15 @@ Vector3 CollisionDetection::Unproject(const Vector3& screenPos, const Perspectiv
 	Vector2i screenSize = Window::GetWindow()->GetScreenSize();
 
 	float aspect = Window::GetWindow()->GetScreenAspect();
-	float fov		= cam.GetFieldOfVision();
+	float fov = cam.GetFieldOfVision();
 	float nearPlane = cam.GetNearPlane();
-	float farPlane  = cam.GetFarPlane();
+	float farPlane = cam.GetFarPlane();
 
 	//Create our inverted matrix! Note how that to get a correct inverse matrix,
 	//the order of matrices used to form it are inverted, too.
 	Matrix4 invVP = GenerateInverseView(cam) * GenerateInverseProjection(aspect, fov, nearPlane, farPlane);
 
-	Matrix4 proj  = cam.BuildProjectionMatrix(aspect);
+	Matrix4 proj = cam.BuildProjectionMatrix(aspect);
 
 	//Our mouse position x and y values are in 0 to screen dimensions range,
 	//so we need to turn them into the -1 to 1 axis range of clip space.
@@ -414,7 +596,7 @@ Vector3 CollisionDetection::Unproject(const Vector3& screenPos, const Perspectiv
 
 Ray CollisionDetection::BuildRayFromMouse(const PerspectiveCamera& cam) {
 	Vector2 screenMouse = Window::GetMouse()->GetAbsolutePosition();
-	Vector2i screenSize	= Window::GetWindow()->GetScreenSize();
+	Vector2i screenSize = Window::GetWindow()->GetScreenSize();
 
 	//We remove the y axis mouse position from height as OpenGL is 'upside down',
 	//and thinks the bottom left is the origin, instead of the top left!
@@ -443,7 +625,7 @@ Ray CollisionDetection::BuildRayFromMouse(const PerspectiveCamera& cam) {
 Matrix4 CollisionDetection::GenerateInverseProjection(float aspect, float fov, float nearPlane, float farPlane) {
 	Matrix4 m;
 
-	float t = tan(fov*PI_OVER_360);
+	float t = tan(fov * PI_OVER_360);
 
 	float neg_depth = nearPlane - farPlane;
 
@@ -451,7 +633,7 @@ Matrix4 CollisionDetection::GenerateInverseProjection(float aspect, float fov, f
 
 	float c = (farPlane + nearPlane) / neg_depth;
 	float e = -1.0f;
-	float d = 2.0f*(nearPlane*farPlane) / neg_depth;
+	float d = 2.0f * (nearPlane * farPlane) / neg_depth;
 
 	m.array[0][0] = aspect / h;
 	m.array[1][1] = tan(fov * PI_OVER_360);
@@ -469,9 +651,9 @@ Matrix4 CollisionDetection::GenerateInverseProjection(float aspect, float fov, f
 And here's how we generate an inverse view matrix. It's pretty much
 an exact inversion of the BuildViewMatrix function of the Camera class!
 */
-Matrix4 CollisionDetection::GenerateInverseView(const Camera &c) {
+Matrix4 CollisionDetection::GenerateInverseView(const Camera& c) {
 	float pitch = c.GetPitch();
-	float yaw	= c.GetYaw();
+	float yaw = c.GetYaw();
 	Vector3 position = c.GetPosition();
 
 	Matrix4 iview =

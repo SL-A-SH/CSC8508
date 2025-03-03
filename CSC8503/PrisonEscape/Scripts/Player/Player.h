@@ -5,7 +5,6 @@
 #include "PhysicsSystem.h"
 #include "Window.h"
 #include "Vector.h"
-#include "MeshMaterial.h"
 
 namespace NCL {
 	namespace CSC8503 {
@@ -20,9 +19,8 @@ namespace NCL {
 			virtual float GetPlayerSpeed() const { return 10.0f; }  // Default speed
 
 		protected:
-			GameObject* _mPlayer;
+			GameObject* playerObject;
 
-		private:
 			void InitializeAssets();
 			GameObject* AddPlayerToWorld(const Vector3& position);
 
@@ -34,11 +32,11 @@ namespace NCL {
 			Vector3 lastCameraPosition;
 			Vector3 lastCameraOrientation;
 
-			Mesh* mesh = nullptr;
-
-			MeshMaterial* material = nullptr;
-
+			Mesh* playerMesh = nullptr;
 			Shader* basicShader = nullptr;
+
+		public:
+			GameObject* GetPlayerObject() const { return playerObject; }
 		};
 	}
 }

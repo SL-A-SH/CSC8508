@@ -11,6 +11,7 @@ GameBase* GameBase::instance = nullptr;
 
 GameBase::GameBase()
 {
+	gameConfig = nullptr;
 }
 
 GameBase::~GameBase() {
