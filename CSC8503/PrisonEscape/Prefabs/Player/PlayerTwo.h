@@ -8,7 +8,7 @@ namespace NCL {
 	namespace CSC8503 {
 		class PlayerTwo : public Player {
 		public:
-			PlayerTwo();
+			PlayerTwo(GameWorld* world, const std::string& name);
 			~PlayerTwo();
 
 			void UpdatePlayerMovement(float dt) override;

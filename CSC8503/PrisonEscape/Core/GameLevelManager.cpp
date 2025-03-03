@@ -1,6 +1,8 @@
 #include "GameLevelManager.h"
 #include "PrisonEscape/Levels/SampleLevel.h"
 #include "Assets.h"
+#include "RenderObject.h"
+#include "PhysicsObject.h"
 #include <string>
 #include <fstream>
 
@@ -10,29 +12,49 @@ using namespace CSC8503;
 
 GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer)
 {
-	world = existingWorld;
-	renderer = existingRenderer;
-	physics = new PhysicsSystem(*world);
-	physics->UseGravity(true);
+	mWorld = existingWorld;
+	mRenderer = existingRenderer;
+	mPhysics = new PhysicsSystem(*mWorld);
+	mPhysics->UseGravity(true);
 	// Move to another place if needed
 
 	InitAssets();
+	
 
 }
 
 GameLevelManager::~GameLevelManager()
 {
+	delete mPhysics;
 
-	delete physics;
+	for (int i = 0; i < mUpdatableObjectList.size(); i++) {
+		delete(mUpdatableObjectList[i]);
+	}
+	mUpdatableObjectList.clear();
+
+	for (auto& mesh : mMeshList) {
+		delete mesh.second;
+	}
+	mMeshList.clear();
+
+	delete mPlayerToAdd;
+	delete mRenderer;
+	delete mWorld;
 }
 
 void GameLevelManager::UpdateGame(float dt)
 {
 	// TODO: Level Updates
 	// TODO: Remove Debug
-	physics->Update(dt);
+	mPhysics->Update(dt);
 
 	GetCurrentLevel()->Update(dt);
+
+	if ((mUpdatableObjectList.size() > 0)) {
+		for (GameObject* obj : mUpdatableObjectList) {
+			obj->UpdateGame(dt);
+		}
+	}
 	Debug::Print("LEVELS", Vector2(25, 30), Debug::WHITE);
 }
 
@@ -96,9 +118,10 @@ void GameLevelManager::InitAssets()
 		}
 
 		if (group != assetInfo[0]) {
+			// Mesh Works
 			if (group == "mesh") {
 				std::cout << "Found Mesh: " << groupInfo[1] << std::endl;
-				renderer->LoadMeshes(mMeshList, groupInfo);
+				mRenderer->LoadMeshes(mMeshList, groupInfo);
 				meshesLoaded = true;
 			}
 
@@ -128,7 +151,31 @@ void GameLevelManager::InitAssets()
 
 }
 
-Player* GameLevelManager::AddPlayerToWorld(const Transform& transform, const std::string& playerName) {
-	mPlayerToAdd = new Player();
+PlayerOne* GameLevelManager::AddPlayerToWorld(const Transform& transform, const std::string& playerName) {
+	mPlayerToAdd = new PlayerOne(mWorld, playerName);
+	AddComponentsToPlayer(*mPlayerToAdd, transform);
 
+	mWorld->AddGameObject(mPlayerToAdd);
+	mUpdatableObjectList.push_back(mPlayerToAdd);
+
+	return mPlayerToAdd;
+}
+
+void GameLevelManager::AddComponentsToPlayer(Player& playerObject, const Transform& playerTransform) {
+	SphereVolume* volume = new SphereVolume(1.0f);
+	playerObject.SetBoundingVolume((CollisionVolume*)volume);
+
+	playerObject.GetTransform()
+		.SetScale(Vector3(PLAYER_MESH_SIZE, PLAYER_MESH_SIZE, PLAYER_MESH_SIZE))
+		.SetPosition(playerTransform.GetPosition())
+		.SetOrientation(playerTransform.GetOrientation());
+
+	Shader* basicShader = GameBase::GetGameBase()->GetRenderer()->LoadShader("scene.vert", "scene.frag");
+
+	playerObject.SetRenderObject(new RenderObject(&playerObject.GetTransform(), mMeshList["PlayerMesh"], nullptr, basicShader));
+
+	playerObject.SetPhysicsObject(new PhysicsObject(&playerObject.GetTransform(), playerObject.GetBoundingVolume()));
+
+	playerObject.GetPhysicsObject()->SetInverseMass(PLAYER_INVERSE_MASS);
+	playerObject.GetPhysicsObject()->InitSphereInertia();
 }

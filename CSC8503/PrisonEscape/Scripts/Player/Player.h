@@ -10,19 +10,15 @@ namespace NCL {
 	namespace CSC8503 {
 		class Player : public GameObject {
 		public:
-			Player();
+			Player(GameWorld* world, const std::string& name);
 			~Player();
 
-			void SpawnPlayer(Vector3 position);
 			virtual void UpdateGame(float dt);
 			virtual void UpdatePlayerMovement(float dt);
 			virtual float GetPlayerSpeed() const { return 10.0f; }  // Default speed
 
 		protected:
 			GameObject* playerObject;
-
-			void InitializeAssets();
-			GameObject* AddPlayerToWorld(const Vector3& position);
 
 			KeyboardMouseController controller;
 
@@ -32,8 +28,8 @@ namespace NCL {
 			Vector3 lastCameraPosition;
 			Vector3 lastCameraOrientation;
 
-			Mesh* playerMesh = nullptr;
-			Shader* basicShader = nullptr;
+			std::string mName;
+			GameWorld* mWorld;
 
 		public:
 			GameObject* GetPlayerObject() const { return playerObject; }

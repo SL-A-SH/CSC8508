@@ -73,7 +73,8 @@ namespace NCL::CSC8503 {
 		int		GetWorldID() const {
 			return worldID;
 		}
-
+		
+		virtual void UpdateGame(float dt); 
 	protected:
 		Transform			transform;
 

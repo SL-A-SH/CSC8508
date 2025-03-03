@@ -160,7 +160,7 @@ GameObject* LevelT::AddButtonToWorld(ButtonTrigger* button, const Vector3& posit
 
 	button->GetTransform().SetScale(buttonSize * 2.0f).SetPosition(position);
 	button->SetRenderObject(new RenderObject(&button->GetTransform(), cubeMesh, basicTex, basicShader));
-	button->GetRenderObject()->SetColour(Vector4(1, 0, 0, 1));  // Red when inactive
+	button->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));  // Red when inactive
 
 	button->SetPhysicsObject(new PhysicsObject(&button->GetTransform(), button->GetBoundingVolume()));
 	button->GetPhysicsObject()->SetInverseMass(0);

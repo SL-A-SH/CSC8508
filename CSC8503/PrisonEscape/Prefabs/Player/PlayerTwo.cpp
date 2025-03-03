@@ -6,9 +6,10 @@
 using namespace NCL;
 using namespace CSC8503;
 
-PlayerTwo::PlayerTwo() : Player()
+PlayerTwo::PlayerTwo(GameWorld* world, const std::string& name) : Player(world, name)
 {
-
+    mWorld = world;
+    mName = name;
 }
 
 PlayerTwo::~PlayerTwo()

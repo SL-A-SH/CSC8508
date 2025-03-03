@@ -6,9 +6,10 @@
 using namespace NCL;
 using namespace CSC8503;
 
-PlayerOne::PlayerOne() : Player()
+PlayerOne::PlayerOne(GameWorld* world, const std::string& name) : Player(world, name)
 {
-	
+    mWorld = world;
+    mName = name;
 }
 
 PlayerOne::~PlayerOne()
@@ -16,8 +17,13 @@ PlayerOne::~PlayerOne()
 
 }
 
+void PlayerOne::UpdateGame(float dt)
+{
+    UpdatePlayerMovement(dt);
+}
+
 void PlayerOne::UpdatePlayerMovement(float dt) {
-    if (!playerObject) {
+    if (!renderObject) {
         return;
     }
 
@@ -27,7 +33,7 @@ void PlayerOne::UpdatePlayerMovement(float dt) {
 
     // If we're the server or in single player, PlayerOne should be controlled locally
     if (isServer || !isMultiplayer) {
-        Vector3 playerPosition = playerObject->GetTransform().GetPosition();
+        Vector3 playerPosition = GetTransform().GetPosition();
         Camera& mainCamera = GameBase::GetGameBase()->GetWorld()->GetMainCamera();
 
         Vector3 cameraOffset(0, 60.0f, 50.0f);
@@ -36,7 +42,7 @@ void PlayerOne::UpdatePlayerMovement(float dt) {
         float forward = controller.GetAxis(2);
         float sidestep = -controller.GetAxis(0);
 
-        Vector3 currentVelocity = playerObject->GetPhysicsObject()->GetLinearVelocity();
+        Vector3 currentVelocity = GetPhysicsObject()->GetLinearVelocity();
 
         Vector3 forwardVec(0, 0, 1);
         Vector3 rightVec(1, 0, 0);
@@ -75,11 +81,11 @@ void PlayerOne::UpdatePlayerMovement(float dt) {
             }
 
             currentVelocity.y -= 25.0f * dt;
-            playerObject->GetPhysicsObject()->SetLinearVelocity(Vector3(movement.x, currentVelocity.y, movement.z));
+            GetPhysicsObject()->SetLinearVelocity(Vector3(movement.x, currentVelocity.y, movement.z));
         }
         else 
         {
-            playerObject->GetPhysicsObject()->SetLinearVelocity(movement);
+            GetPhysicsObject()->SetLinearVelocity(movement);
         }
     }
 }
