@@ -54,6 +54,18 @@ namespace NCL {
 				return shader;
 			}
 
+			AnimationObject* GetAnimationObject() const { return animationObject; }
+
+			void SetAnimationObject(AnimationObject* animObj) { animationObject = animObj; }
+
+			vector<vector<Matrix4>> const& GetFrameMatricesVector() const {
+				return frameMatricesVector;
+			}
+
+			void SetFrameMatricesVector(vector<vector<Matrix4>> fmv) {
+				frameMatricesVector = fmv;
+			}
+
 			void SetColour(const Vector4& c) {
 				colour = c;
 			}
@@ -62,6 +74,11 @@ namespace NCL {
 				return colour;
 			}
 
+			
+			vector<int> GetMatTextures() const { return matTextures; }
+			void SetMatTextures(vector<int> mt) { matTextures = mt; }
+
+			
 		protected:
 			Mesh*		mesh;
 
@@ -76,7 +93,9 @@ namespace NCL {
 			AnimationObject* animationObject = nullptr;
 			int currentFrame;
 
-			std::vector<int> matTextures;
+
+			vector<vector<Matrix4>> frameMatricesVector;
+			vector<int> matTextures;
 		};
 	}
 }
