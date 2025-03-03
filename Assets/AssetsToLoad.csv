@@ -1,0 +1,6 @@
+mesh,PlayerMesh,Max/Rig_Maximilian.msh
+material,PlayerMaterial,Max/Rig_Maximilian.mat
+shader,PlayerShader,Skinning.vert
+anim,PlayerIdle,Max/Idle.anm
+mesh,GuardMesh,MaleGuard/Male_Guard.msh
+end,,

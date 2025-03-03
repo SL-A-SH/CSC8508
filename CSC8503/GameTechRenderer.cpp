@@ -333,6 +333,35 @@ Mesh* GameTechRenderer::LoadMesh(const std::string& name) {
 	mesh->SetPrimitiveType(GeometryPrimitive::Triangles);
 	mesh->UploadToGPU();
 	return mesh;
+
+}
+
+void GameTechRenderer::LoadMeshes(std::unordered_map<std::string, Mesh*>& meshMap, const vector<std::string>& details) {
+	std::vector <OGLMesh*> meshes;
+	for (int i = 0; i < details.size(); i += 3) {
+		meshes.push_back(new OGLMesh());
+	}
+
+	std::thread loadingThread[4];
+	int splitLoad = details.size() / 12;
+
+	for (int i = 0; i < 4; i++) {
+		loadingThread[i] = std::thread([meshes, details, i, splitLoad] {
+			int endPoint = i == 3 ? details.size() / 3 : splitLoad * (i + 1);
+			for (int j = splitLoad * i; j < endPoint; j++) {
+				MshLoader::LoadMesh(details[(j * 3) + 1], *meshes[j]);
+				meshes[j]->SetPrimitiveType(GeometryPrimitive::Triangles);
+			}
+			});
+	}
+	for (int i = 0; i < 4; i++) {
+		loadingThread[i].join();
+	}
+
+	for (int i = 0; i < meshes.size(); i++) {
+		meshes[i]->UploadToGPU();
+		meshMap[details[i * 3]] = meshes[i];
+	}
 }
 
 void GameTechRenderer::NewRenderLines() {

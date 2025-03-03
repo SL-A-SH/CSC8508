@@ -4,6 +4,7 @@
 #include "PhysicsSystem.h"
 #include "GameTechRenderer.h"
 #include "../CSC8503/PrisonEscape/Levels/Level.h"
+#include "../CSC8503/PrisonEscape/Scripts/Player/Player.h"
 
 namespace NCL {
 	namespace CSC8503 {
@@ -13,6 +14,12 @@ namespace NCL {
 			~GameLevelManager();
 			virtual void UpdateGame(float dt);
 
+			void InitAssets();
+
+			// Player Methods
+
+			Player* AddPlayerToWorld(const Transform& transform, const std::string& playerName);
+			void AddComponentsToPlayer(Player& playerObj, const Transform& transform);
 
 
 		public:
@@ -27,6 +34,11 @@ namespace NCL {
 			std::stack<Level*> levelStack;
 
 
+			std::unordered_map<std::string, Mesh*> mMeshList;
+
+
+			//Player Members
+			Player* mPlayerToAdd;
 		};
 	}
 }

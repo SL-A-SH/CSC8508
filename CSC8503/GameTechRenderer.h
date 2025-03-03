@@ -16,6 +16,7 @@ namespace NCL {
 			~GameTechRenderer();
 
 			Mesh* LoadMesh(const std::string& name);
+			void LoadMeshes(std::unordered_map<std::string, Mesh*>& meshMap, const std::vector<std::string>& details);
 			Texture* LoadTexture(const std::string& name);
 			Shader* LoadShader(const std::string& vertex, const std::string& fragment);
 			void RenderUI(std::function<void()> callback);
@@ -41,9 +42,6 @@ namespace NCL {
 
 			void SetDebugStringBufferSizes(size_t newVertCount);
 			void SetDebugLineBufferSizes(size_t newVertCount);
-
-			void AddToGBuffer();
-
 
 			std::function<void()> mImguiCanvasFuncToRender = nullptr;
 			void SetupImgui();
