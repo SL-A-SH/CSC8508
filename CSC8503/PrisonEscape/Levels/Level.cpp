@@ -15,7 +15,7 @@ using namespace CSC8503;
 
 Level::Level()
 {
-	
+
 }
 
 void Level::Init()
@@ -23,15 +23,15 @@ void Level::Init()
 	InitializeAssets();
 	InitializeLevel();
 	SetCameraAttributes();
-
-	GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&Level::DrawPauseButton, this));
+	GameBase::GetGameBase()->GetRenderer()->AddDrawableFunction(std::bind(&Level::DrawPauseButton, this));
 }
 
 void Level::Update(float dt)
 {
 	if (playerOne)
 	{
-		playerOne->UpdateGame(dt);
+		playerOne->UpdatePlayerMovement(dt);
+		playerOne->DetectPlayerCollision();
 	}
 
 	if (playerTwo)
@@ -208,13 +208,11 @@ void Level::DrawPauseButton()
 {
 	ImVec2 windowSize = ImGui::GetWindowSize();
 	ImGui::SetCursorPos(ImVec2(windowSize.x * .9f, windowSize.y * .05f));
-
-
 	GLuint texID = ((OGLTexture*)pauseButton)->GetObjectID();
 
 	if (ImGui::ImageButton("Test", texID, ImVec2(100, 100)))
 	{
-		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&Level::DrawPauseMenu, this));
+		GameBase::GetGameBase()->GetRenderer()->AddDrawableFunction(std::bind(&Level::DrawPauseMenu, this));
 	}
 }
 

@@ -147,12 +147,12 @@ void Player::DetectPlayerCollision() {
 
 		GameObject* collisionObject = (GameObject*)closestCollision.node;
 		if (collisionObject->GetPhysicsObject()->GetLayer() == 1) {
-			GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(
+			GameBase::GetGameBase()->GetRenderer()->AddDrawableFunction(
 				std::bind(&Player::DisplayInteractionPrompt, this));
 		}
 		else
 		{
-			GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(nullptr);
+			GameBase::GetGameBase()->GetRenderer()->RemoveDrawableFunction(std::bind(&Player::DisplayInteractionPrompt, this));
 		}
 	}
 

@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "TextureLoader.h"
 #include "MshLoader.h"
+#include "typeindex"
 using namespace NCL;
 using namespace Rendering;
 using namespace CSC8503;
@@ -148,7 +149,7 @@ void GameTechRenderer::RenderFrame() {
 	RenderShadowMap();
 	RenderSkybox();
 	RenderCamera();
-	RenderUI(mImguiCanvasFuncToRender);
+	LoadUI();
 	glDisable(GL_CULL_FACE); //Todo - text indices are going the wrong way...
 	glDisable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
@@ -516,8 +517,35 @@ void GameTechRenderer::SetDebugStringBufferSizes(size_t newVertCount) {
 		glBindVertexArray(0);
 	}
 }
-void GameTechRenderer::SetImguiCanvasFunc(std::function<void()> func) {
-	mImguiCanvasFuncToRender = func;
+
+
+//TODO //  Find a way to add a function to the list of functions to be rendered
+void GameTechRenderer::AddDrawableFunction(std::function<void()> func) {
+
+	//check if the function is already in the list
+	for (auto& f : mImguiCanvasFuncToRenderList)
+	{
+		if (std::type_index(typeid(f)) == std::type_index(typeid(func)))
+		{
+			return;
+		}
+	}
+	mImguiCanvasFuncToRenderList.push_back(func);
+
+}
+
+
+//TODO //  Find a way to remove a function from the list of functions to be rendered
+bool GameTechRenderer::RemoveDrawableFunction(std::function<void()> func) {
+	for (auto it = mImguiCanvasFuncToRenderList.begin(); it != mImguiCanvasFuncToRenderList.end(); ++it)
+	{
+		if (std::type_index(typeid(it)) == std::type_index(typeid(func)))
+		{
+			mImguiCanvasFuncToRenderList.erase(it);
+			return true;
+		}
+	}
+	return false;
 }
 
 
@@ -550,7 +578,7 @@ void GameTechRenderer::SetDebugLineBufferSizes(size_t newVertCount) {
 }
 
 
-void GameTechRenderer::RenderUI(std::function<void()> callback) {
+void GameTechRenderer::LoadUI() {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
@@ -572,8 +600,12 @@ void GameTechRenderer::RenderUI(std::function<void()> callback) {
 		ImGuiWindowFlags_NoResize
 	);
 
-	if (callback != nullptr) {
-		callback();
+	if (mImguiCanvasFuncToRenderList.size() > 0)
+	{
+		for (auto& func : mImguiCanvasFuncToRenderList)
+		{
+			func();
+		}
 	}
 	//CLEAR
 
