@@ -499,13 +499,60 @@ void GameTechRenderer::NewRenderTextures() {
 }
 
 Texture* GameTechRenderer::LoadTexture(const std::string& name) {
-	return OGLTexture::TextureFromFile(name).release();
+	return OGLTexture::TextureFromFile(name).release(); // TODO
+}
+
+GLuint GameTechRenderer::LoadTextureGetID(const std::string& name) {
+	if (mLoadedTextureList.find(name) != mLoadedTextureList.end()) {
+		return mLoadedTextureList[name];
+	}
+	Texture* texture = LoadTexture(name);
+	return ((OGLTexture*)texture)->GetObjectID();
 }
 
 Shader* GameTechRenderer::LoadShader(const std::string& vertex, const std::string& fragment) {
 	return new OGLShader(vertex, fragment);
 }
 
+MeshAnimation* GameTechRenderer::LoadAnimation(const std::string& name) {
+	return new MeshAnimation(name);
+}
+
+MeshMaterial* GameTechRenderer::LoadMaterial(const std::string& name) {
+	return new MeshMaterial(name);
+}
+
+vector<int> GameTechRenderer::LoadMeshMaterial(Mesh& mesh, MeshMaterial& meshMaterial) {
+	std::vector<int> matTextures = std::vector<int>();
+	for (int i = 0; i < mesh.GetSubMeshCount(); ++i) {
+		const MeshMaterialEntry* matEntry = meshMaterial.GetMaterialForLayer(i);
+		const string* filename = nullptr;
+		matEntry->GetEntry("Albedo", &filename);
+		GLuint texID = 0;
+
+		if (filename) {
+			string path;
+			std::cout << path << std::endl;
+			texID = LoadTextureGetID(path.c_str());
+			std::cout << texID << std::endl;
+		}
+
+		matTextures.emplace_back(texID);
+
+		filename = nullptr;
+		matEntry->GetEntry("Normal", &filename);
+		texID = 0;
+
+		if (filename) {
+			string path = *filename;
+			std::cout << path << std::endl;
+			texID = LoadTextureGetID(path.c_str());
+			std::cout << texID << std::endl;
+		}
+		matTextures.emplace_back(texID);
+	}
+	return matTextures;
+}
 void GameTechRenderer::SetDebugStringBufferSizes(size_t newVertCount) {
 	if (newVertCount > textCount) {
 		textCount = newVertCount;
@@ -547,7 +594,6 @@ void GameTechRenderer::SetDebugStringBufferSizes(size_t newVertCount) {
 void GameTechRenderer::SetImguiCanvasFunc(std::function<void()> func) {
 	mImguiCanvasFuncToRender = func;
 }
-
 
 void GameTechRenderer::SetDebugLineBufferSizes(size_t newVertCount) {
 	if (newVertCount > lineCount) {

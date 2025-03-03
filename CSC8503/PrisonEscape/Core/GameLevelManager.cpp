@@ -127,6 +127,12 @@ void GameLevelManager::InitAssets()
 
 			else if (group == "anim") {
 				std::cout << "Found Animation: " << groupInfo[1] << std::endl;
+				animationLoadThread = std::thread([this, groupInfo, &animationLines] {
+					for (int i = 0; i < groupInfo.size(); i += 3) {
+						mAnimationList[groupInfo[i]] = mRenderer->LoadAnimation(groupInfo[i + 1]);
+						animationLines;
+					}
+					});
 			}
 
 			else if (group == "shader") {
@@ -147,6 +153,12 @@ void GameLevelManager::InitAssets()
 
 			else if (group == "material") {
 				std::cout << "Found Material: " << groupInfo[1] << std::endl;
+				materialLoadThread = std::thread([this, groupInfo, &materialLines] {
+					for (int i = 0; i < groupInfo.size(); i += 3) {
+						mMaterialList[groupInfo[i]] = mRenderer->LoadMaterial(groupInfo[i + 1]);
+						materialLines;
+					}
+					});
 			}
 			group = assetInfo[0];
 			groupInfo.clear();
@@ -157,10 +169,19 @@ void GameLevelManager::InitAssets()
 			groupInfo.push_back(assetInfo[i]);
 		}
 
-
 	}
+	delete[] assetInfo;
+	animationLoadThread.join();
 
+	mPreLoadedAnimationList.insert(std::make_pair("PlayerIdle", mAnimationList["PlayerIdle"]));
 
+	materialLoadThread.join();
+
+	//for (auto const& [key, val] : mMaterialList) {
+	//	if (key.substr(0, 6) == "Player") {
+	//		mMeshMaterialsList[key] = mRenderer->LoadMeshMaterial();
+	//	}
+	//}
 }
 
 PlayerOne* GameLevelManager::AddPlayerToWorld(const Transform& transform, const std::string& playerName) {

@@ -3,6 +3,8 @@
 #include "GameWorld.h"
 #include "PhysicsSystem.h"
 #include "GameTechRenderer.h"
+#include "MeshAnimation.h"
+#include "MeshMaterial.h"
 #include "../CSC8503/PrisonEscape/Levels/Level.h"
 #include "../CSC8503/PrisonEscape/Scripts/Player/Player.h"
 
@@ -41,6 +43,11 @@ namespace NCL {
 			std::unordered_map<std::string, Mesh*> mMeshList;
 			std::unordered_map<std::string, Shader*> mShaderList;
 			std::unordered_map<std::string, Texture*> mTextureList;
+			std::unordered_map<std::string, MeshAnimation*> mAnimationList;
+			std::unordered_map<std::string, MeshMaterial*> mMaterialList;
+			std::unordered_map<std::string, vector<int>> mMeshMaterialsList;
+			std::map<std::string, MeshAnimation*> mPreLoadedAnimationList;
+
 
 
 			//Player Members
