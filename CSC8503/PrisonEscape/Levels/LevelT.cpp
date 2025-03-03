@@ -16,7 +16,7 @@ LevelT::LevelT()
 {
 	doorCloseTex = GameBase::GetGameBase()->GetRenderer()->LoadTexture("Default.png");
 	doorOpenTex = GameBase::GetGameBase()->GetRenderer()->LoadTexture("checkerboard.png");
-	
+
 }
 
 LevelT::~LevelT()
@@ -39,10 +39,10 @@ void LevelT::Init()
 	// Create a button linked to the door
 	ButtonTrigger* button = new ButtonTrigger();
 	AddButtonToWorld(button, Vector3(6, 2, 10), door);
-	 std::cout << "CubeSet contents:" << std::endl;
-    for (const Vector4& color : CubeSet) {
-        std::cout << "Color: (" << color.x << ", " << color.y << ", " << color.z << ", " << color.w << ")" << std::endl;
-    }
+	std::cout << "CubeSet contents:" << std::endl;
+	for (const Vector4& color : CubeSet) {
+		std::cout << "Color: (" << color.x << ", " << color.y << ", " << color.z << ", " << color.w << ")" << std::endl;
+	}
 }
 
 void LevelT::AddCubeSetToTheLevel() {
@@ -54,7 +54,7 @@ void LevelT::Update(float dt)
 {
 
 	GameBase::GetGameBase()->GetWorld()->GetMainCamera().UpdateCamera(dt);
-	
+
 	Level::Update(dt);
 	//UpdateCubeVisibility();
 }
@@ -80,7 +80,7 @@ GameObject* LevelT::CreateRandomColorCube(Vector3 position) {
 	Vector4 randomColor = colors[dis(gen)];
 
 
-	cube->GetTransform().SetScale(Vector3(1, 1, 1) *3.0f).SetPosition(position);
+	cube->GetTransform().SetScale(Vector3(1, 1, 1) * 3.0f).SetPosition(position);
 	RenderObject* renderObject = new RenderObject(&cube->GetTransform(), cubeMesh, basicTex, basicShader);
 	renderObject->SetColour(randomColor);
 	CubeSet.push_back(randomColor);
@@ -114,7 +114,7 @@ GameObject* LevelT::AddDoorToWorld(Door* door, const Vector3& position) {
 	door->GetTransform().SetScale(doorSize * 2.0f).SetPosition(position);
 	door->SetRenderObject(new RenderObject(&door->GetTransform(), cubeMesh, basicTex, basicShader));
 	door->SetPhysicsObject(new PhysicsObject(&door->GetTransform(), door->GetBoundingVolume()));
-
+	door->GetPhysicsObject()->SetLayer(LayerMask::Doors);
 	door->GetPhysicsObject()->SetInverseMass(0);
 	door->GetPhysicsObject()->InitCubeInertia();
 
