@@ -1,7 +1,8 @@
-mesh,PlayerMesh,Max/Rig_Maximilian.msh
-material,PlayerMaterial,Max/Rig_Maximilian.mat
-shader,PlayerShader,Skinning.vert
-anim,PlayerIdle,Max/Idle.anm
-mesh,GuardMesh,MaleGuard/Male_Guard.msh
-shader,BasicShader,scene.vert
-end,,
+mesh,PlayerMesh,Max/Rig_Maximilian.msh,
+material,PlayerMaterial,Max/Rig_Maximilian.mat,
+shader,AnimationShader,Skinning.vert,scene.frag
+anim,PlayerIdle,Max/Idle.anm,
+mesh,GuardMesh,MaleGuard/Male_Guard.msh,
+shader,BasicShader,scene.vert,scene.frag
+texture,DefaultTexture,Default.png,
+end,,,

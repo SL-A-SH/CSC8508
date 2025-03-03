@@ -131,6 +131,18 @@ void GameLevelManager::InitAssets()
 
 			else if (group == "shader") {
 				std::cout << "Found Shader: " << groupInfo[1] << std::endl;
+				for (int i = 0; i < groupInfo.size(); i +=3) {
+					mShaderList[groupInfo[i]] = mRenderer->LoadShader(groupInfo[i + 1], groupInfo[i + 2]);
+					lines++;
+				}
+			}
+
+			else if (group == "texture") {
+				std::cout << "Found Texture: " << groupInfo[1] << std::endl;
+				for (int i = 0; i < groupInfo.size(); i += 3) {
+					mTextureList[groupInfo[i]] = mRenderer->LoadTexture(groupInfo[i + 1]);
+					lines++;
+				}
 			}
 
 			else if (group == "material") {
@@ -170,9 +182,7 @@ void GameLevelManager::AddComponentsToPlayer(Player& playerObject, const Transfo
 		.SetPosition(playerTransform.GetPosition())
 		.SetOrientation(playerTransform.GetOrientation());
 
-	Shader* basicShader = GameBase::GetGameBase()->GetRenderer()->LoadShader("scene.vert", "scene.frag");
-
-	playerObject.SetRenderObject(new RenderObject(&playerObject.GetTransform(), mMeshList["PlayerMesh"], nullptr, basicShader));
+	playerObject.SetRenderObject(new RenderObject(&playerObject.GetTransform(), mMeshList["PlayerMesh"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
 
 	playerObject.SetPhysicsObject(new PhysicsObject(&playerObject.GetTransform(), playerObject.GetBoundingVolume()));
 

@@ -39,6 +39,8 @@ namespace NCL {
 			vector<GameObject*> mUpdatableObjectList;
 
 			std::unordered_map<std::string, Mesh*> mMeshList;
+			std::unordered_map<std::string, Shader*> mShaderList;
+			std::unordered_map<std::string, Texture*> mTextureList;
 
 
 			//Player Members
