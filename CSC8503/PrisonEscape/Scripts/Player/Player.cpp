@@ -6,7 +6,7 @@
 #include "PrisonEscape/Core/GameBase.h"
 #include "PrisonEscape/Core/GameConfigManager.h"
 
-Player::Player(GameWorld* world, const std::string& name) : controller(*Window::GetKeyboard(), *Window::GetMouse())
+Player::Player(GameWorld* world, const std::string& name) : GameObject(), controller(*Window::GetKeyboard(), *Window::GetMouse())
 {
 	playerObject = nullptr;
 	useGravity = true;
@@ -20,8 +20,7 @@ Player::Player(GameWorld* world, const std::string& name) : controller(*Window::
 	controller.MapAxis(3, "XLook");
 	controller.MapAxis(4, "YLook");
 
-	mWorld = world;
-	mName = name;
+	GameObject::SetName(name);
 }
 
 Player::~Player()

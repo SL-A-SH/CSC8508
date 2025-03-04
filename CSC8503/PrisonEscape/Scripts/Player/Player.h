@@ -17,6 +17,8 @@ namespace NCL {
 			virtual void UpdatePlayerMovement(float dt);
 			virtual float GetPlayerSpeed() const { return 10.0f; }  // Default speed
 
+			virtual std::string GetName() { return mName; }
+
 		protected:
 			GameObject* playerObject;
 

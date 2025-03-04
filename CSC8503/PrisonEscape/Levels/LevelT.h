@@ -29,9 +29,6 @@ private:
 	Texture* doorCloseTex = nullptr;
 	Texture* doorOpenTex = nullptr;
 
-
-	//void InitializeAssets();
-
 	void AddCubeSetToTheLevel();
 	void CreateCollidingCube(Vector3 position);
 	void UpdateCubeVisibility();

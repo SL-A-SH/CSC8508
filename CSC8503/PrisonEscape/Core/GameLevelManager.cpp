@@ -195,7 +195,7 @@ PlayerOne* GameLevelManager::AddPlayerToWorld(const Transform& transform, const 
 }
 
 void GameLevelManager::AddComponentsToPlayer(Player& playerObject, const Transform& playerTransform) {
-	SphereVolume* volume = new SphereVolume(1.0f);
+	SphereVolume* volume = new SphereVolume(PLAYER_MESH_SIZE/2);
 	playerObject.SetBoundingVolume((CollisionVolume*)volume);
 
 	playerObject.GetTransform()
