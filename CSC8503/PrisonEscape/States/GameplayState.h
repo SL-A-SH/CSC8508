@@ -18,6 +18,13 @@ namespace NCL {
 
 			void OnAwake() override;
 			PushdownResult OnUpdate(float dt, PushdownState** newState) override;
+			void SetGameConfig(GameConfigManager* config) {
+				if (gameConfig != nullptr && gameConfig != config) {
+					delete gameConfig;
+				}
+				gameConfig = config;
+				GameBase::GetGameBase()->SetGameConfig(gameConfig);
+			}
 
 		private:
 			GameLevelManager* manager;

@@ -7,27 +7,6 @@ using namespace CSC8503;
 
 GamePlayState::GamePlayState(bool multiplayer, bool asServer)
 {
-	gameConfig = new GameConfigManager();
-
-	gameConfig->networkConfig.isMultiplayer = multiplayer;
-	gameConfig->networkConfig.isServer = asServer;
-
-	GameBase::GetGameBase()->SetGameConfig(gameConfig);
-
-	if (gameConfig->networkConfig.isMultiplayer)
-	{
-		gameConfig->InitNetwork();
-
-		if (gameConfig->networkConfig.isServer)
-		{
-			gameConfig->CreateServer();
-		}
-		else
-		{
-			gameConfig->CreateClient();
-		}
-	}
-	
 	manager = new GameLevelManager(GameBase::GetGameBase()->GetWorld(), GameBase::GetGameBase()->GetRenderer());
 }
 
@@ -36,7 +15,7 @@ void GamePlayState::OnAwake()
 	Level* level = new LevelT();
 	level->Init();
 
-	if (gameConfig->networkConfig.isMultiplayer)
+	if (gameConfig && gameConfig->networkConfig.isMultiplayer)
 	{
 		if (gameConfig->networkConfig.isServer)
 		{
@@ -89,7 +68,7 @@ GamePlayState::~GamePlayState()
 
 PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** newState) 
 {
-	if (gameConfig->networkConfig.isMultiplayer) {
+	if (gameConfig && gameConfig->networkConfig.isMultiplayer) {
 		if (gameConfig->networkConfig.isServer && gameConfig->networkConfig.server) 
 		{
 			// Server: Send PlayerOne position to clients
