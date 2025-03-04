@@ -27,6 +27,7 @@ namespace NCL {
 			void SetImguiCanvasFunc(std::function<void()> func);
 
 			GLuint LoadTextureGetID(const std::string& name);
+			int FindTextureIndex(GLuint texId);
 			std::vector<int> LoadMeshMaterial(Mesh& mesh, MeshMaterial& meshMaterial);
 
 		protected:
@@ -91,6 +92,8 @@ namespace NCL {
 			size_t textCount;
 
 			std::unordered_map<std::string, GLuint> mLoadedTextureList;
+
+			vector<std::pair<GLuint, GLuint64>> mTextureIDList;
 		};
 	}
 }

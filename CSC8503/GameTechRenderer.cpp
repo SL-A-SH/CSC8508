@@ -499,7 +499,15 @@ void GameTechRenderer::NewRenderTextures() {
 }
 
 Texture* GameTechRenderer::LoadTexture(const std::string& name) {
-	return OGLTexture::TextureFromFile(name).release(); // TODO
+	OGLTexture* texture = OGLTexture::TextureFromFile(name).release(); // TODO
+	if (FindTextureIndex(texture->GetObjectID()) == -1)
+	{
+		const GLuint64 ID = glGetTextureHandleARB(texture->GetObjectID());
+		glMakeTextureHandleResidentARB(ID);
+		mTextureIDList.push_back(std::pair<GLuint, GLuint64>(texture->GetObjectID(), ID));
+		mLoadedTextureList[name] = texture->GetObjectID();
+	}
+	return texture;
 }
 
 GLuint GameTechRenderer::LoadTextureGetID(const std::string& name) {
@@ -508,6 +516,15 @@ GLuint GameTechRenderer::LoadTextureGetID(const std::string& name) {
 	}
 	Texture* texture = LoadTexture(name);
 	return ((OGLTexture*)texture)->GetObjectID();
+}
+
+int GameTechRenderer::FindTextureIndex(GLuint texId) {
+	for (int i = 0; i < mTextureIDList.size(); i++) {
+		if (texId == mTextureIDList[i].first) {
+			return i;
+		}
+	}
+	return -1;
 }
 
 Shader* GameTechRenderer::LoadShader(const std::string& vertex, const std::string& fragment) {
@@ -524,14 +541,27 @@ MeshMaterial* GameTechRenderer::LoadMaterial(const std::string& name) {
 
 vector<int> GameTechRenderer::LoadMeshMaterial(Mesh& mesh, MeshMaterial& meshMaterial) {
 	std::vector<int> matTextures = std::vector<int>();
+
+	if (&mesh == nullptr) {
+		std::cerr << "Error: Mesh reference is null!" << std::endl;
+		return {};
+	}
+	std::cout << "Mesh is valid, checking submesh count..." << std::endl;
+
+
 	for (int i = 0; i < mesh.GetSubMeshCount(); ++i) {
+		std::cout << "I am inside the loop!" << std::endl;
 		const MeshMaterialEntry* matEntry = meshMaterial.GetMaterialForLayer(i);
+		if (!matEntry) {
+			std::cout << "No Material for layer " << i << std::endl;
+			continue;
+		}
 		const string* filename = nullptr;
-		matEntry->GetEntry("Albedo", &filename);
+		matEntry->GetEntry("Diffuse", &filename);
 		GLuint texID = 0;
 
 		if (filename) {
-			string path;
+			string path = *filename;
 			std::cout << path << std::endl;
 			texID = LoadTextureGetID(path.c_str());
 			std::cout << texID << std::endl;
@@ -543,6 +573,11 @@ vector<int> GameTechRenderer::LoadMeshMaterial(Mesh& mesh, MeshMaterial& meshMat
 		matEntry->GetEntry("Normal", &filename);
 		texID = 0;
 
+		if (!matEntry) {
+			std::cout << "No Material for layer " << i << std::endl;
+			continue;
+		}
+
 		if (filename) {
 			string path = *filename;
 			std::cout << path << std::endl;
@@ -551,6 +586,7 @@ vector<int> GameTechRenderer::LoadMeshMaterial(Mesh& mesh, MeshMaterial& meshMat
 		}
 		matTextures.emplace_back(texID);
 	}
+	std::cout << "Loaded Mesh Material" << std::endl;
 	return matTextures;
 }
 void GameTechRenderer::SetDebugStringBufferSizes(size_t newVertCount) {

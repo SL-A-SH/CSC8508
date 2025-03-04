@@ -127,17 +127,21 @@ void GameLevelManager::InitAssets()
 
 			else if (group == "anim") {
 				std::cout << "Found Animation: " << groupInfo[1] << std::endl;
+
+				if (animationLoadThread.joinable()) {
+					animationLoadThread.join();
+				}
 				animationLoadThread = std::thread([this, groupInfo, &animationLines] {
 					for (int i = 0; i < groupInfo.size(); i += 3) {
 						mAnimationList[groupInfo[i]] = mRenderer->LoadAnimation(groupInfo[i + 1]);
-						animationLines;
+						animationLines++;
 					}
 					});
 			}
 
 			else if (group == "shader") {
 				std::cout << "Found Shader: " << groupInfo[1] << std::endl;
-				for (int i = 0; i < groupInfo.size(); i +=3) {
+				for (int i = 0; i < groupInfo.size(); i += 3) {
 					mShaderList[groupInfo[i]] = mRenderer->LoadShader(groupInfo[i + 1], groupInfo[i + 2]);
 					lines++;
 				}
@@ -153,13 +157,17 @@ void GameLevelManager::InitAssets()
 
 			else if (group == "material") {
 				std::cout << "Found Material: " << groupInfo[1] << std::endl;
+				if (materialLoadThread.joinable()) {
+					materialLoadThread.join();
+				}
 				materialLoadThread = std::thread([this, groupInfo, &materialLines] {
 					for (int i = 0; i < groupInfo.size(); i += 3) {
 						mMaterialList[groupInfo[i]] = mRenderer->LoadMaterial(groupInfo[i + 1]);
-						materialLines;
+						materialLines++;
 					}
 					});
 			}
+	
 			group = assetInfo[0];
 			groupInfo.clear();
 
@@ -171,17 +179,45 @@ void GameLevelManager::InitAssets()
 
 	}
 	delete[] assetInfo;
-	animationLoadThread.join();
 
+	if (animationLoadThread.joinable()) {
+		animationLoadThread.join();
+	}
 	mPreLoadedAnimationList.insert(std::make_pair("PlayerIdle", mAnimationList["PlayerIdle"]));
 
-	materialLoadThread.join();
+	if (materialLoadThread.joinable()) {
+		materialLoadThread.join();
+	}
 
+
+
+	//std::cout << "Material List Size: " << mMaterialList.size() << std::endl;
 	//for (auto const& [key, val] : mMaterialList) {
-	//	if (key.substr(0, 6) == "Player") {
-	//		mMeshMaterialsList[key] = mRenderer->LoadMeshMaterial();
-	//	}
+	//	std::cout << "Material Loaded: " << key << std::endl;
 	//}
+
+	//std::cout << "Mesh List Size: " << mMeshList.size() << std::endl;
+	//for (auto const& [key, val] : mMeshList) {
+	//	std::cout << "Mesh Loaded: " << key << std::endl;
+	//}
+
+
+
+	for (auto const& [key, val] : mMaterialList) {
+		if (key.substr(0, 6) == "Player") {
+			std::cout << "Loading Player Mesh Materials" << std::endl;
+			mMeshMaterialsList[key] = mRenderer->LoadMeshMaterial(*mMeshList["Player"], *val);
+			std::cout << "Finished Loaded Player Mesh Materials" << std::endl;
+		}
+		else {
+			std::cout << "Loading Other Mesh Materials" << std::endl;
+			std::cout << "Processing Material for mesh: " << key << std::endl;
+			mMeshMaterialsList[key] = mRenderer->LoadMeshMaterial(*mMeshList[key], *val);
+		}
+		lines++;
+	}
+	std::cout << "Loading Successful!" << std::endl;
+	ready = true;
 }
 
 PlayerOne* GameLevelManager::AddPlayerToWorld(const Transform& transform, const std::string& playerName) {
@@ -203,7 +239,7 @@ void GameLevelManager::AddComponentsToPlayer(Player& playerObject, const Transfo
 		.SetPosition(playerTransform.GetPosition())
 		.SetOrientation(playerTransform.GetOrientation());
 
-	playerObject.SetRenderObject(new RenderObject(&playerObject.GetTransform(), mMeshList["PlayerMesh"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+	playerObject.SetRenderObject(new RenderObject(&playerObject.GetTransform(), mMeshList["Player"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
 
 	playerObject.SetPhysicsObject(new PhysicsObject(&playerObject.GetTransform(), playerObject.GetBoundingVolume()));
 
