@@ -14,6 +14,7 @@ RenderObject::RenderObject(Transform* parentTransform, Mesh* mesh, Texture* tex,
 	this->shader	= shader;
 	this->colour	= Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	
+	std::vector<uint64_t> mMatTextures = {};
 }
 
 RenderObject::~RenderObject() {

@@ -50,6 +50,11 @@ namespace NCL {
 				return visible;
 			}
 
+			void SetMaterialTextures(std::vector<int> MaterialTextureList) {
+				mMatTextures = MaterialTextureList;
+			}
+			std::vector<int> GetMaterialTextures() { return mMatTextures; }
+
 		protected:
 			Mesh*		mesh;
 			Texture*	texture;
@@ -57,6 +62,8 @@ namespace NCL {
 			Transform*	transform;
 			Vector4		colour;
 			bool visible;
+
+			std::vector<int> mMatTextures;
 		};
 	}
 }

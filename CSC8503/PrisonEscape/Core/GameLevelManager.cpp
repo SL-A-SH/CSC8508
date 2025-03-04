@@ -243,6 +243,8 @@ void GameLevelManager::AddComponentsToPlayer(Player& playerObject, const Transfo
 
 	playerObject.SetPhysicsObject(new PhysicsObject(&playerObject.GetTransform(), playerObject.GetBoundingVolume()));
 
+	playerObject.GetRenderObject()->SetMaterialTextures(mMeshMaterialsList["Player"]);
+
 	playerObject.GetPhysicsObject()->SetInverseMass(PLAYER_INVERSE_MASS);
 	playerObject.GetPhysicsObject()->InitSphereInertia();
 }
