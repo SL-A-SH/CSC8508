@@ -39,10 +39,12 @@ namespace NCL {
 			static void DrawSlider(const std::string& label, int* value, int min, int max, float verticalPos);
 			static void DrawBackButton(const std::function<void()>& callback);
 			static void DrawFooter(const std::string& text);
+            static void DrawMessagePanel(const std::string& title,const std::string& message,const ImVec4& messageColor = ImVec4(1, 1, 1, 1),std::function<void()> cancelCallback = nullptr);
 
-			static ImFont* buttonFont;
-			static ImFont* headerFont;
+            static ImFont* buttonFont;
+            static ImFont* headerFont;
 			static ImFont* footerFont;
+            static ImFont* messageFont;
 
 			static constexpr float BUTTON_WIDTH_RATIO = 0.3f;
 			static constexpr float BUTTON_HEIGHT_RATIO = 0.1f;
