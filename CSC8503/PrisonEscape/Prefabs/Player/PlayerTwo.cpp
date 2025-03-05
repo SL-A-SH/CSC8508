@@ -8,8 +8,7 @@ using namespace CSC8503;
 
 PlayerTwo::PlayerTwo(GameWorld* world, const std::string& name) : Player(world, name)
 {
-    mWorld = world;
-    mName = name;
+    GameObject::SetName(name);
 }
 
 PlayerTwo::~PlayerTwo()

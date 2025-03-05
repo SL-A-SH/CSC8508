@@ -220,7 +220,7 @@ void GameLevelManager::InitAssets()
 	ready = true;
 }
 
-PlayerOne* GameLevelManager::AddPlayerToWorld(const Transform& transform, const std::string& playerName) {
+PlayerOne* GameLevelManager::AddPlayerOneToWorld(const Transform& transform, const std::string& playerName) {
 	mPlayerToAdd = new PlayerOne(mWorld, playerName);
 	AddComponentsToPlayer(*mPlayerToAdd, transform);
 
@@ -228,6 +228,15 @@ PlayerOne* GameLevelManager::AddPlayerToWorld(const Transform& transform, const 
 	mUpdatableObjectList.push_back(mPlayerToAdd);
 
 	return mPlayerToAdd;
+}
+PlayerTwo* GameLevelManager::AddPlayerTwoToWorld(const Transform& transform, const std::string& playerName) {
+	mPlayerTwoToAdd = new PlayerTwo(mWorld, playerName);
+	AddComponentsToPlayer(*mPlayerToAdd, transform);
+
+	mWorld->AddGameObject(mPlayerToAdd);
+	mUpdatableObjectList.push_back(mPlayerToAdd);
+
+	return mPlayerTwoToAdd;
 }
 
 void GameLevelManager::AddComponentsToPlayer(Player& playerObject, const Transform& playerTransform) {
@@ -239,7 +248,7 @@ void GameLevelManager::AddComponentsToPlayer(Player& playerObject, const Transfo
 		.SetPosition(playerTransform.GetPosition())
 		.SetOrientation(playerTransform.GetOrientation());
 
-	playerObject.SetRenderObject(new RenderObject(&playerObject.GetTransform(), mMeshList["Player"], mTextureList["DefaultTexture"], mShaderList["Animation"]));
+	playerObject.SetRenderObject(new RenderObject(&playerObject.GetTransform(), mMeshList["Player"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
 
 	playerObject.SetPhysicsObject(new PhysicsObject(&playerObject.GetTransform(), playerObject.GetBoundingVolume()));
 

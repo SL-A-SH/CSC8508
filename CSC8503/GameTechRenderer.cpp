@@ -320,11 +320,10 @@ void GameTechRenderer::RenderCamera() {
 		glUniform1i(hasTexLocation, (OGLTexture*)activeObjects[i]->GetDefaultTexture() ? 1 : 0);
 
 		BindMesh((OGLMesh&)*activeObjects[i]->GetMesh());
-		//size_t layerCount = activeObjects[i]->GetMesh()->GetSubMeshCount();
-		//for (size_t i = 0; i < layerCount; ++i) {
-		//	DrawBoundMesh((uint32_t)i);
-		//}
-
+		size_t layerCount = activeObjects[i]->GetMesh()->GetSubMeshCount();
+		for (size_t i = 0; i < layerCount; ++i) {
+			DrawBoundMesh((uint32_t)i);
+		}
 	}
 }
 

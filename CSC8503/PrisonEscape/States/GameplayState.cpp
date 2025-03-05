@@ -36,19 +36,22 @@ void GamePlayState::OnAwake()
 	Level* level = new LevelT();
 	level->Init();
 	Transform playerTransform; // messy 
+	PlayerOne* playerOne = manager->AddPlayerOneToWorld(playerTransform, "player");
+	PlayerTwo* playerTwo = manager->AddPlayerTwoToWorld(playerTransform, "player");
+
 	if (gameConfig->networkConfig.isMultiplayer)
 	{
 		
 		if (gameConfig->networkConfig.isServer)
 		{
 			//messy do not keep
-			level->AddPlayerOneToLevel(manager->AddPlayerToWorld(playerTransform, "player"));
+			level->AddPlayerOneToLevel(playerOne);
 			Vector3 playerPosition = level->GetPlayerOne()->GetTransform().GetPosition();
 			GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(Vector3(playerPosition.x, playerPosition.y, playerPosition.z));
 
 			gameConfig->networkConfig.server->SetPlayerConnectedCallback(
-				[level](int playerID) {
-					level->AddPlayerTwoToLevel();
+				[playerTwo, level, playerTransform](int playerID) {
+					level->AddPlayerTwoToLevel(playerTwo);
 				}
 			);
 
@@ -57,11 +60,11 @@ void GamePlayState::OnAwake()
 		}
 		else if(gameConfig->networkConfig.client)
 		{
-			level->AddPlayerTwoToLevel();
+			level->AddPlayerTwoToLevel(playerTwo);
 			Vector3 playerPosition = level->GetPlayerTwo()->GetTransform().GetPosition();
 			GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(Vector3(playerPosition.x, playerPosition.y, playerPosition.z));
 
-			level->AddPlayerOneToLevel(manager->AddPlayerToWorld(playerTransform, "player"));
+			level->AddPlayerOneToLevel(playerOne);
 			// Position it somewhere off to the side initially
 			if (level->GetPlayerOne() && level->GetPlayerOne()->GetPlayerObject()) {
 				level->GetPlayerOne()->GetPlayerObject()->GetTransform().SetPosition(Vector3(10, -100, 10));
@@ -74,7 +77,7 @@ void GamePlayState::OnAwake()
 	else
 	{
 		// Single player mode
-		level->AddPlayerOneToLevel(manager->AddPlayerToWorld(playerTransform, "player"));
+		level->AddPlayerOneToLevel(playerOne);
 		Vector3 playerPosition = level->GetPlayerOne()->GetTransform().GetPosition();
 		GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(Vector3(playerPosition.x, playerPosition.y, playerPosition.z));
 	}

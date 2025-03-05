@@ -18,8 +18,8 @@ namespace NCL {
 			Level();
 			~Level() {}
 			virtual void Init();
-			void AddPlayerOneToLevel(PlayerOne* player);
-			void AddPlayerTwoToLevel();
+			void AddPlayerOneToLevel(PlayerOne* playerOne);
+			void AddPlayerTwoToLevel(PlayerTwo* playerTwo);
 
 			virtual void Update(float dt);
 

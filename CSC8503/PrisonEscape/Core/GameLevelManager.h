@@ -22,7 +22,8 @@ namespace NCL {
 
 			// Player Methods
 
-			PlayerOne* AddPlayerToWorld(const Transform& transform, const std::string& playerName);
+			PlayerOne* AddPlayerOneToWorld(const Transform& transform, const std::string& playerName);
+			PlayerTwo* AddPlayerTwoToWorld(const Transform& transform, const std::string& playerName);
 			void AddComponentsToPlayer(Player& playerObj, const Transform& transform);
 
 
@@ -52,6 +53,7 @@ namespace NCL {
 
 			//Player Members
 			PlayerOne* mPlayerToAdd;
+			PlayerTwo* mPlayerTwoToAdd;
 		};
 	}
 }
