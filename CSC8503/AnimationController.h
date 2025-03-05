@@ -2,7 +2,7 @@
 #include "GameWorld.h"
 #include "MeshAnimation.h"
 #include "RenderObject.h"
-
+#include "GameWorld.h"
 #include <map>
 
 
@@ -16,12 +16,30 @@ namespace NCL {
 			AnimationController(GameWorld& world, std::map<std::string, MeshAnimation*>& preLoadedAnimationList);
 			~AnimationController();
 
-			void clear();
+			void Clear();
 			void Update(float dt, vector<GameObject*> updatableObjects);
-
+			void UpdateAllAnimations(float dt, vector<GameObject*> updatableObjects);
 			void UpdateCurrentFrames(float dt);
-			void UpdateAnimations(float dt);
-		
+
+			void SetObjectList(vector<GameObject*> UpdatableObjects);
+			void SetAnimationState(GameObject* obj, GameObject::AnimationState state);
+
+
+		protected:
+			GameWorld& mGameWorld;
+			vector<AnimationObject*> mAnimationList;
+			vector<Player*> mPlayersList;
+
+			Mesh* mMesh;
+			MeshAnimation* mAnim;
+
+			GameObject::AnimationState mPlayerState;
+			std::map<std::string, MeshAnimation*>& mPreLoadedAnimationList;
+
+			std::map<GameObject::AnimationState, std::string> mPlayerAnimationMap;
+
+			void InitPlayerAnimMap();
+
 		};
 	}
 }

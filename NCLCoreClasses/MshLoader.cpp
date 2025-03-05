@@ -122,6 +122,18 @@ bool MshLoader::LoadMesh(const std::string& filename, Mesh& destinationMesh) {
 			ReadSubMeshNames(file, numMeshes, subMeshNames);
 			destinationMesh.SetSubMeshNames(subMeshNames);
 		}break;
+		case GeometryChunkTypes::BindPoseIndices: {
+			std::vector<int> bindPoseIndices;
+			ReadIntegerArray(file, bindPoseIndices);
+			destinationMesh.SetBindPoseIndices(bindPoseIndices);
+		}break;//New!	
+
+		case GeometryChunkTypes::BindPoseStates: {
+			std::vector<Mesh::SubMeshPoses>	bindPoseStates;
+			ReadBindposes(file, bindPoseStates);
+			destinationMesh.SetBindPoseStates(bindPoseStates);
+		}break;//New!
+
 		}
 	}
 
@@ -285,5 +297,27 @@ void MshLoader::ReadIntegers(std::ifstream& file, vector<unsigned int>& elements
 		unsigned int temp;
 		file >> temp;
 		elements.emplace_back(temp);
+	}
+}
+
+void MshLoader::ReadIntegerArray(std::ifstream& file, vector<int>& into) {
+	int count = 0;
+	file >> count;
+	for (int i = 0; i < count; ++i) {
+		int r = 0;
+		file >> r;
+		into.push_back(r);
+	}
+}
+
+void MshLoader::ReadBindposes(std::ifstream& file, vector<Mesh::SubMeshPoses>& bindPoses) {
+	int poseCount = 0;
+	file >> poseCount;
+
+	for (int i = 0; i < poseCount; ++i) {
+		Mesh::SubMeshPoses m;
+		file >> m.start;
+		file >> m.count;
+		bindPoses.emplace_back(m);
 	}
 }

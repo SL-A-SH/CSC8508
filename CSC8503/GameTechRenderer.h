@@ -30,7 +30,24 @@ namespace NCL {
 			int FindTextureIndex(GLuint texId);
 			std::vector<int> LoadMeshMaterial(Mesh& mesh, MeshMaterial& meshMaterial);
 
+
+			void GenerateObjectDataUBOs();
+
 		protected:
+
+			enum BufferNames {
+				objectsUBO,
+			};
+
+			struct TextureHandleData {
+				GLuint64 handles[256] = { 0 };
+			};
+
+			struct TextureHandles {
+				int albedoIndex = 0;
+				int normalIndex = 0;
+			};
+
 			void NewRenderLines();
 			void NewRenderText();
 			void NewRenderTextures();

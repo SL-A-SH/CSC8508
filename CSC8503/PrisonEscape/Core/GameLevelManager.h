@@ -7,6 +7,7 @@
 #include "MeshMaterial.h"
 #include "../CSC8503/PrisonEscape/Levels/Level.h"
 #include "../CSC8503/PrisonEscape/Scripts/Player/Player.h"
+#include "AnimationController.h"
 
 namespace NCL {
 	constexpr float PLAYER_MESH_SIZE = 3.0f;
@@ -19,6 +20,7 @@ namespace NCL {
 			virtual void UpdateGame(float dt);
 
 			void InitAssets();
+			void InitAnimationObjects() const;
 
 			// Player Methods
 
@@ -37,6 +39,7 @@ namespace NCL {
 			PhysicsSystem* mPhysics;
 			Level* mCurrentLevel;
 			std::stack<Level*> mLevelStack;
+			AnimationController* mAnimator;
 
 
 			vector<GameObject*> mUpdatableObjectList;

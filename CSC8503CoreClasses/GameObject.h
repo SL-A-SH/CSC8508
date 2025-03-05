@@ -13,6 +13,11 @@ namespace NCL::CSC8503 {
 	public:
 		GameObject(const std::string& name = "");
 		~GameObject();
+		
+		enum AnimationState {
+			Idle,
+			Default 
+		};
 
 		void SetBoundingVolume(CollisionVolume* vol) {
 			boundingVolume = vol;

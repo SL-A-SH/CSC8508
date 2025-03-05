@@ -36,17 +36,19 @@ void GamePlayState::OnAwake()
 	Level* level = new LevelT();
 	level->Init();
 	Transform player1Transform;// messy 
-	Transform player2Transform;// messy 
-	/*PlayerOne* playerOne = manager->AddPlayerOneToWorld(player1Transform, "player");*/
-	PlayerTwo* playerTwo = manager->AddPlayerTwoToWorld(player2Transform, "player");
+	 
+	PlayerOne* playerOne = manager->AddPlayerOneToWorld(player1Transform, "player");
+
 
 	if (gameConfig->networkConfig.isMultiplayer)
 	{
-		
+		Transform player2Transform;// messy
+		PlayerTwo* playerTwo = manager->AddPlayerTwoToWorld(player2Transform, "player");
+
 		if (gameConfig->networkConfig.isServer)
 		{
 			//messy do not keep
-			/*level->AddPlayerOneToLevel(playerOne);
+			level->AddPlayerOneToLevel(playerOne);
 			Vector3 playerPosition = level->GetPlayerOne()->GetTransform().GetPosition();
 			GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(Vector3(playerPosition.x, playerPosition.y, playerPosition.z));
 
@@ -57,29 +59,29 @@ void GamePlayState::OnAwake()
 			);
 
 			gameConfig->networkConfig.server->RegisterPacketHandler(Player_ID_Assignment, level);
-			gameConfig->networkConfig.server->RegisterPacketHandler(Player_Position, level);*/
+			gameConfig->networkConfig.server->RegisterPacketHandler(Player_Position, level);
 		}
 		else if(gameConfig->networkConfig.client)
 		{
-			//level->AddPlayerTwoToLevel(playerTwo);
-			//Vector3 playerPosition = level->GetPlayerTwo()->GetTransform().GetPosition();
-			//GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(Vector3(playerPosition.x, playerPosition.y, playerPosition.z));
+			level->AddPlayerTwoToLevel(playerTwo);
+			Vector3 playerPosition = level->GetPlayerTwo()->GetTransform().GetPosition();
+			GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(Vector3(playerPosition.x, playerPosition.y, playerPosition.z));
 
-			//level->AddPlayerOneToLevel(playerOne);
-			//// Position it somewhere off to the side initially
-			//if (level->GetPlayerOne() && level->GetPlayerOne()->GetPlayerObject()) {
-			//	level->GetPlayerOne()->GetPlayerObject()->GetTransform().SetPosition(Vector3(10, -100, 10));
-			//}
+			level->AddPlayerOneToLevel(playerOne);
+			//Position it somewhere off to the side initially
+			if (level->GetPlayerOne() && level->GetPlayerOne()->GetPlayerObject()) {
+				level->GetPlayerOne()->GetPlayerObject()->GetTransform().SetPosition(Vector3(10, -100, 10));
+			}
 
-			//gameConfig->networkConfig.client->RegisterPacketHandler(Player_Position, level);
-			//gameConfig->networkConfig.client->RegisterPacketHandler(Player_ID_Assignment, level);
+			gameConfig->networkConfig.client->RegisterPacketHandler(Player_Position, level);
+			gameConfig->networkConfig.client->RegisterPacketHandler(Player_ID_Assignment, level);
 		}
 	}
 	else
 	{
 		// Single player mode
-		level->AddPlayerTwoToLevel(playerTwo);
-		Vector3 playerPosition = level->GetPlayerTwo()->GetTransform().GetPosition();
+		level->AddPlayerOneToLevel(playerOne);
+		Vector3 playerPosition = level->GetPlayerOne()->GetTransform().GetPosition();
 
 		GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(Vector3(playerPosition.x, playerPosition.y, playerPosition.z));
 	}

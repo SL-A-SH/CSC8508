@@ -2,6 +2,7 @@
 #include "Texture.h"
 #include "Shader.h"
 #include "Mesh.h"
+#include "../CSC8503/AnimationObject.h"
 
 namespace NCL {
 	using namespace NCL::Rendering;
@@ -53,7 +54,19 @@ namespace NCL {
 			void SetMaterialTextures(std::vector<int> MaterialTextureList) {
 				mMatTextures = MaterialTextureList;
 			}
-			std::vector<int> GetMaterialTextures() { return mMatTextures; }
+			std::vector<int> GetMaterialTextures() const { return mMatTextures; }
+
+			AnimationObject* GetAnimObject() { return animObj; }
+			void SetAnimObject(AnimationObject* newAnimObj) { animObj = newAnimObj; }
+
+			int GetCurrentFrame() { return currentFrame; }
+			void SetCurrentFrame(int newFrame) { currentFrame = newFrame; }
+
+			std::vector<std::vector<Matrix4>> GetFrameMatricesVector() const { 
+				return mFrameMatricesVector; 
+			}
+			void SetFrameMatricesVector(std::vector<std::vector<Matrix4>> newFrameMatricesVector) { mFrameMatricesVector = newFrameMatricesVector; }
+
 
 		protected:
 			Mesh*		mesh;
@@ -64,6 +77,11 @@ namespace NCL {
 			bool visible;
 
 			std::vector<int> mMatTextures;
+
+			AnimationObject* animObj;
+
+			int currentFrame;
+			std::vector<std::vector<Matrix4>> mFrameMatricesVector;
 		};
 	}
 }

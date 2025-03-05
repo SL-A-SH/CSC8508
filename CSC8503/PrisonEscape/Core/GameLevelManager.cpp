@@ -15,6 +15,7 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	mWorld = existingWorld;
 	mRenderer = existingRenderer;
 	mPhysics = new PhysicsSystem(*mWorld);
+	mAnimator = new AnimationController(*mWorld, mPreLoadedAnimationList);
 	mPhysics->UseGravity(true);
 	// Move to another place if needed
 
@@ -26,6 +27,7 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 GameLevelManager::~GameLevelManager()
 {
 	delete mPhysics;
+	delete mAnimator;
 
 	for (int i = 0; i < mUpdatableObjectList.size(); i++) {
 		delete(mUpdatableObjectList[i]);
@@ -37,7 +39,28 @@ GameLevelManager::~GameLevelManager()
 	}
 	mMeshList.clear();
 
+	for (auto& texture : mTextureList) {
+		delete texture.second;
+	}
+	mTextureList.clear();
+
+	for (auto& shader : mShaderList) {
+		delete shader.second;
+	}
+	mShaderList.clear();
+
+	for (auto& material : mMaterialList) {
+		delete material.second;
+	}
+	mMaterialList.clear();
+
+	for (auto& anim : mAnimationList) {
+		delete anim.second;
+	}
+	mAnimationList.clear();
+
 	delete mPlayerToAdd;
+	delete mPlayerTwoToAdd;
 	delete mRenderer;
 	delete mWorld;
 }
@@ -47,8 +70,11 @@ void GameLevelManager::UpdateGame(float dt)
 	// TODO: Level Updates
 	// TODO: Remove Debug
 	mPhysics->Update(dt);
+	mAnimator->Update(dt, mUpdatableObjectList);
 
 	GetCurrentLevel()->Update(dt);
+
+	//mWorld->UpdateWorld(dt);
 
 	if ((mUpdatableObjectList.size() > 0)) {
 		for (GameObject* obj : mUpdatableObjectList) {
@@ -220,6 +246,11 @@ void GameLevelManager::InitAssets()
 	ready = true;
 }
 
+
+void GameLevelManager::InitAnimationObjects() const {
+	mAnimator->SetObjectList(mUpdatableObjectList);
+}
+
 PlayerOne* GameLevelManager::AddPlayerOneToWorld(const Transform& transform, const std::string& playerName) {
 	mPlayerToAdd = new PlayerOne(mWorld, playerName);
 	AddComponentsToPlayer(*mPlayerToAdd, transform);
@@ -248,7 +279,8 @@ void GameLevelManager::AddComponentsToPlayer(Player& playerObject, const Transfo
 		.SetPosition(playerTransform.GetPosition())
 		.SetOrientation(playerTransform.GetOrientation());
 
-	playerObject.SetRenderObject(new RenderObject(&playerObject.GetTransform(), mMeshList["Player"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+	playerObject.SetRenderObject(new RenderObject(&playerObject.GetTransform(), mMeshList["Player"], mTextureList["DefaultTexture"], mShaderList["Animation"]));
+	playerObject.GetRenderObject()->SetAnimObject(new AnimationObject(AnimationObject::AnimationType::player, mAnimationList["PlayerIdle"]));
 
 	playerObject.SetPhysicsObject(new PhysicsObject(&playerObject.GetTransform(), playerObject.GetBoundingVolume()));
 

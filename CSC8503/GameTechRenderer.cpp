@@ -263,7 +263,6 @@ void GameTechRenderer::RenderCamera() {
 
 	int cameraLocation = 0;
 
-	//TODO - PUT IN FUNCTION
 	glActiveTexture(GL_TEXTURE0 + 1);
 	glBindTexture(GL_TEXTURE_2D, shadowTex);
 
@@ -319,10 +318,32 @@ void GameTechRenderer::RenderCamera() {
 
 		glUniform1i(hasTexLocation, (OGLTexture*)activeObjects[i]->GetDefaultTexture() ? 1 : 0);
 
-		BindMesh((OGLMesh&)*activeObjects[i]->GetMesh());
-		size_t layerCount = activeObjects[i]->GetMesh()->GetSubMeshCount();
-		for (size_t i = 0; i < layerCount; ++i) {
-			DrawBoundMesh((uint32_t)i);
+		shader = (OGLShader*)activeObjects[i]->GetShader();
+		if (activeShader != shader) {
+			activeShader = shader;
+			UseShader(*shader);
+		}
+
+		OGLMesh* mesh = (OGLMesh*)activeObjects[i]->GetMesh();
+		if (boundMesh != mesh) {
+			BindMesh(*mesh);
+			boundMesh = mesh;
+		}
+		if (activeObjects[i]->GetMaterialTextures().size() > 1) {
+			const std::vector<int>& matTextures = activeObjects[i]->GetMaterialTextures();
+			size_t layerCount = activeObjects[i]->GetMesh()->GetSubMeshCount();
+			for (size_t b = 0; b < layerCount; ++b) {
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, matTextures[b]);
+
+				DrawBoundMesh((uint32_t)b);
+			}
+		}
+		else {
+			size_t layerCount = mesh->GetSubMeshCount();
+			for (size_t b = 0; b < layerCount; ++b){
+				DrawBoundMesh((uint32_t)b);
+			}
 		}
 	}
 }
