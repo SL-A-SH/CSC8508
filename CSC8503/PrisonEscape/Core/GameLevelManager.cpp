@@ -55,7 +55,7 @@ void GameLevelManager::UpdateGame(float dt)
 			obj->UpdateGame(dt);
 		}
 	}
-	Debug::Print("LEVELS", Vector2(25, 30), Debug::WHITE);
+	
 }
 
 
@@ -231,10 +231,10 @@ PlayerOne* GameLevelManager::AddPlayerOneToWorld(const Transform& transform, con
 }
 PlayerTwo* GameLevelManager::AddPlayerTwoToWorld(const Transform& transform, const std::string& playerName) {
 	mPlayerTwoToAdd = new PlayerTwo(mWorld, playerName);
-	AddComponentsToPlayer(*mPlayerToAdd, transform);
+	AddComponentsToPlayer(*mPlayerTwoToAdd, transform);
 
-	mWorld->AddGameObject(mPlayerToAdd);
-	mUpdatableObjectList.push_back(mPlayerToAdd);
+	mWorld->AddGameObject(mPlayerTwoToAdd);
+	mUpdatableObjectList.push_back(mPlayerTwoToAdd);
 
 	return mPlayerTwoToAdd;
 }

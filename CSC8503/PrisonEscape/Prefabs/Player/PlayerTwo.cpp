@@ -17,7 +17,7 @@ PlayerTwo::~PlayerTwo()
 }
 
 void PlayerTwo::UpdatePlayerMovement(float dt) {
-    if (!playerObject) {
+    if (!renderObject) {
         return;
     }
 
@@ -26,7 +26,7 @@ void PlayerTwo::UpdatePlayerMovement(float dt) {
 
     // If we're the client, PlayerTwo should be controlled locally
     if (isClient) {
-        Vector3 playerPosition = playerObject->GetTransform().GetPosition();
+        Vector3 playerPosition = GetTransform().GetPosition();
         Camera& mainCamera = GameBase::GetGameBase()->GetWorld()->GetMainCamera();
 
         Vector3 cameraOffset(0, 60.0f, 50.0f);
@@ -35,7 +35,7 @@ void PlayerTwo::UpdatePlayerMovement(float dt) {
         float forward = controller.GetAxis(2);
         float sidestep = -controller.GetAxis(0);
 
-        Vector3 currentVelocity = playerObject->GetPhysicsObject()->GetLinearVelocity();
+        Vector3 currentVelocity = GetPhysicsObject()->GetLinearVelocity();
 
         Vector3 forwardVec(0, 0, 1);
         Vector3 rightVec(1, 0, 0);
@@ -55,6 +55,9 @@ void PlayerTwo::UpdatePlayerMovement(float dt) {
             movement += rightVec * sidestep * GetPlayerSpeed();
         }
 
+        if (Window::GetKeyboard()->KeyPressed(KeyCodes::K)) {
+            this->transform.SetPosition(Vector3(0, 100, 0));
+        }
         if (useGravity) {
             if (fabs(currentVelocity.y) < 1.0f) {
                 static float lastJumpTime = -2.2f;
@@ -68,10 +71,12 @@ void PlayerTwo::UpdatePlayerMovement(float dt) {
             }
 
             currentVelocity.y -= 25.0f * dt;
-            playerObject->GetPhysicsObject()->SetLinearVelocity(Vector3(movement.x, currentVelocity.y, movement.z));
+            GetPhysicsObject()->SetLinearVelocity(Vector3(movement.x, currentVelocity.y, movement.z));
         }
         else {
-            playerObject->GetPhysicsObject()->SetLinearVelocity(movement);
+            GetPhysicsObject()->SetLinearVelocity(movement);
         }
+
+    
     }
 }

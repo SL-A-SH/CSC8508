@@ -36,6 +36,7 @@ void Level::Update(float dt)
 
 	if (playerTwo)
 	{
+		
 		playerTwo->UpdateGame(dt);
 	}
 }
@@ -93,7 +94,7 @@ void Level::AddPlayerOneToLevel(PlayerOne* playerOne)
 void Level::AddPlayerTwoToLevel(PlayerTwo* playerTwo)
 {
 	this->playerTwo = playerTwo;
-	this->playerTwo->GetRenderObject()->GetTransform()->SetPosition(Vector3(10, 50, 0));
+	this->playerTwo->GetRenderObject()->GetTransform()->SetPosition(Vector3(0, 50, 0));
 }
 
 void Level::SetCameraAttributes()
