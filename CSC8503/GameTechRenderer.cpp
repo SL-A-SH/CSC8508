@@ -179,6 +179,7 @@ void GameTechRenderer::BuildObjectList() {
 void GameTechRenderer::SortObjectList() {
 }
 
+
 void GameTechRenderer::RenderShadowMap() {
 	glBindFramebuffer(GL_FRAMEBUFFER, shadowFBO);
 	glClear(GL_DEPTH_BUFFER_BIT);
@@ -245,6 +246,13 @@ void GameTechRenderer::RenderSkybox() {
 }
 
 void GameTechRenderer::RenderCamera() {
+	glDisable(GL_BLEND);
+
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
+
 	Matrix4 viewMatrix = gameWorld.GetMainCamera().BuildViewMatrix();
 	Matrix4 projMatrix = gameWorld.GetMainCamera().BuildProjectionMatrix(hostWindow.GetScreenAspect());
 
@@ -270,9 +278,7 @@ void GameTechRenderer::RenderCamera() {
 		OGLShader* shader = (OGLShader*)activeObjects[i]->GetShader();
 		UseShader(*shader);
 
-		if (activeObjects[i]->GetDefaultTexture()) {
-			BindTextureToShader(*(OGLTexture*)activeObjects[i]->GetDefaultTexture(), "mainTex", 0);
-		}
+		
 
 		if (activeShader != shader) {
 			projLocation = glGetUniformLocation(shader->GetProgramID(), "projMatrix");
@@ -314,32 +320,52 @@ void GameTechRenderer::RenderCamera() {
 		Vector4 colour = activeObjects[i]->GetColour();
 		glUniform4fv(colourLocation, 1, &colour.x);
 
-		glUniform1i(hasVColLocation, !activeObjects[i]->GetMesh()->GetColourData().empty());
-
+		glUniform1i(hasVColLocation, !activeObjects[i]->GetMesh()->GetColourData().empty()); 
 		glUniform1i(hasTexLocation, (OGLTexture*)activeObjects[i]->GetDefaultTexture() ? 1 : 0);
-
-		shader = (OGLShader*)activeObjects[i]->GetShader();
-		if (activeShader != shader) {
-			activeShader = shader;
-			UseShader(*shader);
-		}
 
 		OGLMesh* mesh = (OGLMesh*)activeObjects[i]->GetMesh();
 		if (boundMesh != mesh) {
 			BindMesh(*mesh);
 			boundMesh = mesh;
 		}
-		if (activeObjects[i]->GetMaterialTextures().size() > 1) {
+		size_t layerCount = activeObjects[i]->GetMesh()->GetSubMeshCount();
+		std::vector<vector<Matrix4>> frameMatrices = activeObjects[i]->GetFrameMatricesVector();
+
+		if (activeObjects[i]->GetAnimObject()) {
+			std::cout << "USING ANIMATION SHADER" << std::endl;
+
+			int j = glGetUniformLocation(shader->GetProgramID(), "joints");
+
+			std::vector<Matrix4> flatMatrices;
+			for (const auto& jointSet : activeObjects[i]->GetFrameMatricesVector()) {
+				flatMatrices.insert(flatMatrices.end(), jointSet.begin(), jointSet.end());
+			}
+
+			glUniformMatrix4fv(j, flatMatrices.size(), false, (float*)flatMatrices.data());
+
 			const std::vector<int>& matTextures = activeObjects[i]->GetMaterialTextures();
-			size_t layerCount = activeObjects[i]->GetMesh()->GetSubMeshCount();
+
+			for (int b = 0; b < layerCount; ++b) {
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, matTextures[b]);
+				DrawBoundMesh((uint32_t)b);
+			}
+		}
+		else if (activeObjects[i]->GetMaterialTextures().size() > 1) {
+			std::cout << "USING MATERIAL SHADER" << std::endl;
+			
+			const std::vector<int>& matTextures = activeObjects[i]->GetMaterialTextures();
+
 			for (size_t b = 0; b < layerCount; ++b) {
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, matTextures[b]);
-
 				DrawBoundMesh((uint32_t)b);
 			}
 		}
 		else {
+			if (activeObjects[i]->GetDefaultTexture()) {
+				BindTextureToShader(*(OGLTexture*)activeObjects[i]->GetDefaultTexture(), "mainTex", 0);
+			}
 			size_t layerCount = mesh->GetSubMeshCount();
 			for (size_t b = 0; b < layerCount; ++b){
 				DrawBoundMesh((uint32_t)b);

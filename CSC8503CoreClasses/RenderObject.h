@@ -56,7 +56,7 @@ namespace NCL {
 			}
 			std::vector<int> GetMaterialTextures() const { return mMatTextures; }
 
-			AnimationObject* GetAnimObject() { return animObj; }
+			AnimationObject* GetAnimObject() const { return animObj; }
 			void SetAnimObject(AnimationObject* newAnimObj) { animObj = newAnimObj; }
 
 			int GetCurrentFrame() { return currentFrame; }

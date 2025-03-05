@@ -18,15 +18,18 @@ uniform mat4 	joints[110];
 uniform float frameLerp;
 
 out Vertex {
-	vec2 texCoord;
-	//vec3 normal;
+    vec4 colour;     
+    vec2 texCoord;    
+    vec4 shadowProj;  
+    vec3 normal;      
+    vec3 worldPos;
 } OUT;
 
 void main(void) {
 	vec4 localNormal = vec4(normal, 1.0f);
 	vec4 localPos 	= vec4(position, 1.0f);
 	vec4 skelPos 	= vec4(0,0,0,0);
-	vec4 otherSkelPos 	= vec4(0,0,0,0);
+	vec4 skelNormal 	= vec4(0,0,0,0);
 
 	//vec4 skelNormal = vec4(0,0,0,0);
 	for(int i = 0; i < 4; ++i) {
@@ -34,16 +37,25 @@ void main(void) {
 		float jointWeight 	= jointWeights[i];
 
 		skelPos += joints[jointIndex] * localPos * jointWeight;
-
-		//skelNormal += joints[jointIndex] * localNormal * jointWeight;
+		skelNormal += joints[jointIndex] * localNormal * jointWeight;
 	}
 	//skelPos.xyz = position.xyz;
 
 
 	//OUT.normal = mat3(modelMatrix) * normalize(skelNormal.xyz);
 
-	mat4 mvp = projMatrix * viewMatrix * modelMatrix;
-	gl_Position = mvp * vec4(skelPos.xyz, 1.0);
+	OUT.normal = normalize(mat3(modelMatrix) * skelNormal.xyz);
+
+	vec4 worldPos = modelMatrix * vec4 (skelPos.xyz, 1.0);
+
+	OUT.shadowProj = textureMatrix * worldPos;
+
 	OUT.texCoord = texCoord;
+
+	OUT.colour = vec4(1.0);
+
+	mat4 mvp = projMatrix * viewMatrix * modelMatrix;
+	gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+
 
 }
