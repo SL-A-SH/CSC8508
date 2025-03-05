@@ -4,6 +4,7 @@
 #include "PushdownMachine.h"
 #include "GameWorld.h"
 
+#include "PrisonEscape/Core/GameConfigManager.h"
 
 namespace NCL {
 	namespace CSC8503 {
@@ -23,11 +24,17 @@ namespace NCL {
 
 			PushdownMachine* stateMachine;
 
+		private:
+			GameConfigManager* gameConfig;
+
 		public:
 			static GameTechRenderer* GetRenderer() { return renderer; }
 			static GameWorld* GetWorld() { return world; }
 			static GameBase* GetGameBase();
 			static PushdownMachine* GetStateMachine() { return instance->stateMachine; }
+
+			void SetGameConfig(GameConfigManager* config) { gameConfig = config; }
+			GameConfigManager* GetGameConfig() const { return gameConfig; }
 		};
 	}
 }

@@ -54,6 +54,10 @@ namespace NCL::CSC8503 {
 			return name;
 		}
 
+		void SetName(const std::string& newName) {
+			name = newName;
+		}
+
 		virtual void OnCollisionBegin(GameObject* otherObject) {
 			//std::cout << "OnCollisionBegin event occured!\n";
 		}
@@ -73,7 +77,8 @@ namespace NCL::CSC8503 {
 		int		GetWorldID() const {
 			return worldID;
 		}
-
+		
+		virtual void UpdateGame(float dt); 
 	protected:
 		Transform			transform;
 

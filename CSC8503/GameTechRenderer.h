@@ -3,9 +3,11 @@
 #include "OGLShader.h"
 #include "OGLTexture.h"
 #include "OGLMesh.h"
-
+#include "MeshAnimation.h"
+#include "MeshMaterial.h"
 #include "GameWorld.h"
 #include <iostream>
+#include <map>
 namespace NCL {
 	namespace CSC8503 {
 		class RenderObject;
@@ -16,10 +18,17 @@ namespace NCL {
 			~GameTechRenderer();
 
 			Mesh* LoadMesh(const std::string& name);
+			void LoadMeshes(std::unordered_map<std::string, Mesh*>& meshMap, const std::vector<std::string>& details);
 			Texture* LoadTexture(const std::string& name);
 			Shader* LoadShader(const std::string& vertex, const std::string& fragment);
+			MeshMaterial* LoadMaterial(const std::string& name);
+			MeshAnimation* LoadAnimation(const std::string& name);
 			void RenderUI(std::function<void()> callback);
 			void SetImguiCanvasFunc(std::function<void()> func);
+
+			GLuint LoadTextureGetID(const std::string& name);
+			std::vector<int> LoadMeshMaterial(Mesh& mesh, MeshMaterial& meshMaterial);
+
 		protected:
 			void NewRenderLines();
 			void NewRenderText();
@@ -41,7 +50,6 @@ namespace NCL {
 
 			void SetDebugStringBufferSizes(size_t newVertCount);
 			void SetDebugLineBufferSizes(size_t newVertCount);
-
 
 			std::function<void()> mImguiCanvasFuncToRender = nullptr;
 			void SetupImgui();
@@ -81,6 +89,8 @@ namespace NCL {
 			GLuint textColourVBO;
 			GLuint textTexVBO;
 			size_t textCount;
+
+			std::unordered_map<std::string, GLuint> mLoadedTextureList;
 		};
 	}
 }
