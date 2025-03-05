@@ -30,7 +30,7 @@ void PlayerOne::UpdatePlayerMovement(float dt) {
         Vector3 playerPosition = playerObject->GetTransform().GetPosition();
         Camera& mainCamera = GameBase::GetGameBase()->GetWorld()->GetMainCamera();
 
-        Vector3 cameraOffset(0, 60.0f, 50.0f);
+        Vector3 cameraOffset(0, 20.0f, 10.0f);
         mainCamera.SetPosition(playerPosition + cameraOffset);
 
         float forward = controller.GetAxis(2);

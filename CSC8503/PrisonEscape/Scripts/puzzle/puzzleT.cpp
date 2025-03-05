@@ -41,7 +41,7 @@ void Door::Open() {
 	isOpen = true;
 	GetRenderObject()->SetDefaultTexture(openTexture);
 
-	Vector3 newPosition = GetTransform().GetPosition() + Vector3(0, 10, 0); // Move up by 10 units
+	Vector3 newPosition = GetTransform().GetPosition() + Vector3(40, 0, 0); // Move up by 10 units
 	GetTransform().SetPosition(newPosition);
 	
 }

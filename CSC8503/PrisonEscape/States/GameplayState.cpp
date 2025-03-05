@@ -1,6 +1,7 @@
 #include "GameplayState.h"
 #include "PrisonEscape/Levels/SampleLevel.h"
 #include "PrisonEscape/Levels/LevelT.h"
+#include "PrisonEscape/Levels/StartLevel.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -33,7 +34,7 @@ GamePlayState::GamePlayState(bool multiplayer, bool asServer)
 
 void GamePlayState::OnAwake()
 {
-	Level* level = new LevelT();
+	Level* level = new StartLevel();
 	level->Init();
 
 	if (gameConfig->networkConfig.isMultiplayer)
