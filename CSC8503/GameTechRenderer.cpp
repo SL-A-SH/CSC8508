@@ -267,12 +267,12 @@ void GameTechRenderer::RenderCamera() {
 	glActiveTexture(GL_TEXTURE0 + 1);
 	glBindTexture(GL_TEXTURE_2D, shadowTex);
 
-	for (const auto& i : activeObjects) {
-		OGLShader* shader = (OGLShader*)(*i).GetShader();
+	for (int i = 0; i < activeObjects.size(); i++) {
+		OGLShader* shader = (OGLShader*)activeObjects[i]->GetShader();
 		UseShader(*shader);
 
-		if ((*i).GetDefaultTexture()) {
-			BindTextureToShader(*(OGLTexture*)(*i).GetDefaultTexture(), "mainTex", 0);
+		if (activeObjects[i]->GetDefaultTexture()) {
+			BindTextureToShader(*(OGLTexture*)activeObjects[i]->GetDefaultTexture(), "mainTex", 0);
 		}
 
 		if (activeShader != shader) {
@@ -306,24 +306,25 @@ void GameTechRenderer::RenderCamera() {
 			activeShader = shader;
 		}
 
-		Matrix4 modelMatrix = (*i).GetTransform()->GetMatrix();
+		Matrix4 modelMatrix = activeObjects[i]->GetTransform()->GetMatrix();
 		glUniformMatrix4fv(modelLocation, 1, false, (float*)&modelMatrix);
 
 		Matrix4 fullShadowMat = shadowMatrix * modelMatrix;
 		glUniformMatrix4fv(shadowLocation, 1, false, (float*)&fullShadowMat);
 
-		Vector4 colour = i->GetColour();
+		Vector4 colour = activeObjects[i]->GetColour();
 		glUniform4fv(colourLocation, 1, &colour.x);
 
-		glUniform1i(hasVColLocation, !(*i).GetMesh()->GetColourData().empty());
+		glUniform1i(hasVColLocation, !activeObjects[i]->GetMesh()->GetColourData().empty());
 
-		glUniform1i(hasTexLocation, (OGLTexture*)(*i).GetDefaultTexture() ? 1 : 0);
+		glUniform1i(hasTexLocation, (OGLTexture*)activeObjects[i]->GetDefaultTexture() ? 1 : 0);
 
-		BindMesh((OGLMesh&)*(*i).GetMesh());
-		size_t layerCount = (*i).GetMesh()->GetSubMeshCount();
-		for (size_t i = 0; i < layerCount; ++i) {
-			DrawBoundMesh((uint32_t)i);
-		}
+		BindMesh((OGLMesh&)*activeObjects[i]->GetMesh());
+		//size_t layerCount = activeObjects[i]->GetMesh()->GetSubMeshCount();
+		//for (size_t i = 0; i < layerCount; ++i) {
+		//	DrawBoundMesh((uint32_t)i);
+		//}
+
 	}
 }
 
