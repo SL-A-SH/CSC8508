@@ -70,7 +70,7 @@ void GamePlayState::OnAwake()
 			level->AddPlayerOneToLevel(playerOne);
 			//Position it somewhere off to the side initially
 			if (level->GetPlayerOne() && level->GetPlayerOne()->GetPlayerObject()) {
-				level->GetPlayerOne()->GetPlayerObject()->GetTransform().SetPosition(Vector3(10, -100, 10));
+				level->GetPlayerOne()->GetTransform().SetPosition(Vector3(10, -100, 10));
 			}
 
 			gameConfig->networkConfig.client->RegisterPacketHandler(Player_Position, level);
@@ -103,9 +103,9 @@ PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** 
 		{
 			// Server: Send PlayerOne position to clients
 			Level* level = manager->GetCurrentLevel();
-			if (level && level->GetPlayerOne() && level->GetPlayerOne()->GetPlayerObject())
+			if (level && level->GetPlayerOne())
 			{
-				Vector3 pos = level->GetPlayerOne()->GetPlayerObject()->GetTransform().GetPosition();
+				Vector3 pos = level->GetPlayerOne()->GetTransform().GetPosition();
 				PlayerPositionPacket posPacket(1, pos.x, pos.y, pos.z);
 				gameConfig->networkConfig.server->SendGlobalPacket(posPacket);
 			}
@@ -116,9 +116,9 @@ PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** 
 		{
 			// Client: Send PlayerTwo position to server
 			Level* level = manager->GetCurrentLevel();
-			if (level && level->GetPlayerTwo() && level->GetPlayerTwo()->GetPlayerObject())
+			if (level && level->GetPlayerTwo())
 			{
-				Vector3 pos = level->GetPlayerTwo()->GetPlayerObject()->GetTransform().GetPosition();
+				Vector3 pos = level->GetPlayerTwo()->GetTransform().GetPosition();
 
 				PlayerPositionPacket posPacket(gameConfig->networkConfig.playerID, pos.x, pos.y, pos.z);
 				gameConfig->networkConfig.client->SendPacket(posPacket);

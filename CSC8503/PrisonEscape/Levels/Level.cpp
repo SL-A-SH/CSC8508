@@ -50,12 +50,12 @@ void Level::ReceivePacket(int type, GamePacket* payload, int source) {
 		// Update the appropriate player based on ID
 		if (posPacket->playerID == 1) {
 			if (playerOne && config && !config->networkConfig.isServer) {
-				playerOne->GetPlayerObject()->GetTransform().SetPosition(Vector3(posPacket->posX, posPacket->posY, posPacket->posZ));
+				playerOne->GetTransform().SetPosition(Vector3(posPacket->posX, posPacket->posY, posPacket->posZ));
 			}
 		}
 		else {
 			if (playerTwo && config && config->networkConfig.isServer) {
-				playerTwo->GetPlayerObject()->GetTransform().SetPosition(Vector3(posPacket->posX, posPacket->posY, posPacket->posZ));
+				playerTwo->GetTransform().SetPosition(Vector3(posPacket->posX, posPacket->posY, posPacket->posZ));
 			}
 		}
 	}
