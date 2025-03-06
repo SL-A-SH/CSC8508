@@ -5,8 +5,5 @@ anim,PlayerIdle,Max/Idle.anm,
 mesh,Guard,MaleGuard/Male_Guard.msh,
 shader,BasicShader,scene.vert,scene.frag
 texture,DefaultTexture,Default.png,
-anim,PlayerWalk,Max/Walk.anm,
 material,Guard,MaleGuard/Male_Guard.mat,
-shader,Matrix,matrix.vert,scene.frag
-shader,DebugShader,Debug.vert,Debug.frag
 end,,,

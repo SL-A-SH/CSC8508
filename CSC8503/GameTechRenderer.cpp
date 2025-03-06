@@ -248,7 +248,7 @@ void GameTechRenderer::RenderSkybox() {
 void GameTechRenderer::RenderCamera() {
 	glDisable(GL_BLEND);
 
-	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
@@ -329,25 +329,23 @@ void GameTechRenderer::RenderCamera() {
 			boundMesh = mesh;
 		}
 		size_t layerCount = activeObjects[i]->GetMesh()->GetSubMeshCount();
-		std::vector<vector<Matrix4>> frameMatrices = activeObjects[i]->GetFrameMatricesVector();
+		
 
 		if (activeObjects[i]->GetAnimObject()) {
 			std::cout << "USING ANIMATION SHADER" << std::endl;
-
+			std::cout << "LayerCount is :" << layerCount << std::endl;
 			int j = glGetUniformLocation(shader->GetProgramID(), "joints");
-
-			std::vector<Matrix4> flatMatrices;
-			for (const auto& jointSet : activeObjects[i]->GetFrameMatricesVector()) {
-				flatMatrices.insert(flatMatrices.end(), jointSet.begin(), jointSet.end());
-			}
-
-			glUniformMatrix4fv(j, flatMatrices.size(), false, (float*)flatMatrices.data());
+			std::cout << "Shader ID is: " << shader->GetProgramID() << std::endl;
 
 			const std::vector<int>& matTextures = activeObjects[i]->GetMaterialTextures();
 
 			for (int b = 0; b < layerCount; ++b) {
+				std::cout << b << std::endl;
+				std::cout << "Frame Matrice size" << activeObjects[i]->GetFrameMatricesVector().size();
+				std::vector<vector<Matrix4>> frameMatrices = activeObjects[i]->GetFrameMatricesVector();
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, matTextures[b]);
+				glUniformMatrix4fv(j, frameMatrices.size(), false, (float*)frameMatrices.data());
 				DrawBoundMesh((uint32_t)b);
 			}
 		}

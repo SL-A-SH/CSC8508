@@ -37,14 +37,14 @@ void main(void) {
 		float jointWeight 	= jointWeights[i];
 
 		skelPos += joints[jointIndex] * localPos * jointWeight;
-		skelNormal += joints[jointIndex] * localNormal * jointWeight;
+		//skelNormal += joints[jointIndex] * localNormal * jointWeight;
 	}
 	//skelPos.xyz = position.xyz;
 
 
-	//OUT.normal = mat3(modelMatrix) * normalize(skelNormal.xyz);
+	OUT.normal = mat3(modelMatrix) * normalize(skelNormal.xyz);
 
-	OUT.normal = normalize(mat3(modelMatrix) * skelNormal.xyz);
+	//OUT.normal = normalize(mat3(modelMatrix) * skelNormal.xyz);
 
 	vec4 worldPos = modelMatrix * vec4 (skelPos.xyz, 1.0);
 
@@ -55,7 +55,7 @@ void main(void) {
 	OUT.colour = vec4(1.0);
 
 	mat4 mvp = projMatrix * viewMatrix * modelMatrix;
-	gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+	gl_Position = mvp * vec4(skelPos.xyz, 1.0);
 
 
 }

@@ -30,6 +30,7 @@ void AnimationController::Update(float dt, vector<GameObject*> animationObjects)
 void AnimationController::UpdateAllAnimations(float dt, vector<GameObject*> animatedObjects) {
 	for (GameObject* obj : animatedObjects) {
 		if (obj->GetRenderObject()->GetAnimObject()) {
+			std::cout << "Updating Animations" << std::endl;
 			AnimationObject* animObj = obj->GetRenderObject()->GetAnimObject();
 			if (animObj != nullptr) {
 				int currentFrame = animObj->GetCurrentFrame();
@@ -49,8 +50,10 @@ void AnimationController::UpdateAllAnimations(float dt, vector<GameObject*> anim
 					for (unsigned int i = 0; i < pose.count; ++i) {
 						int jointID = bindPoseIndices[pose.start + i];
 						Matrix4 mat = frameData[jointID] * invBindPose[pose.start + i];
+						std::cout << "Added to Frame Matrices" << std::endl;
 						frameMatrices.emplace_back(mat);
 					}
+					std::cout << "Added to frame Matrices Vector" << std::endl;
 					frameMatricesVec.emplace_back(frameMatrices);
 				}
 				obj->GetRenderObject()->SetCurrentFrame(currentFrame);
