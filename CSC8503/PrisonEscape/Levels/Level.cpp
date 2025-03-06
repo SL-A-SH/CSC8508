@@ -23,7 +23,8 @@ void Level::Init()
 	InitializeAssets();
 	InitializeLevel();
 	SetCameraAttributes();
-	GameBase::GetGameBase()->GetRenderer()->AddDrawableFunction(std::bind(&Level::DrawPauseButton, this));
+	GameBase::GetGameBase()->GetRenderer()->AddDrawableFunction("PauseButton", [this]() {DrawPauseButton();});
+	GameBase::GetGameBase()->GetRenderer()->RemoveDrawableFunction("MainMenuPanel");
 }
 
 void Level::Update(float dt)
@@ -212,7 +213,7 @@ void Level::DrawPauseButton()
 
 	if (ImGui::ImageButton("Test", texID, ImVec2(100, 100)))
 	{
-		GameBase::GetGameBase()->GetRenderer()->AddDrawableFunction(std::bind(&Level::DrawPauseMenu, this));
+		GameBase::GetGameBase()->GetRenderer()->AddDrawableFunction("PauseMenu", [this]() {DrawPauseButton();});
 	}
 }
 

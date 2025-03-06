@@ -20,8 +20,9 @@ namespace NCL {
 			Texture* LoadTexture(const std::string& name);
 			Shader* LoadShader(const std::string& vertex, const std::string& fragment);
 			void LoadUI();
-			void AddDrawableFunction(std::function<void()> func);
-			bool RemoveDrawableFunction(std::function<void()> func);
+			void AddPanelToCanvas(const std::string& key, std::function<void()> func);
+			void DeletePanelFromCanvas(const std::string& key);
+			void UpdatePanelList();
 		protected:
 			void NewRenderLines();
 			void NewRenderText();
@@ -45,8 +46,10 @@ namespace NCL {
 			void SetDebugLineBufferSizes(size_t newVertCount);
 
 			void SetupImgui();
-			std::vector < std::function<void()>> mImguiCanvasFuncToRenderList = {};
-			std::function<void()> mImguiCanvasFuncToRender = nullptr;
+			std::unordered_map<std::string, std::function<void()>> mImguiCanvasFuncToRenderList;
+			std::list<std::string> removePanelList;
+
+
 
 
 			vector<const RenderObject*> activeObjects;

@@ -519,34 +519,38 @@ void GameTechRenderer::SetDebugStringBufferSizes(size_t newVertCount) {
 }
 
 
-//TODO //  Find a way to add a function to the list of functions to be rendered
-void GameTechRenderer::AddDrawableFunction(std::function<void()> func) {
-
-	//check if the function is already in the list
-	for (auto& f : mImguiCanvasFuncToRenderList)
-	{
-		if (std::type_index(typeid(f)) == std::type_index(typeid(func)))
-		{
-			return;
-		}
+void GameTechRenderer::AddDrawableFunction(const std::string& key, std::function<void()> func) {
+	// Avoid adding duplicates by key
+	if (mImguiCanvasFuncToRenderList.find(key) == mImguiCanvasFuncToRenderList.end()) {
+		mImguiCanvasFuncToRenderList[key] = std::move(func);
 	}
-	mImguiCanvasFuncToRenderList.push_back(func);
-
 }
 
 
-//TODO //  Find a way to remove a function from the list of functions to be rendered
-bool GameTechRenderer::RemoveDrawableFunction(std::function<void()> func) {
-	for (auto it = mImguiCanvasFuncToRenderList.begin(); it != mImguiCanvasFuncToRenderList.end(); ++it)
-	{
-		if (std::type_index(typeid(it)) == std::type_index(typeid(func)))
-		{
+void GameTechRenderer::RemoveDrawableFunction(const std::string& key) {
+
+	auto it = mImguiCanvasFuncToRenderList.find(key);
+	removePanelList.push_back(key);
+	/*auto it = mImguiCanvasFuncToRenderList.find(key);
+	if (it != mImguiCanvasFuncToRenderList.end()) {
+		mImguiCanvasFuncToRenderList.erase(it);
+
+	}*/
+}
+
+void GameTechRenderer::UpdateDrawableFunction() {
+
+	for (const auto& key : removePanelList) {
+		auto it = mImguiCanvasFuncToRenderList.find(key);
+		if (it != mImguiCanvasFuncToRenderList.end()) {
 			mImguiCanvasFuncToRenderList.erase(it);
-			return true;
 		}
 	}
-	return false;
+	removePanelList.clear();
 }
+
+
+
 
 
 void GameTechRenderer::SetDebugLineBufferSizes(size_t newVertCount) {
@@ -583,11 +587,10 @@ void GameTechRenderer::LoadUI() {
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-
 	// Next window to be created will cover the entire screen
 	NCL::Maths::Vector2i windowSize = NCL::Window::GetWindow()->GetScreenSize();
-	int windowWidth = windowSize.x;
-	int windowHeight = windowSize.y;
+	float windowWidth = static_cast<float>(windowSize.x);
+	float windowHeight = static_cast<float>(windowSize.y);
 
 	ImVec2 size(windowWidth, windowHeight);
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
@@ -600,17 +603,13 @@ void GameTechRenderer::LoadUI() {
 		ImGuiWindowFlags_NoResize
 	);
 
-	if (mImguiCanvasFuncToRenderList.size() > 0)
-	{
-		for (auto& func : mImguiCanvasFuncToRenderList)
-		{
-			func();
-		}
+	for (const auto& [key, func] : mImguiCanvasFuncToRenderList) {
+		func();
 	}
+	UpdateDrawableFunction();
 	//CLEAR
 
 	ImGui::End();
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
 }
