@@ -54,15 +54,17 @@ void PlayerOne::UpdatePlayerMovement(float dt) {
         {
             sidestep = -sidestep;
         }
+        float sprintMultiplier = 1.0f;
+        if (Window::GetKeyboard()->KeyDown(KeyCodes::SHIFT)) {
+            sprintMultiplier = 5.0f; // Adjust the multiplier as needed
+        }
 
         Vector3 movement(0, 0, 0);
-        if (forward != 0.0f) 
-        {
-            movement += forwardVec * forward * GetPlayerSpeed();
+        if (forward != 0.0f) {
+            movement += forwardVec * forward * GetPlayerSpeed() * sprintMultiplier;
         }
-        if (sidestep != 0.0f) 
-        {
-            movement += rightVec * sidestep * GetPlayerSpeed();
+        if (sidestep != 0.0f) {
+            movement += rightVec * sidestep * GetPlayerSpeed() * sprintMultiplier;
         }
 
         if (useGravity) 
@@ -79,6 +81,7 @@ void PlayerOne::UpdatePlayerMovement(float dt) {
                 }
             }
 
+			
             currentVelocity.y -= 25.0f * dt;
             GetPhysicsObject()->SetLinearVelocity(Vector3(movement.x, currentVelocity.y, movement.z));
         }

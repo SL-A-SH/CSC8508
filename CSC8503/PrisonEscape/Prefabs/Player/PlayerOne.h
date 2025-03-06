@@ -16,7 +16,7 @@ namespace NCL {
 			void UpdatePlayerMovement(float dt) override;
 
 			std::string GetName() { return mName; }
-
+			void SetPlayerSpeed(float speed) { playerSpeed = speed; }
 			GameWorld* mWorld;
 			std::string mName;
 
