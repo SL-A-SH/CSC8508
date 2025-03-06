@@ -12,6 +12,7 @@
 #include "PrisonEscape/Prefabs/Player/PlayerOne.h" 
 
 #include "PrisonEscape/Core/GameBase.h"
+#include <PrisonEscape/Scripts/puzzle/HidingArea.h>
 LevelT::LevelT()
 {
 	doorCloseTex = GameBase::GetGameBase()->GetRenderer()->LoadTexture("Default.png");
@@ -31,6 +32,8 @@ void LevelT::Init()
 	CreateRandomColorCube(Vector3(4, 5, 0));
 	CreateCollidingCube(Vector3(10, 3, 0));
 	CreateCollidingCube(Vector3(15, 3, 0));
+
+	AddHidingAreaToWorld(Vector3(20, 3, 0), Vector3(1,1,1));
 
 	Door* door = new Door();
 	door->SetTextures(doorCloseTex, doorOpenTex);
@@ -123,33 +126,7 @@ GameObject* LevelT::AddDoorToWorld(Door* door, const Vector3& position) {
 }
 
 void LevelT::UpdateCubeVisibility() {
-	PlayerOne* player = GetPlayerOne();
-	if (!player) return;
-
-	Vector3 playerPos = player->GetTransform().GetPosition();
-	float visibilityThreshold = 5.0f; // Adjust visibility range
-
-	for (GameObject* cube : Cubes) {
-		if (!cube) continue; // Ensure cube is valid
-
-		Vector3 cubePos = cube->GetTransform().GetPosition();
-		float distance = (cubePos - playerPos).Length();
-
-		RenderObject* renderObject = cube->GetRenderObject();
-		if (!renderObject) continue; // Ensure cube has a RenderObject
-
-		Vector4 color = renderObject->GetColour();
-
-		// If the cube is within the visibility threshold, make it visible, otherwise hide it
-		if (distance <= visibilityThreshold) {
-			color.w = 1.0f; // Fully visible
-		}
-		else {
-			color.w = 0.0f; // Invisible (completely transparent)
-		}
-
-		renderObject->SetColour(color);
-	}
+	
 }
 
 
@@ -169,4 +146,20 @@ GameObject* LevelT::AddButtonToWorld(ButtonTrigger* button, const Vector3& posit
 	button->SetLinkedDoor(linkedDoor);
 	GameBase::GetGameBase()->GetWorld()->AddGameObject(button);
 	return button;
+}
+
+void LevelT::AddHidingAreaToWorld(const Vector3& position, const Vector3& size) {
+	Vector3 AreaSize(size);
+	HidingArea* hidingArea = new HidingArea(position, size);
+	hidingArea->GetTransform().SetScale(AreaSize * 2.0f).SetPosition(position);
+	hidingArea->SetRenderObject(new RenderObject(&hidingArea->GetTransform(), cubeMesh, basicTex, basicShader));
+	hidingArea->SetPhysicsObject(new PhysicsObject(&hidingArea->GetTransform(), hidingArea->GetBoundingVolume()));
+
+	hidingArea->GetPhysicsObject()->SetInverseMass(0);
+	hidingArea->GetPhysicsObject()->InitCubeInertia();
+
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(hidingArea);
+
+
+
 }

@@ -22,6 +22,16 @@ namespace NCL {
 
 		private:
 			float playerSpeed = 10.0f;
+			enum PlayerState {
+				Idle,
+				Walking,
+				Running,
+				Jumping,
+				Hiding,
+				Interacting,
+				Dead
+			};
+			
 
 		public:
 			float GetPlayerSpeed() const { return playerSpeed; }

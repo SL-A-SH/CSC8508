@@ -5,6 +5,7 @@
 #include "PhysicsObject.h"
 #include <string>
 #include <fstream>
+#include <PrisonEscape/Scripts/puzzle/HidingArea.h>
 
 
 using namespace NCL;
@@ -209,4 +210,11 @@ void GameLevelManager::AddComponentsToPlayer(Player& playerObject, const Transfo
 
 	playerObject.GetPhysicsObject()->SetInverseMass(PLAYER_INVERSE_MASS);
 	playerObject.GetPhysicsObject()->InitSphereInertia();
+}
+
+void GameLevelManager::AddHidingAreaToWorld(const Vector3& position, const Vector3& size) {
+	HidingArea* hidingArea = new HidingArea(position, size);
+	mWorld->AddGameObject(hidingArea);
+	mUpdatableObjectList.push_back(hidingArea);
+
 }
