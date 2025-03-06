@@ -30,6 +30,7 @@ namespace NCL {
 			int FindTextureIndex(GLuint texId);
 			std::vector<int> LoadMeshMaterial(Mesh& mesh, MeshMaterial& meshMaterial);
 
+			void SetGameReady(bool ready) { gameReady = ready; }
 
 			void GenerateObjectDataUBOs();
 
@@ -111,6 +112,8 @@ namespace NCL {
 			size_t textCount;
 
 			std::unordered_map<std::string, GLuint> mLoadedTextureList;
+
+			bool gameReady = false;
 
 			vector<std::pair<GLuint, GLuint64>> mTextureIDList;
 		};

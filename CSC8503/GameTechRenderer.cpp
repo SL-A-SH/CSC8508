@@ -245,7 +245,7 @@ void GameTechRenderer::RenderSkybox() {
 	glEnable(GL_DEPTH_TEST);
 }
 
-void GameTechRenderer::RenderCamera() {
+void GameTechRenderer::RenderCamera() {	
 	glDisable(GL_BLEND);
 
 	glDisable(GL_DEPTH_TEST);
@@ -312,6 +312,7 @@ void GameTechRenderer::RenderCamera() {
 		}
 
 		Matrix4 modelMatrix = activeObjects[i]->GetTransform()->GetMatrix();
+		
 		glUniformMatrix4fv(modelLocation, 1, false, (float*)&modelMatrix);
 
 		Matrix4 fullShadowMat = shadowMatrix * modelMatrix;
@@ -330,43 +331,45 @@ void GameTechRenderer::RenderCamera() {
 		}
 		size_t layerCount = activeObjects[i]->GetMesh()->GetSubMeshCount();
 		
+		if (gameReady) {
+			if (activeObjects[i]->GetAnimObject()) {
+				std::cout << "Model Matrix for object " << i << ": " << modelMatrix << std::endl;
+				std::cout << "USING ANIMATION SHADER" << std::endl;
+				std::cout << "LayerCount is :" << layerCount << std::endl;
+				int j = glGetUniformLocation(shader->GetProgramID(), "joints");
+				std::cout << "Shader ID is: " << shader->GetProgramID() << std::endl;
 
-		if (activeObjects[i]->GetAnimObject()) {
-			std::cout << "USING ANIMATION SHADER" << std::endl;
-			std::cout << "LayerCount is :" << layerCount << std::endl;
-			int j = glGetUniformLocation(shader->GetProgramID(), "joints");
-			std::cout << "Shader ID is: " << shader->GetProgramID() << std::endl;
+				const std::vector<int>& matTextures = activeObjects[i]->GetMaterialTextures();
+				std::vector<std::vector<Matrix4>> frameMatricesVec = activeObjects[i]->GetFrameMatricesVector();
 
-			const std::vector<int>& matTextures = activeObjects[i]->GetMaterialTextures();
-
-			for (int b = 0; b < layerCount; ++b) {
-				std::cout << b << std::endl;
-				std::cout << "Frame Matrice size" << activeObjects[i]->GetFrameMatricesVector().size();
-				std::vector<vector<Matrix4>> frameMatrices = activeObjects[i]->GetFrameMatricesVector();
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, matTextures[b]);
-				glUniformMatrix4fv(j, frameMatrices.size(), false, (float*)frameMatrices.data());
-				DrawBoundMesh((uint32_t)b);
+				for (int b = 0; b < layerCount; ++b) {
+					std::cout << "b is: " << b << std::endl;
+					vector<Matrix4> frameMatrices = frameMatricesVec[b];
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, matTextures[b]);
+					glUniformMatrix4fv(j, frameMatrices.size(), false, (float*)frameMatrices.data());
+					DrawBoundMesh((uint32_t)b);
+				}
 			}
-		}
-		else if (activeObjects[i]->GetMaterialTextures().size() > 1) {
-			std::cout << "USING MATERIAL SHADER" << std::endl;
-			
-			const std::vector<int>& matTextures = activeObjects[i]->GetMaterialTextures();
+			else if (activeObjects[i]->GetMaterialTextures().size() > 1) {
+				std::cout << "USING MATERIAL SHADER" << std::endl;
 
-			for (size_t b = 0; b < layerCount; ++b) {
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, matTextures[b]);
-				DrawBoundMesh((uint32_t)b);
+				const std::vector<int>& matTextures = activeObjects[i]->GetMaterialTextures();
+
+				for (size_t b = 0; b < layerCount; ++b) {
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, matTextures[b]);
+					DrawBoundMesh((uint32_t)b);
+				}
 			}
-		}
-		else {
-			if (activeObjects[i]->GetDefaultTexture()) {
-				BindTextureToShader(*(OGLTexture*)activeObjects[i]->GetDefaultTexture(), "mainTex", 0);
-			}
-			size_t layerCount = mesh->GetSubMeshCount();
-			for (size_t b = 0; b < layerCount; ++b){
-				DrawBoundMesh((uint32_t)b);
+			else {
+				if (activeObjects[i]->GetDefaultTexture()) {
+					BindTextureToShader(*(OGLTexture*)activeObjects[i]->GetDefaultTexture(), "mainTex", 0);
+				}
+				size_t layerCount = mesh->GetSubMeshCount();
+				for (size_t b = 0; b < layerCount; ++b) {
+					DrawBoundMesh((uint32_t)b);
+				}
 			}
 		}
 	}

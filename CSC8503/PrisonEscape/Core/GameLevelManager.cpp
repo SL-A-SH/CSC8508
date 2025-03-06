@@ -19,10 +19,14 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	mPhysics->UseGravity(true);
 	// Move to another place if needed
 
+
 	InitAssets();
+	InitAnimationObjects();
+
+
 	
 
-}
+}	
 
 GameLevelManager::~GameLevelManager()
 {
@@ -67,11 +71,14 @@ GameLevelManager::~GameLevelManager()
 
 void GameLevelManager::UpdateGame(float dt)
 {
+	if (mUpdatableObjectList.size() >= 1) {
+		mRenderer->SetGameReady(true);
+	}
+
 	// TODO: Level Updates
 	// TODO: Remove Debug
 	mPhysics->Update(dt);
 	mAnimator->Update(dt, mUpdatableObjectList);
-
 	GetCurrentLevel()->Update(dt);
 
 	//mWorld->UpdateWorld(dt);
@@ -81,6 +88,8 @@ void GameLevelManager::UpdateGame(float dt)
 			obj->UpdateGame(dt);
 		}
 	}
+
+
 	
 }
 
@@ -243,6 +252,7 @@ void GameLevelManager::InitAssets()
 		lines++;
 	}
 	std::cout << "Loading Successful!" << std::endl;
+
 	ready = true;
 }
 
@@ -252,11 +262,13 @@ void GameLevelManager::InitAnimationObjects() const {
 }
 
 PlayerOne* GameLevelManager::AddPlayerOneToWorld(const Transform& transform, const std::string& playerName) {
+	std::cout << "Adding Player To World" << std::endl;
 	mPlayerToAdd = new PlayerOne(mWorld, playerName);
 	AddComponentsToPlayer(*mPlayerToAdd, transform);
 
 	mWorld->AddGameObject(mPlayerToAdd);
 	mUpdatableObjectList.push_back(mPlayerToAdd);
+	
 
 	return mPlayerToAdd;
 }

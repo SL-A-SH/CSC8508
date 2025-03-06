@@ -30,7 +30,6 @@ void AnimationController::Update(float dt, vector<GameObject*> animationObjects)
 void AnimationController::UpdateAllAnimations(float dt, vector<GameObject*> animatedObjects) {
 	for (GameObject* obj : animatedObjects) {
 		if (obj->GetRenderObject()->GetAnimObject()) {
-			std::cout << "Updating Animations" << std::endl;
 			AnimationObject* animObj = obj->GetRenderObject()->GetAnimObject();
 			if (animObj != nullptr) {
 				int currentFrame = animObj->GetCurrentFrame();
@@ -50,12 +49,11 @@ void AnimationController::UpdateAllAnimations(float dt, vector<GameObject*> anim
 					for (unsigned int i = 0; i < pose.count; ++i) {
 						int jointID = bindPoseIndices[pose.start + i];
 						Matrix4 mat = frameData[jointID] * invBindPose[pose.start + i];
-						std::cout << "Added to Frame Matrices" << std::endl;
 						frameMatrices.emplace_back(mat);
 					}
-					std::cout << "Added to frame Matrices Vector" << std::endl;
 					frameMatricesVec.emplace_back(frameMatrices);
 				}
+
 				obj->GetRenderObject()->SetCurrentFrame(currentFrame);
 				obj->GetRenderObject()->SetFrameMatricesVector(frameMatricesVec);
 				
@@ -92,11 +90,16 @@ void AnimationController::UpdateCurrentFrames(float dt) {
 }
 
 void AnimationController::SetObjectList(vector<GameObject*> animationObjects) {
+	std::cout << "Object List Size: " << animationObjects.size() << std::endl;
 	for (auto& obj : animationObjects) {
 		if (obj->GetName().find("player") != std::string::npos) {
+			std::cout << "Found Player" << std::endl;
 			mPlayersList.emplace_back((Player*)obj);
 			AnimationObject* animObj = obj->GetRenderObject()->GetAnimObject();
 			mAnimationList.emplace_back(animObj);
+		}
+		else {
+			std::cout << "Could not find player" << std::endl;
 		}
 	}
 }

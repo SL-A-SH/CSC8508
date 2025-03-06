@@ -24,6 +24,8 @@ namespace NCL {
 			void SetObjectList(vector<GameObject*> UpdatableObjects);
 			void SetAnimationState(GameObject* obj, GameObject::AnimationState state);
 
+			std::map<std::string, MeshAnimation*>& GetPreLoadedAnimationList() { return mPreLoadedAnimationList; }
+
 
 		protected:
 			GameWorld& mGameWorld;

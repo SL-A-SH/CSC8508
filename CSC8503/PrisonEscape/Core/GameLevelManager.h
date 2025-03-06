@@ -52,7 +52,7 @@ namespace NCL {
 			std::unordered_map<std::string, vector<int>> mMeshMaterialsList;
 			std::map<std::string, MeshAnimation*> mPreLoadedAnimationList;
 
-
+			bool isPlaying;
 
 			//Player Members
 			PlayerOne* mPlayerToAdd;

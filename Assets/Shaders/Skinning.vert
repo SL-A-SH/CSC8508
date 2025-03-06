@@ -55,7 +55,7 @@ void main(void) {
 	OUT.colour = vec4(1.0);
 
 	mat4 mvp = projMatrix * viewMatrix * modelMatrix;
-	gl_Position = mvp * vec4(skelPos.xyz, 1.0);
+	gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(skelPos.xyz, 1.0);
 
 
 }
