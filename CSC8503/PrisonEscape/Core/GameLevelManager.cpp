@@ -5,6 +5,7 @@
 #include "PhysicsObject.h"
 #include <string>
 #include <fstream>
+#include <iostream>
 
 
 using namespace NCL;
@@ -16,6 +17,7 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	mRenderer = existingRenderer;
 	mPhysics = new PhysicsSystem(*mWorld);
 	mPhysics->UseGravity(true);
+	loadMap();
 	// Move to another place if needed
 
 	InitAssets();
@@ -247,4 +249,53 @@ void GameLevelManager::AddComponentsToPlayer(Player& playerObject, const Transfo
 
 	playerObject.GetPhysicsObject()->SetInverseMass(PLAYER_INVERSE_MASS);
 	playerObject.GetPhysicsObject()->InitSphereInertia();
+}
+
+void GameLevelManager::loadMap() {
+	int level;
+	std::vector<InGameObject> objects;
+
+	if (jsonParser::LoadLevel("../CSC8503/PrisonEscape/Levels/levelTest.json", level, objects)) {
+		for (const auto& obj : objects) {
+			if (obj.type == "Button") {
+				std::cout << "ID: " << obj.id << " Type: " << obj.type << "\n";
+				std::cout << " Position -> X: " << obj.position.x << " Y: " << obj.position.y << " Z: " << obj.position.z << "\n";
+				std::cout << " Dimensions -> X: " << obj.dimensions.x << " Y: " << obj.dimensions.y << " Z: " << obj.dimensions.z << "\n";
+				std::cout << "Function to place " + obj.type + "\n\n";
+			}
+
+			if (obj.type == "Box") {
+				std::cout << "ID: " << obj.id << " Type: " << obj.type << "\n";
+				std::cout << " Position -> X: " << obj.position.x << " Y: " << obj.position.y << " Z: " << obj.position.z << "\n";
+				std::cout << " Dimensions -> X: " << obj.dimensions.x << " Y: " << obj.dimensions.y << " Z: " << obj.dimensions.z << "\n";
+				std::cout << "Function to place " + obj.type + "\n\n";
+			}
+
+			if (obj.type == "Wall") {
+				std::cout << "ID: " << obj.id << " Type: " << obj.type << "\n";
+				std::cout << " Position -> X: " << obj.position.x << " Y: " << obj.position.y << " Z: " << obj.position.z << "\n";
+				std::cout << " Dimensions -> X: " << obj.dimensions.x << " Y: " << obj.dimensions.y << " Z: " << obj.dimensions.z << "\n";
+				std::cout << "Function to place " + obj.type + "\n\n";
+			}
+
+			if (obj.type == "Exit") {
+				std::cout << "ID: " << obj.id << " Type: " << obj.type << "\n";
+				std::cout << " Position -> X: " << obj.position.x << " Y: " << obj.position.y << " Z: " << obj.position.z << "\n";
+				std::cout << " Dimensions -> X: " << obj.dimensions.x << " Y: " << obj.dimensions.y << " Z: " << obj.dimensions.z << "\n";
+				std::cout << "Function to place " + obj.type + "\n\n";
+			}
+
+			if (obj.type == "Floor") {
+				std::cout << "ID: " << obj.id << " Type: " << obj.type << "\n";
+				std::cout << " Position -> X: " << obj.position.x << " Y: " << obj.position.y << " Z: " << obj.position.z << "\n";
+				std::cout << " Dimensions -> X: " << obj.dimensions.x << " Y: " << obj.dimensions.y << " Z: " << obj.dimensions.z << "\n";
+				std::cout << "Function to place " + obj.type + "\n\n";
+			}
+
+
+		}
+	}
+	else {
+		std::cerr << "Failed to load level \n";
+	}
 }

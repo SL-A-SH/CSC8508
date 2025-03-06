@@ -3,42 +3,31 @@
 
 #include <vector>
 #include <string>
-#include "../CSC8503/Third Party/nlohmann/json.hpp" 
+#include <fstream>
+#include "../CSC8503/json.hpp"
+#include "PhysicsObject.h"
+#include "RenderObject.h"
+#include "TextureLoader.h"
 
 using json = nlohmann::json;
-using namespace std;
-
-// Structs for JSON mapping
-struct Position {
-    float x, y, z;
-};
-
-struct Dimensions {
-    float x, y, z;
-};
 
 struct InGameObject {
     int id;
-    string type;
-    Position position;
-    Dimensions dimensions;
+    std::string type;
+    Vector3 position;
+    Vector3 dimensions;
+    //Vector3 orientation;
 };
 
 struct LevelData {
     int level;
-    vector<InGameObject> objects;
+    std::vector<InGameObject> objects;
 };
 
-// Function to load level from a JSON file
-LevelData loadLevelFromJson(const string& filename);
 
-// Function to process the loaded level data
-void processLevelData(const LevelData& levelData);
+class jsonParser {
+public:
+    static bool LoadLevel(const std::string& filename, int& level, std::vector<InGameObject>& objects);
+};
 
-// JSON Deserialization Functions
-void from_json(const json& j, Position& p);
-void from_json(const json& j, Dimensions& d);
-void from_json(const json& j, InGameObject& obj);
-void from_json(const json& j, LevelData& level);
-
-#endif // LEVEL_LOADER_H
+#endif 

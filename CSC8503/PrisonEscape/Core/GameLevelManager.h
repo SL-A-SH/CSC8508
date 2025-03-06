@@ -5,6 +5,7 @@
 #include "GameTechRenderer.h"
 #include "MeshAnimation.h"
 #include "MeshMaterial.h"
+#include "jsonParser.h"
 #include "../CSC8503/PrisonEscape/Levels/Level.h"
 #include "../CSC8503/PrisonEscape/Scripts/Player/Player.h"
 
@@ -24,12 +25,13 @@ namespace NCL {
 
 			PlayerOne* AddPlayerToWorld(const Transform& transform, const std::string& playerName);
 			void AddComponentsToPlayer(Player& playerObj, const Transform& transform);
-
+			void loadMap();
 
 		public:
 			Level* GetCurrentLevel() { return mCurrentLevel; }
 			void SetCurrentLevel(Level* level) { mCurrentLevel = level; }
 			void AddLevel(Level* newLevel) { mLevelStack.push(newLevel); }
+			
 		private:
 			GameWorld* mWorld;
 			GameTechRenderer* mRenderer;
