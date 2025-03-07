@@ -3,11 +3,18 @@ using namespace NCL::Maths;
 
 namespace NCL {
 	class CollisionVolume;
-	
+
 	namespace CSC8503 {
 		class Transform;
-
-		class PhysicsObject	{
+		enum LayerMask
+		{
+			Default = 0,
+			Doors = 1,
+			Player,
+			Enemy,
+			Collectible,
+		};
+		class PhysicsObject {
 		public:
 			PhysicsObject(Transform* parentTransform, const CollisionVolume* parentVolume);
 			~PhysicsObject();
@@ -38,7 +45,7 @@ namespace NCL {
 
 			void ApplyAngularImpulse(const Vector3& force);
 			void ApplyLinearImpulse(const Vector3& force);
-			
+
 			void AddForce(const Vector3& force);
 
 			void AddForceAtPosition(const Vector3& force, const Vector3& position);
@@ -65,9 +72,15 @@ namespace NCL {
 				return inverseInteriaTensor;
 			}
 
+			void SetLayer(LayerMask l) {
+				layer = l;
+			}
+			LayerMask GetLayer() const {
+				return layer;
+			}
 		protected:
 			const CollisionVolume* volume;
-			Transform*		transform;
+			Transform* transform;
 
 			float inverseMass;
 			float elasticity;
@@ -76,12 +89,14 @@ namespace NCL {
 			//linear stuff
 			Vector3 linearVelocity;
 			Vector3 force;
-			
+
 			//angular stuff
 			Vector3 angularVelocity;
 			Vector3 torque;
 			Vector3 inverseInertia;
 			Matrix3 inverseInteriaTensor;
+
+			LayerMask layer;
 		};
 	}
 }

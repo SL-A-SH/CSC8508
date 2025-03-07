@@ -15,9 +15,15 @@ namespace NCL {
 
 			virtual void UpdateGame(float dt);
 			virtual void UpdatePlayerMovement(float dt);
+			virtual void HandleJumpingAndGravity(float dt, Vector3& currentVelocity, Vector3& movement);
 			virtual float GetPlayerSpeed() const { return 10.0f; }  // Default speed
 
+
+			void DetectPlayerCollision();
+			void DisplayInteractionPrompt();
+
 			virtual std::string GetName() { return mName; }
+
 
 		protected:
 			GameObject* playerObject;
@@ -35,6 +41,15 @@ namespace NCL {
 
 		public:
 			GameObject* GetPlayerObject() const { return playerObject; }
+
+
+			RayCollision closestCollision;
+
+			Vector3 rayPos;
+			Vector3 rayDir;
+
+
+
 		};
 	}
 }

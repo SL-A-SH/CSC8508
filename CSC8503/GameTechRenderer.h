@@ -7,7 +7,11 @@
 #include "MeshMaterial.h"
 #include "GameWorld.h"
 #include <iostream>
+
+#include <functional>
+
 #include <map>
+
 namespace NCL {
 	namespace CSC8503 {
 		class RenderObject;
@@ -21,14 +25,17 @@ namespace NCL {
 			void LoadMeshes(std::unordered_map<std::string, Mesh*>& meshMap, const std::vector<std::string>& details);
 			Texture* LoadTexture(const std::string& name);
 			Shader* LoadShader(const std::string& vertex, const std::string& fragment);
+
+			void LoadUI();
+			void AddPanelToCanvas(const std::string& key, std::function<void()> func);
+			void DeletePanelFromCanvas(const std::string& key);
+			void UpdatePanelList();
 			MeshMaterial* LoadMaterial(const std::string& name);
 			MeshAnimation* LoadAnimation(const std::string& name);
-			void RenderUI(std::function<void()> callback);
-			void SetImguiCanvasFunc(std::function<void()> func);
+		
 
 			GLuint LoadTextureGetID(const std::string& name);
 			std::vector<int> LoadMeshMaterial(Mesh& mesh, MeshMaterial& meshMaterial);
-
 		protected:
 			void NewRenderLines();
 			void NewRenderText();
@@ -50,9 +57,10 @@ namespace NCL {
 
 			void SetDebugStringBufferSizes(size_t newVertCount);
 			void SetDebugLineBufferSizes(size_t newVertCount);
-
-			std::function<void()> mImguiCanvasFuncToRender = nullptr;
 			void SetupImgui();
+			std::unordered_map<std::string, std::function<void()>> mImguiCanvasFuncToRenderList;
+			std::list<std::string> removePanelList;
+
 
 
 			vector<const RenderObject*> activeObjects;
