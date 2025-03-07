@@ -109,11 +109,11 @@ void Player::DetectPlayerCollision() {
 
 		GameObject* collisionObject = (GameObject*)closestCollision.node;
 		if (collisionObject->GetPhysicsObject()->GetLayer() == 1) {
-			GameBase::GetGameBase()->GetRenderer()->AddDrawableFunction("Interaction", [this]() {DisplayInteractionPrompt();});
+			GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("Interaction", [this]() {DisplayInteractionPrompt();});
 		}
 		else
 		{
-			GameBase::GetGameBase()->GetRenderer()->RemoveDrawableFunction("Interaction");
+			GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("Interaction");
 		}
 	}
 

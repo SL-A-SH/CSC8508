@@ -594,7 +594,7 @@ void GameTechRenderer::SetDebugStringBufferSizes(size_t newVertCount) {
 }
 
 
-void GameTechRenderer::AddDrawableFunction(const std::string& key, std::function<void()> func) {
+void GameTechRenderer::AddPanelToCanvas(const std::string& key, std::function<void()> func) {
 	// Avoid adding duplicates by key
 	if (mImguiCanvasFuncToRenderList.find(key) == mImguiCanvasFuncToRenderList.end()) {
 		mImguiCanvasFuncToRenderList[key] = std::move(func);
@@ -602,7 +602,7 @@ void GameTechRenderer::AddDrawableFunction(const std::string& key, std::function
 }
 
 
-void GameTechRenderer::RemoveDrawableFunction(const std::string& key) {
+void GameTechRenderer::DeletePanelFromCanvas(const std::string& key) {
 
 	auto it = mImguiCanvasFuncToRenderList.find(key);
 	removePanelList.push_back(key);
@@ -613,7 +613,7 @@ void GameTechRenderer::RemoveDrawableFunction(const std::string& key) {
 	}*/
 }
 
-void GameTechRenderer::UpdateDrawableFunction() {
+void GameTechRenderer::UpdatePanelList() {
 
 	for (const auto& key : removePanelList) {
 		auto it = mImguiCanvasFuncToRenderList.find(key);
@@ -678,7 +678,8 @@ void GameTechRenderer::LoadUI() {
 	for (const auto& [key, func] : mImguiCanvasFuncToRenderList) {
 		func();
 	}
-	UpdateDrawableFunction();
+	void UpdatePanelList();
+
 	//CLEAR
 
 	ImGui::End();
