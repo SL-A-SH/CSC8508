@@ -10,10 +10,13 @@ project(CSC8503 CXX)
 if(NOT CMAKE_VS_PLATFORM_NAME)
     set(CMAKE_VS_PLATFORM_NAME "x64")
 endif()
+
 message("${CMAKE_VS_PLATFORM_NAME} architecture in use")
 
-if(NOT ("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64"))
-    message(FATAL_ERROR "${CMAKE_VS_PLATFORM_NAME} arch is not supported!")
+if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Prospero")
+    add_compile_definitions(USEPROSPERO)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti")
+    add_compile_options(-Wno-pragma-once-outside-header)
 endif()
 
 ################################################################################
@@ -28,7 +31,6 @@ set(CMAKE_CONFIGURATION_TYPES
 ################################################################################
 # Global compiler options
 ################################################################################
-#set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD 20)
 
 ################################################################################
@@ -77,8 +79,17 @@ endif()
 ################################################################################
 add_subdirectory(NCLCoreClasses)
 add_subdirectory(CSC8503CoreClasses)
-add_subdirectory(OpenGLRendering)
 add_subdirectory(CSC8503)
+
+if ("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
+    add_subdirectory(OpenGLRendering)
+	message("Adding OpenGL")
+endif()
+
+if ("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Prospero")
+    add_subdirectory(PS5Core)
+	message("Adding PS5Core")
+endif()
 
 if(USE_VULKAN)
     add_subdirectory(VulkanRendering)

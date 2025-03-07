@@ -15,11 +15,14 @@ void GamePlayState::OnAwake()
 	Level* level = new LevelT();
 	level->Init();
 
+Transform playerTransform; // messy 
 	if (gameConfig && gameConfig->networkConfig.isMultiplayer)
 	{
+		
 		if (gameConfig->networkConfig.isServer)
 		{
-			level->AddPlayerOneToLevel();
+			//messy do not keep
+			level->AddPlayerOneToLevel(manager->AddPlayerToWorld(playerTransform, "player"));
 			Vector3 playerPosition = level->GetPlayerOne()->GetTransform().GetPosition();
 			GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(Vector3(playerPosition.x, playerPosition.y, playerPosition.z));
 
@@ -38,7 +41,7 @@ void GamePlayState::OnAwake()
 			Vector3 playerPosition = level->GetPlayerTwo()->GetTransform().GetPosition();
 			GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(Vector3(playerPosition.x, playerPosition.y, playerPosition.z));
 
-			level->AddPlayerOneToLevel();
+			level->AddPlayerOneToLevel(manager->AddPlayerToWorld(playerTransform, "player"));
 			// Position it somewhere off to the side initially
 			if (level->GetPlayerOne() && level->GetPlayerOne()->GetPlayerObject()) {
 				level->GetPlayerOne()->GetPlayerObject()->GetTransform().SetPosition(Vector3(10, -100, 10));
@@ -51,7 +54,7 @@ void GamePlayState::OnAwake()
 	else
 	{
 		// Single player mode
-		level->AddPlayerOneToLevel();
+		level->AddPlayerOneToLevel(manager->AddPlayerToWorld(playerTransform, "player"));
 		Vector3 playerPosition = level->GetPlayerOne()->GetTransform().GetPosition();
 		GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(Vector3(playerPosition.x, playerPosition.y, playerPosition.z));
 	}

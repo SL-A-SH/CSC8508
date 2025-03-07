@@ -85,16 +85,16 @@ void Level::InitializeLevel()
 	AddMeshToWorldPosition(Vector3(10, 10, 0), kittenMesh, Vector3(1, 1, 1), VolumeType::Sphere, Vector3(1, 1, 1));
 }
 
-void Level::AddPlayerOneToLevel()
+void Level::AddPlayerOneToLevel(PlayerOne* player)
 {
-	playerOne = new PlayerOne();
-	playerOne->SpawnPlayer(Vector3(0, 50, 0));
+	playerOne = player;
+	playerOne->GetRenderObject()->GetTransform()->SetPosition(Vector3(0, 50, 0));
 }
 
 void Level::AddPlayerTwoToLevel()
 {
-	playerTwo = new PlayerTwo();
-	playerTwo->SpawnPlayer(Vector3(0, 50, 0));
+	//playerTwo = new PlayerTwo();
+	//playerTwo->SpawnPlayer(Vector3(0, 50, 0));
 }
 
 void Level::SetCameraAttributes()
