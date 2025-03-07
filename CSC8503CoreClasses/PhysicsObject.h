@@ -10,8 +10,8 @@ namespace NCL {
 		{
 			Default = 0,
 			Doors = 1,
-			Player,
-			Enemy,
+			_lmPlayer,
+			_lmEnemy,
 			Collectible,
 		};
 		class PhysicsObject {
