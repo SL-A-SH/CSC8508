@@ -19,15 +19,16 @@ namespace NCL {
             void SetPatrolPoints(const std::vector<Vector3>& points);
             void SetPlayerObject(GameObject* player);
 
-            void OnCollisionBegin(GameObject* otherObject) override {
+            void OnCatch(GameObject* otherObject) {
                 if (otherObject == playerObject) {
                     currentState = PATROL;
-                    pursuitTimer = 0.0f;
                     patrolCounter = 0;
 
                     playerObject->GetTransform().SetPosition(Vector3(0, 5, 0));
                 }
             }
+
+            bool visible;
 
         protected:
             void InitBehaviourTree();
@@ -42,14 +43,13 @@ namespace NCL {
 
             int currentPatrolPoint;
             int patrolCounter;
-            float pursuitTimer;
+            float warningTimer;
 
-            const float MAX_PURSUIT_TIME = 5.0f;
             const float VISION_RANGE = 15.0f;
 
             enum AIState {
                 PATROL,
-                PURSUIT
+                CAUGHT
             };
             AIState currentState;
         };
