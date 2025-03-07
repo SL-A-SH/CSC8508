@@ -7,9 +7,10 @@ PatrolEnemy::PatrolEnemy(GameWorld* world) : GameObject("PatrolEnemy") {
     gameWorld = world;
     currentPatrolPoint = 0;
     patrolCounter = 0;
-    pursuitTimer = 0.0f;
     currentState = PATROL;
     playerObject = nullptr;
+    visible = true;
+    warningTimer = 2.0f;
     InitBehaviourTree();
 }
 
@@ -22,7 +23,7 @@ void PatrolEnemy::Update(float dt) {
     std::string stateStr;
     switch (currentState) {
     case PATROL:  stateStr = "PATROL"; break;
-    case PURSUIT: stateStr = "PURSUIT"; break;
+    case CAUGHT: stateStr = "CAUGHT"; break;
     }
 
     rootSequence->Execute(dt);
@@ -38,6 +39,8 @@ void PatrolEnemy::SetPlayerObject(GameObject* player) {
 
 bool PatrolEnemy::CanSeePlayer() const {
     if (!playerObject) return false;
+
+    if (!visible) return false;
 
     Vector3 direction = playerObject->GetTransform().GetPosition() - transform.GetPosition();
 
@@ -63,8 +66,7 @@ void PatrolEnemy::InitBehaviourTree() {
             }
 
             if (CanSeePlayer()) {
-                currentState = PURSUIT;
-                pursuitTimer = MAX_PURSUIT_TIME;
+                currentState = CAUGHT;
                 return Success;
             }
 
@@ -86,25 +88,22 @@ void PatrolEnemy::InitBehaviourTree() {
             return Ongoing;
         });
 
-    BehaviourAction* pursuitAction = new BehaviourAction("Pursuit",
+    BehaviourAction* pursuitAction = new BehaviourAction("Caught",
         [&](float dt, BehaviourState state) -> BehaviourState {
-            if (currentState != PURSUIT) {
+            if (currentState != CAUGHT) {
                 return Failure;
             }
 
-            pursuitTimer -= dt;
-            if (pursuitTimer <= 0.0f) {
-                currentState = PATROL;
-                return Success;
+            if (warningTimer > 0.0f) {
+				Debug::Print("Warning: " + std::to_string(warningTimer), Vector2(10, 10));
+                warningTimer -= dt;
             }
 
-            if (playerObject) {
-                Vector3 direction = playerObject->GetTransform().GetPosition() - transform.GetPosition();
-                Vector3 force = Vector::Normalise(direction) * 100.0f;
-                GetPhysicsObject()->AddForce(force);
-
-                Vector3 currentVel = GetPhysicsObject()->GetLinearVelocity();
-                GetPhysicsObject()->AddForce(-currentVel * 10.0f);
+            else {
+                warningTimer = 2.0f;
+				OnCatch(playerObject);
+				currentState = PATROL;
+                return Success;
             }
             return Ongoing;
         });
