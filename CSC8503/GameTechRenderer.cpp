@@ -310,8 +310,27 @@ void GameTechRenderer::RenderCamera() {
 
 			activeShader = shader;
 		}
+		Transform* transform = activeObjects[i]->GetTransform();
+		Vector3 pos = transform->GetPosition();
+		Quaternion ori = transform->GetOrientation();
+		Vector3 scale = transform->GetScale();
 
-		Matrix4 modelMatrix = activeObjects[i]->GetTransform()->GetMatrix();
+		std::cout << "Position: " << pos.x << ":" << pos.y << ":" << pos.z << std::endl;
+		std::cout << "Orientation: " << ori << std::endl;
+		std::cout << "Scale: " << scale.x << ":" << scale.y << ":" << scale.z << std::endl;
+		
+		Matrix4 posT = Matrix::Translation(pos);
+		std::cout << "Position2: " << posT << std::endl;
+
+		Matrix4 Rot = Quaternion::RotationMatrix<Matrix4>(ori);
+		std::cout << "Orientation 2: " << Rot << std::endl;
+
+		Matrix4 ScaleT = Matrix::Scale(scale);
+		std::cout << "Scale 2:" << ScaleT << std::endl;
+
+
+		Matrix4 modelMatrix = posT * Rot * ScaleT;
+		std::cout << "Matrix New" << modelMatrix << std::endl;
 		
 		glUniformMatrix4fv(modelLocation, 1, false, (float*)&modelMatrix);
 
