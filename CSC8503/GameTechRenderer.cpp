@@ -248,7 +248,7 @@ void GameTechRenderer::RenderSkybox() {
 void GameTechRenderer::RenderCamera() {	
 	glDisable(GL_BLEND);
 
-	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
@@ -310,27 +310,8 @@ void GameTechRenderer::RenderCamera() {
 
 			activeShader = shader;
 		}
-		Transform* transform = activeObjects[i]->GetTransform();
-		Vector3 pos = transform->GetPosition();
-		Quaternion ori = transform->GetOrientation();
-		Vector3 scale = transform->GetScale();
-
-		std::cout << "Position: " << pos.x << ":" << pos.y << ":" << pos.z << std::endl;
-		std::cout << "Orientation: " << ori << std::endl;
-		std::cout << "Scale: " << scale.x << ":" << scale.y << ":" << scale.z << std::endl;
 		
-		Matrix4 posT = Matrix::Translation(pos);
-		std::cout << "Position2: " << posT << std::endl;
-
-		Matrix4 Rot = Quaternion::RotationMatrix<Matrix4>(ori);
-		std::cout << "Orientation 2: " << Rot << std::endl;
-
-		Matrix4 ScaleT = Matrix::Scale(scale);
-		std::cout << "Scale 2:" << ScaleT << std::endl;
-
-
-		Matrix4 modelMatrix = posT * Rot * ScaleT;
-		std::cout << "Matrix New" << modelMatrix << std::endl;
+		Matrix4 modelMatrix = activeObjects[i]->GetTransform()->GetMatrix();
 		
 		glUniformMatrix4fv(modelLocation, 1, false, (float*)&modelMatrix);
 
@@ -351,7 +332,79 @@ void GameTechRenderer::RenderCamera() {
 		size_t layerCount = activeObjects[i]->GetMesh()->GetSubMeshCount();
 		
 		if (gameReady) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 			if (activeObjects[i]->GetAnimObject()) {
+
+
+
+
+
+
+
+
+
+
+
+				Transform* transform = activeObjects[i]->GetTransform();
+
+				Vector3 pos = transform->GetPosition();
+
+				Quaternion ori = transform->GetOrientation();
+
+				Vector3 scale = transform->GetScale();
+
+				std::cout << std::endl;
+
+				std::cout << "Position: " << pos.x << ":" << pos.y << ":" << pos.z << std::endl;
+				std::cout << "Orientation: " << ori << std::endl;
+				std::cout << "Scale: " << scale.x << ":" << scale.y << ":" << scale.z << std::endl;
+
+				std::cout << std::endl;
+
+				Matrix4 posT = Matrix::Translation(pos);
+
+				std::cout << "Position2: " << posT << std::endl;
+
+				Matrix4 Rot = Quaternion::RotationMatrix<Matrix4>(ori);
+
+				std::cout << "Orientation 2: " << Rot << std::endl;
+
+				Matrix4 ScaleT = Matrix::Scale(scale);
+
+				std::cout << "Scale 2:" << ScaleT << std::endl;
+
+				std::cout << std::endl;
+
+				Matrix4 modelMatrix = posT * Rot * ScaleT;
+
+				std::cout << "Matrix New" << modelMatrix << std::endl;
+
+
+
+				for (int row = 0; row < 4; ++row) {
+					for (int col = 0; col < 4; ++col) {
+						std::cout << modelMatrix.array[col][row] << " "; // Column-major access
+					}
+					std::cout << std::endl;
+				}
+
+
+
+
 				std::cout << "Model Matrix for object " << i << ": " << modelMatrix << std::endl;
 				std::cout << "USING ANIMATION SHADER" << std::endl;
 				std::cout << "LayerCount is :" << layerCount << std::endl;
