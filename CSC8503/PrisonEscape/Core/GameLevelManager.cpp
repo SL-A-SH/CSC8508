@@ -252,7 +252,6 @@ void GameLevelManager::InitAssets()
 		lines++;
 	}
 	std::cout << "Loading Successful!" << std::endl;
-
 	ready = true;
 }
 
@@ -268,7 +267,9 @@ PlayerOne* GameLevelManager::AddPlayerOneToWorld(const Transform& transform, con
 
 	mWorld->AddGameObject(mPlayerToAdd);
 	mUpdatableObjectList.push_back(mPlayerToAdd);
-	
+	std::cout << "mUpdatable Object List Size:    " << mUpdatableObjectList.size() << std::endl;
+	mAnimator->SetObjectList(mUpdatableObjectList);
+
 
 	return mPlayerToAdd;
 }
@@ -278,6 +279,9 @@ PlayerTwo* GameLevelManager::AddPlayerTwoToWorld(const Transform& transform, con
 
 	mWorld->AddGameObject(mPlayerTwoToAdd);
 	mUpdatableObjectList.push_back(mPlayerTwoToAdd);
+	mAnimator->SetObjectList(mUpdatableObjectList);
+
+
 
 	return mPlayerTwoToAdd;
 }

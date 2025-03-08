@@ -15,6 +15,7 @@ namespace NCL::Maths {
     template <typename T, uint32_t rows, uint32_t cols>
     struct MatrixTemplate    {
         T array[cols][rows]; //We store matrices in col major format
+        
 
         MatrixTemplate() {
             for (int i = 0; i < cols; ++i) {

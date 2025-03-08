@@ -334,19 +334,6 @@ void GameTechRenderer::RenderCamera() {
 		if (gameReady) {
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 			if (activeObjects[i]->GetAnimObject()) {
 
 
@@ -392,18 +379,6 @@ void GameTechRenderer::RenderCamera() {
 				Matrix4 modelMatrix = posT * Rot * ScaleT;
 
 				std::cout << "Matrix New" << modelMatrix << std::endl;
-
-
-
-				for (int row = 0; row < 4; ++row) {
-					for (int col = 0; col < 4; ++col) {
-						std::cout << modelMatrix.array[col][row] << " "; // Column-major access
-					}
-					std::cout << std::endl;
-				}
-
-
-
 
 				std::cout << "Model Matrix for object " << i << ": " << modelMatrix << std::endl;
 				std::cout << "USING ANIMATION SHADER" << std::endl;

@@ -39,7 +39,6 @@ void main(void) {
 		skelPos += joints[jointIndex] * localPos * jointWeight;
 		skelNormal += joints[jointIndex] * localNormal * jointWeight;
 	}
-	skelPos.xyz = position.xyz;
 
 
 	OUT.normal = normalize(mat3(modelMatrix) * skelNormal.xyz);
@@ -57,7 +56,7 @@ void main(void) {
 	
 
 
-	gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(skelPos.xyz, 1.0);
+	gl_Position = mvp * vec4(skelPos.xyz, 1.0);
 
 
 }

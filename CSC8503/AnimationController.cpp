@@ -28,10 +28,11 @@ void AnimationController::Update(float dt, vector<GameObject*> animationObjects)
 
 
 void AnimationController::UpdateAllAnimations(float dt, vector<GameObject*> animatedObjects) {
-	for (GameObject* obj : animatedObjects) {
+		for (GameObject* obj : animatedObjects) {
 		if (obj->GetRenderObject()->GetAnimObject()) {
 			AnimationObject* animObj = obj->GetRenderObject()->GetAnimObject();
 			if (animObj != nullptr) {
+
 				int currentFrame = animObj->GetCurrentFrame();
 				mMesh = obj->GetRenderObject()->GetMesh();
 				mAnim = animObj->GetAnimation();
@@ -46,9 +47,12 @@ void AnimationController::UpdateAllAnimations(float dt, vector<GameObject*> anim
 					mMesh->GetBindPoseState(i, pose);
 
 					vector<Matrix4> frameMatrices;
-					for (unsigned int i = 0; i < pose.count; ++i) {
-						int jointID = bindPoseIndices[pose.start + i];
-						Matrix4 mat = frameData[jointID] * invBindPose[pose.start + i];
+					for (unsigned int b = 0; b < pose.count; ++b) {
+						int jointID = bindPoseIndices[pose.start + b]; // safe
+
+						Matrix4 mat = frameData[jointID] * invBindPose[pose.start + b]; // all three quaternions
+
+
 						frameMatrices.emplace_back(mat);
 					}
 					frameMatricesVec.emplace_back(frameMatrices);
@@ -90,7 +94,7 @@ void AnimationController::UpdateCurrentFrames(float dt) {
 }
 
 void AnimationController::SetObjectList(vector<GameObject*> animationObjects) {
-	std::cout << "Object List Size: " << animationObjects.size() << std::endl;
+	std::cout << "Object List Size: " << animationObjects.size() << std::endl; // YOU
 	for (auto& obj : animationObjects) {
 		if (obj->GetName().find("player") != std::string::npos) {
 			std::cout << "Found Player" << std::endl;

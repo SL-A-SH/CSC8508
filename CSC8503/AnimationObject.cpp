@@ -8,7 +8,7 @@ AnimationObject::AnimationObject(AnimationType type, MeshAnimation* anim) {
 	animationType = type;
 
 	currentFrame = 0;
-	nextFrame = 0;
+	nextFrame = 1;
 	frameTime = 0.0f;
 	frameRate = 1.0f;
 }
@@ -18,7 +18,14 @@ AnimationObject::~AnimationObject() {
 }
 
 void AnimationObject::Update(float dt) {
-	if (animation == nullptr) return;
+	std::cout << "UPDATiING ANIMATIONS" << std::endl;
+	if (animation == nullptr) {
+		std::cout << "NO ANIMATION" << std::endl;
+		return;
+	}
+	else {
+		std::cout << "Animation Found" << std::endl;
+	}
 	frameTime -= frameRate * dt; // scale by frame rate to change speed of animation
 
 	while (frameTime < 0.0f) {
