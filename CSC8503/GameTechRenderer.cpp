@@ -678,7 +678,8 @@ void GameTechRenderer::LoadUI() {
 	for (const auto& [key, func] : mImguiCanvasFuncToRenderList) {
 		func();
 	}
-UpdatePanelList();
+	Debug::DrawDebugMenu();
+	UpdatePanelList();
 
 	//CLEAR
 
