@@ -1,6 +1,7 @@
 #include "GameplayState.h"
 #include "PrisonEscape/Levels/SampleLevel.h"
 #include "PrisonEscape/Levels/LevelT.h"
+#include "PauseState.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -15,10 +16,10 @@ void GamePlayState::OnAwake()
 	Level* level = new LevelT();
 	level->Init();
 
-Transform playerTransform; // messy 
+	Transform playerTransform; // messy 
 	if (gameConfig && gameConfig->networkConfig.isMultiplayer)
 	{
-		
+
 		if (gameConfig->networkConfig.isServer)
 		{
 			//messy do not keep
@@ -35,7 +36,7 @@ Transform playerTransform; // messy
 			gameConfig->networkConfig.server->RegisterPacketHandler(Player_ID_Assignment, level);
 			gameConfig->networkConfig.server->RegisterPacketHandler(Player_Position, level);
 		}
-		else if(gameConfig->networkConfig.client)
+		else if (gameConfig->networkConfig.client)
 		{
 			level->AddPlayerTwoToLevel();
 			Vector3 playerPosition = level->GetPlayerTwo()->GetTransform().GetPosition();
@@ -63,16 +64,16 @@ Transform playerTransform; // messy
 	manager->SetCurrentLevel(level);
 }
 
-GamePlayState::~GamePlayState() 
+GamePlayState::~GamePlayState()
 {
 	delete manager;
 	delete gameConfig;
 }
 
-PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** newState) 
+PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** newState)
 {
 	if (gameConfig && gameConfig->networkConfig.isMultiplayer) {
-		if (gameConfig->networkConfig.isServer && gameConfig->networkConfig.server) 
+		if (gameConfig->networkConfig.isServer && gameConfig->networkConfig.server)
 		{
 			// Server: Send PlayerOne position to clients
 			Level* level = manager->GetCurrentLevel();
@@ -85,7 +86,7 @@ PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** 
 
 			gameConfig->networkConfig.server->UpdateServer();
 		}
-		else if (gameConfig->networkConfig.client) 
+		else if (gameConfig->networkConfig.client)
 		{
 			// Client: Send PlayerTwo position to server
 			Level* level = manager->GetCurrentLevel();
@@ -101,6 +102,11 @@ PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** 
 		}
 	}
 
+	if (Window::GetKeyboard()->KeyPressed(KeyCodes::P))
+	{
+		*newState = new PauseState();
+		return PushdownResult::Push;
+	}
 	manager->UpdateGame(dt);
 
 	return PushdownResult::NoChange;

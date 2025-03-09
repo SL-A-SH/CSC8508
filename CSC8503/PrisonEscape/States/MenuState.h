@@ -42,7 +42,7 @@ namespace NCL {
 
 			std::function<void(PushdownState**)> stateChangeAction = nullptr;
 			int volume = 50;
-            int brightness = 50;
+			int brightness = 50;
 
 			// Network connection state
 			bool isConnecting = false;

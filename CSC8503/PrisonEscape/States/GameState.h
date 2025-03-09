@@ -24,19 +24,5 @@ namespace NCL {
 		class GameOverState;
 
 
-
-
-		class PauseState : public GameState {
-		public:
-			PauseState() {}
-			PushdownResult OnUpdate(float dt, PushdownState** newState) override;
-		};
-
-		class GameOverState : public GameState {
-		public:
-			GameOverState() {
-			}
-			PushdownResult OnUpdate(float dt, PushdownState** newState) override;
-		};
 	}
 }

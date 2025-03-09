@@ -24,6 +24,8 @@ function(Create_PS5_CSC8503_Files)
         "PrisonEscape/Core/GameLevelManager.h"
         "PrisonEscape/Core/ImGuiManager.cpp"
         "PrisonEscape/Core/ImGuiManager.h"
+        "PrisonEscape/Core/GameSettingManager.h"
+        "PrisonEscape/Core/GameSettingManager.cpp"
     )
     source_group("Prison Escape Core" FILES ${Prison_Escape_Core})
 
@@ -68,7 +70,10 @@ function(Create_PS5_CSC8503_Files)
         "PrisonEscape/States/GameState.h"
         "PrisonEscape/States/MenuState.cpp"
         "PrisonEscape/States/MenuState.h"
-
+        "PrisonEscape/States/PauseState.cpp"
+        "PrisonEscape/States/PauseState.h"
+        "PrisonEscape/States/GameoverState.cpp"
+        "PrisonEscape/States/GameoverState.h"
     )
     source_group("Prison Escape States" FILES ${Prison_Escape_States})
 

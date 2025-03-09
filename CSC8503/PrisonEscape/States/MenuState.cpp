@@ -1,11 +1,15 @@
+
+
 #include "MenuState.h"
 #include "GamePlayState.h"
 #include <iostream>
+#include "Debug.h"
 
 #include "PrisonEscape/Core/ImGuiManager.h"
 
 using namespace NCL;
 using namespace CSC8503;
+
 
 MenuState::MenuState() :
 	isConnecting(false),
@@ -29,8 +33,7 @@ MenuState::~MenuState()
 void MenuState::OnAwake() {
 	ImGuiManager::Initialize();
 	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("MainMenuPanel", [this]() {	DrawMainMenuPanel();});
-
-
+	Debug::PrintDebugInfo({ "Menu State", Debug::RED });
 	Window::GetWindow()->ShowOSPointer(true);
 }
 
@@ -180,6 +183,7 @@ void MenuState::DrawMainMenuPanel() {
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("MultiplayerPanel", [this]() {DrawMultiplayerPanel();});
 		}, 0.45f},
 		{"Settings", [this]() {
+			Debug::PrintDebugInfo({ "Setting"});
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("SettingPanel", [this]() {DrawSettingPanel();});
 		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MainMenuPanel");
 		}, 0.65f}
@@ -189,6 +193,8 @@ void MenuState::DrawMainMenuPanel() {
 }
 
 void MenuState::DrawSettingPanel() {
+
+
 	std::vector<PanelButton> buttons = {
 		{"Audio", [this]() {
 				GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("AudioSettingPanel", [this]() {DrawAudioSettingPanel();});
@@ -209,9 +215,7 @@ void MenuState::DrawSettingPanel() {
 }
 
 void MenuState::DrawAudioSettingPanel() {
-	std::vector<PanelSlider> sliders = {
-		{"Master Volume", &volume, 0, 100, 0.36f}
-	};
+	std::vector<PanelSlider> sliders = { {"Master Volume", &volume, 0, 100, 0.36f} };
 
 	auto backCallback = [this]() {
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("SettingPanel", [this]() {DrawSettingPanel();});
@@ -222,9 +226,7 @@ void MenuState::DrawAudioSettingPanel() {
 }
 
 void MenuState::DrawVideoSettingPanel() {
-	std::vector<PanelSlider> sliders = {
-		{"Brightness", &brightness, 0, 100, 0.36f}
-	};
+	std::vector<PanelSlider> sliders = { {"Brightness", &brightness, 0, 100, 0.36f} };
 
 	auto backCallback = [this]() {
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("SettingPanel", [this]() {DrawSettingPanel();});
@@ -262,6 +264,8 @@ void MenuState::StartServerProcess()
 	isConnecting = true;
 
 	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("ConnectionPanel", [this]() {DrawConnectionMessagePanel();});
+	GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MultiplayerPanel");
+
 }
 
 void MenuState::StartClientProcess()
@@ -272,6 +276,8 @@ void MenuState::StartClientProcess()
 	isConnecting = true;
 
 	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("ConnectionPanel", [this]() {DrawConnectionMessagePanel();});
+	GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MultiplayerPanel");
+
 }
 
 void MenuState::DrawConnectionMessagePanel()
@@ -283,7 +289,9 @@ void MenuState::DrawConnectionMessagePanel()
 	auto cancelCallback = [this]() {
 		isConnecting = false;
 		connectionStage = ConnectionStage::None;
-		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("MultiplayerPanel", [this]() {DrawMultiplayerPanel();});
+		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("ConnectionPanel", [this]() {DrawMultiplayerPanel();});
+		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MultiplayerPanel");
+
 		};
 
 	// Determine message based on current stage
