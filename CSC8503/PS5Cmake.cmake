@@ -41,7 +41,9 @@ function(Create_PS5_CSC8503_Files)
 
     set(Prison_Escape_Prefabs
         "PrisonEscape/Prefabs/PatrolEnemy/PatrollingEnemy.cpp"
-        "PrisonEscape/Prefabs/PatrolEnemy/PatrollingEnemy.h"   
+        "PrisonEscape/Prefabs/PatrolEnemy/PatrollingEnemy.h"
+		"PrisonEscape/Prefabs/PursuitEnemy/PursuingEnemy.cpp"
+        "PrisonEscape/Prefabs/PursuitEnemy/PursuingEnemy.h"	
         "PrisonEscape/Prefabs/Player/PlayerOne.cpp" 
         "PrisonEscape/Prefabs/Player/PlayerOne.h"
         "PrisonEscape/Prefabs/Player/PlayerTwo.cpp"    
@@ -52,6 +54,8 @@ function(Create_PS5_CSC8503_Files)
     set(Prison_Escape_Scripts
         "PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.cpp"
         "PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
+		"PrisonEscape/Scripts/PursuitEnemy/PursuitEnemy.cpp"
+		"PrisonEscape/Scripts/PursuitEnemy/PursuitEnemy.h"
         "PrisonEscape/Scripts/Player/Player.cpp"
         "PrisonEscape/Scripts/Player/Player.h"
         "PrisonEscape/Scripts/puzzle/Button.cpp"
