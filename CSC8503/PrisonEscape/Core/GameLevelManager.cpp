@@ -219,6 +219,7 @@ void GameLevelManager::InitAssets()
 		animationLoadThread.join();
 	}
 	mPreLoadedAnimationList.insert(std::make_pair("PlayerIdle", mAnimationList["PlayerIdle"]));
+	mPreLoadedAnimationList.insert(std::make_pair("PlayerWalk", mAnimationList["PlayerWalk"]));
 
 	if (materialLoadThread.joinable()) {
 		materialLoadThread.join();
@@ -296,7 +297,7 @@ void GameLevelManager::AddComponentsToPlayer(Player& playerObject, const Transfo
 		.SetOrientation(playerTransform.GetOrientation());
 
 	playerObject.SetRenderObject(new RenderObject(&playerObject.GetTransform(), mMeshList["Player"], mTextureList["DefaultTexture"], mShaderList["Animation"]));
-	playerObject.GetRenderObject()->SetAnimObject(new AnimationObject(AnimationObject::AnimationType::player, mAnimationList["PlayerIdle"]));
+	playerObject.GetRenderObject()->SetAnimObject(new AnimationObject(AnimationObject::AnimationType::player, mAnimationList["PlayerWalk"]));
 
 	playerObject.SetPhysicsObject(new PhysicsObject(&playerObject.GetTransform(), playerObject.GetBoundingVolume()));
 

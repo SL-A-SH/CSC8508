@@ -13,9 +13,8 @@ https://research.ncl.ac.uk/game/
 namespace NCL::Maths {
 
     template <typename T, uint32_t rows, uint32_t cols>
-    struct MatrixTemplate    {
+    struct MatrixTemplate {
         T array[cols][rows]; //We store matrices in col major format
-        
 
         MatrixTemplate() {
             for (int i = 0; i < cols; ++i) {
@@ -77,7 +76,7 @@ namespace NCL::Maths {
 
 
     template <typename T, uint32_t r, uint32_t c>
-    constexpr MatrixTemplate<T,r,c> operator*(const MatrixTemplate<T, r, c>& a, const MatrixTemplate<T, r, c>& b) {
+    constexpr MatrixTemplate<T, r, c> operator*(const MatrixTemplate<T, r, c>& a, const MatrixTemplate<T, r, c>& b) {
         MatrixTemplate<T, r, c> out;
         for (unsigned int cc = 0; cc < c; ++cc) {
             for (unsigned int rr = 0; rr < r; ++rr) {
@@ -113,13 +112,13 @@ namespace NCL::Maths {
     }
 
     template <typename T>
-    VectorTemplate<T, 4> operator*(const MatrixTemplate<T, 4, 4>& mat, const VectorTemplate<T, 4>&v) {
-    	return  VectorTemplate<T, 4>(
-    		v.x*mat.array[0][0] + v.y*mat.array[1][0] + v.z*mat.array[2][0]  + v.w * mat.array[3][0] ,
-    		v.x*mat.array[0][1] + v.y*mat.array[1][1] + v.z*mat.array[2][1]  + v.w * mat.array[3][1] ,
-    		v.x*mat.array[0][2] + v.y*mat.array[1][2] + v.z*mat.array[2][2]  + v.w * mat.array[3][2] ,
-    		v.x*mat.array[0][3] + v.y*mat.array[1][3] + v.z*mat.array[2][3]  + v.w * mat.array[3][3] 
-    	);
+    VectorTemplate<T, 4> operator*(const MatrixTemplate<T, 4, 4>& mat, const VectorTemplate<T, 4>& v) {
+        return  VectorTemplate<T, 4>(
+            v.x * mat.array[0][0] + v.y * mat.array[1][0] + v.z * mat.array[2][0] + v.w * mat.array[3][0],
+            v.x * mat.array[0][1] + v.y * mat.array[1][1] + v.z * mat.array[2][1] + v.w * mat.array[3][1],
+            v.x * mat.array[0][2] + v.y * mat.array[1][2] + v.z * mat.array[2][2] + v.w * mat.array[3][2],
+            v.x * mat.array[0][3] + v.y * mat.array[1][3] + v.z * mat.array[2][3] + v.w * mat.array[3][3]
+        );
     }
 
     namespace Matrix {

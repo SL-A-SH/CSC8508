@@ -55,6 +55,7 @@ void AnimationController::UpdateAllAnimations(float dt, vector<GameObject*> anim
 
 						frameMatrices.emplace_back(mat);
 					}
+
 					frameMatricesVec.emplace_back(frameMatrices);
 				}
 
@@ -69,6 +70,7 @@ void AnimationController::UpdateAllAnimations(float dt, vector<GameObject*> anim
 void AnimationController::InitPlayerAnimMap() {
 	mPlayerAnimationMap = {
 		{GameObject::AnimationState::Idle, "PlayerIdle"},
+		{GameObject::AnimationState::Walk, "PlayerWalk"}
 	};
 }
 
@@ -82,8 +84,12 @@ void AnimationController::SetAnimationState(GameObject* obj, GameObject::Animati
 
 	MeshAnimation* animation = mPreLoadedAnimationList[animationName];
 
-	obj->GetRenderObject()->GetAnimObject()->SetRate(1.0);
-
+	if (animationName == "GuardSprint" || animationName == "PlayerSprint") {
+		obj->GetRenderObject()->GetAnimObject()->SetRate(2.0);
+	}
+	else {
+		obj->GetRenderObject()->GetAnimObject()->SetRate(1.0);
+	}
 	obj->GetRenderObject()->GetAnimObject()->SetAnimation(animation);
 }
 

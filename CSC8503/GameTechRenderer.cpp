@@ -337,72 +337,31 @@ void GameTechRenderer::RenderCamera() {
 			if (activeObjects[i]->GetAnimObject()) {
 
 
-
-
-
-
-
-
-
-
-
-				Transform* transform = activeObjects[i]->GetTransform();
-
-				Vector3 pos = transform->GetPosition();
-
-				Quaternion ori = transform->GetOrientation();
-
-				Vector3 scale = transform->GetScale();
-
-				std::cout << std::endl;
-
-				std::cout << "Position: " << pos.x << ":" << pos.y << ":" << pos.z << std::endl;
-				std::cout << "Orientation: " << ori << std::endl;
-				std::cout << "Scale: " << scale.x << ":" << scale.y << ":" << scale.z << std::endl;
-
-				std::cout << std::endl;
-
-				Matrix4 posT = Matrix::Translation(pos);
-
-				std::cout << "Position2: " << posT << std::endl;
-
-				Matrix4 Rot = Quaternion::RotationMatrix<Matrix4>(ori);
-
-				std::cout << "Orientation 2: " << Rot << std::endl;
-
-				Matrix4 ScaleT = Matrix::Scale(scale);
-
-				std::cout << "Scale 2:" << ScaleT << std::endl;
-
-				std::cout << std::endl;
-
-				Matrix4 modelMatrix = posT * Rot * ScaleT;
-
-				std::cout << "Matrix New" << modelMatrix << std::endl;
-
-				std::cout << "Model Matrix for object " << i << ": " << modelMatrix << std::endl;
-				std::cout << "USING ANIMATION SHADER" << std::endl;
-				std::cout << "LayerCount is :" << layerCount << std::endl;
 				int j = glGetUniformLocation(shader->GetProgramID(), "joints");
-				std::cout << "Shader ID is: " << shader->GetProgramID() << std::endl;
+
+
+				std::cout << modelMatrix << std::endl;
 
 				const std::vector<int>& matTextures = activeObjects[i]->GetMaterialTextures();
 				std::vector<std::vector<Matrix4>> frameMatricesVec = activeObjects[i]->GetFrameMatricesVector();
+
+
+
 
 				for (int b = 0; b < layerCount; ++b) {
 					std::cout << "b is: " << b << std::endl;
 					vector<Matrix4> frameMatrices = frameMatricesVec[b];
 					glActiveTexture(GL_TEXTURE0);
 					glBindTexture(GL_TEXTURE_2D, matTextures[b]);
+
+					std::cout << "FRAME MATRCIES SIZE: " << frameMatrices.size() << std::endl;
 					glUniformMatrix4fv(j, frameMatrices.size(), false, (float*)frameMatrices.data());
 					DrawBoundMesh((uint32_t)b);
 				}
 			}
 			else if (activeObjects[i]->GetMaterialTextures().size() > 1) {
 				std::cout << "USING MATERIAL SHADER" << std::endl;
-
 				const std::vector<int>& matTextures = activeObjects[i]->GetMaterialTextures();
-
 				for (size_t b = 0; b < layerCount; ++b) {
 					glActiveTexture(GL_TEXTURE0);
 					glBindTexture(GL_TEXTURE_2D, matTextures[b]);
