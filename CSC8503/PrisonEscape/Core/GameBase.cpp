@@ -1,6 +1,6 @@
 #include "GameBase.h"
-#include "../CSC8503/PrisonEscape/States/GameState.h"
-#include "../CSC8503/PrisonEscape/States/MenuState.h"
+#include "PrisonEscape/States/GameState.h"
+#include "PrisonEscape/States/MenuState.h"
 
 using namespace NCL;
 using namespace CSC8503;

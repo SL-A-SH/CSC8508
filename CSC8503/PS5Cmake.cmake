@@ -22,6 +22,8 @@ function(Create_PS5_CSC8503_Files)
         "PrisonEscape/Core/GameConfigManager.h"
         "PrisonEscape/Core/GameLevelManager.cpp"
         "PrisonEscape/Core/GameLevelManager.h"
+        "PrisonEscape/Core/ImGuiManager.cpp"
+        "PrisonEscape/Core/ImGuiManager.h"
     )
     source_group("Prison Escape Core" FILES ${Prison_Escape_Core})
 

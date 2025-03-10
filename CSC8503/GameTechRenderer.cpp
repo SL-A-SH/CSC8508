@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "TextureLoader.h"
 #include "MshLoader.h"
+#include "typeindex"
 using namespace NCL;
 using namespace Rendering;
 using namespace CSC8503;
@@ -148,7 +149,7 @@ void GameTechRenderer::RenderFrame() {
 	RenderShadowMap();
 	RenderSkybox();
 	RenderCamera();
-	RenderUI(mImguiCanvasFuncToRender);
+	LoadUI();
 	glDisable(GL_CULL_FACE); //Todo - text indices are going the wrong way...
 	glDisable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
@@ -591,9 +592,38 @@ void GameTechRenderer::SetDebugStringBufferSizes(size_t newVertCount) {
 		glBindVertexArray(0);
 	}
 }
-void GameTechRenderer::SetImguiCanvasFunc(std::function<void()> func) {
-	mImguiCanvasFuncToRender = func;
+
+
+void GameTechRenderer::AddPanelToCanvas(const std::string& key, std::function<void()> func) {
+	// Avoid adding duplicates by key
+	if (mImguiCanvasFuncToRenderList.find(key) == mImguiCanvasFuncToRenderList.end()) {
+		mImguiCanvasFuncToRenderList[key] = std::move(func);
+	}
 }
+
+
+void GameTechRenderer::DeletePanelFromCanvas(const std::string& key) {
+
+	auto it = mImguiCanvasFuncToRenderList.find(key);
+	removePanelList.push_back(key);
+	/*auto it = mImguiCanvasFuncToRenderList.find(key);
+	if (it != mImguiCanvasFuncToRenderList.end()) {
+		mImguiCanvasFuncToRenderList.erase(it);
+
+	}*/
+}
+
+void GameTechRenderer::UpdatePanelList() {
+
+	for (const auto& key : removePanelList) {
+		auto it = mImguiCanvasFuncToRenderList.find(key);
+		if (it != mImguiCanvasFuncToRenderList.end()) {
+			mImguiCanvasFuncToRenderList.erase(it);
+		}
+	}
+	removePanelList.clear();
+}
+
 
 void GameTechRenderer::SetDebugLineBufferSizes(size_t newVertCount) {
 	if (newVertCount > lineCount) {
@@ -624,16 +654,15 @@ void GameTechRenderer::SetDebugLineBufferSizes(size_t newVertCount) {
 }
 
 
-void GameTechRenderer::RenderUI(std::function<void()> callback) {
+void GameTechRenderer::LoadUI() {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-
 	// Next window to be created will cover the entire screen
 	NCL::Maths::Vector2i windowSize = NCL::Window::GetWindow()->GetScreenSize();
-	int windowWidth = windowSize.x;
-	int windowHeight = windowSize.y;
+	float windowWidth = static_cast<float>(windowSize.x);
+	float windowHeight = static_cast<float>(windowSize.y);
 
 	ImVec2 size(windowWidth, windowHeight);
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
@@ -646,13 +675,14 @@ void GameTechRenderer::RenderUI(std::function<void()> callback) {
 		ImGuiWindowFlags_NoResize
 	);
 
-	if (callback != nullptr) {
-		callback();
+	for (const auto& [key, func] : mImguiCanvasFuncToRenderList) {
+		func();
 	}
+UpdatePanelList();
+
 	//CLEAR
 
 	ImGui::End();
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
 }
