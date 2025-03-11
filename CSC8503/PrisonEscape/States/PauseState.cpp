@@ -4,7 +4,7 @@
 #include "MenuState.h"
 #include <iostream>
 
-
+#include "PrisonEscape/Core/GameBase.h"
 
 #include "PrisonEscape/Core/ImGuiManager.h"
 
@@ -18,14 +18,16 @@ void PauseState::OnAwake() {
 }
 
 PushdownState::PushdownResult PauseState::OnUpdate(float dt, PushdownState** newState) {
-	if (stateChangeAction) {
-		stateChangeAction(newState);
-		stateChangeAction = nullptr;
+	if (buttonClicked == ButtonClicked::Resume) {
+		*newState = nullptr;
 		return PushdownResult::Pop;
 	}
-	if (Window::GetKeyboard()->KeyPressed(KeyCodes::ESCAPE)) {
-		stateChangeAction = [](PushdownState** newState) { *newState = nullptr; }; // Resumes the game
-		return PushdownResult::Pop;
+	else if (buttonClicked == ButtonClicked::Settings) {
+		return PushdownResult::NoChange;
+	}
+	else if (buttonClicked == ButtonClicked::Exit) {
+		*newState = new MenuState;
+		return PushdownResult::Push;
 	}
 	return PushdownResult::NoChange;
 }
@@ -33,15 +35,21 @@ PushdownState::PushdownResult PauseState::OnUpdate(float dt, PushdownState** new
 void PauseState::DrawPauseMenuPanel() {
 	std::vector<PanelButton> buttons = {
 		{"Resume", [this]() {
-			stateChangeAction = [](PushdownState** newState) { *newState = nullptr; }; // Resumes the game
+			//stateChangeAction = [](PushdownState** newState) { *newState = nullptr; }; // Resumes the game
+			this->buttonClicked = ButtonClicked::Resume;
+			//GameBase::GetGameBase()->GetStateMachine()->PopState();
 			GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("PauseMenuPanel");
 		}, 0.25f},
 		{"Settings", [this]() {
+			this->buttonClicked = ButtonClicked::Settings;
 			GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("PauseSettingPanel", [this]() { DrawSettingPanel(); });
 			GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("PauseMenuPanel");
 		}, 0.45f},
 		{"Exit to Main Menu", [this]() {
-			stateChangeAction = [](PushdownState** newState) { *newState = new MenuState(); }; // Goes back to main menu
+			this->buttonClicked = ButtonClicked::Exit;
+			//GameBase::GetGameBase()->GetStateMachine()->PushState(new MenuState);
+			GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("PauseMenuPanel");
+
 		}, 0.65f}
 	};
 

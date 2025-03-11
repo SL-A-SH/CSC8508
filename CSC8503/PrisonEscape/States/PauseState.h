@@ -12,7 +12,15 @@
 
 namespace NCL {
 	namespace CSC8503 {
+		enum ButtonClicked
+		{
+			Default,
+			Resume,
+			Settings,
+			Exit
+		};
 		class PauseState : public GameState {
+
 
 		public:
 			PauseState() {}
@@ -30,6 +38,9 @@ namespace NCL {
 		private:
 			int volume = 50;
 			int brightness = 50;
+
+			ButtonClicked buttonClicked = ButtonClicked::Default;
+
 		};
 	}
 }
