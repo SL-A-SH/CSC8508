@@ -29,16 +29,7 @@ void Level::Init()
 
 void Level::Update(float dt)
 {
-	if (playerOne)
-	{
-		playerOne->UpdateGame(dt);
-	}
-
-	if (playerTwo)
-	{
-		
-		playerTwo->UpdateGame(dt);
-	}
+	
 }
 
 void Level::ReceivePacket(int type, GamePacket* payload, int source) {
@@ -49,13 +40,13 @@ void Level::ReceivePacket(int type, GamePacket* payload, int source) {
 
 		// Update the appropriate player based on ID
 		if (posPacket->playerID == 1) {
-			if (playerOne && config && !config->networkConfig.isServer) {
-				playerOne->GetTransform().SetPosition(Vector3(posPacket->posX, posPacket->posY, posPacket->posZ));
+			if (player && config && !config->networkConfig.isServer) {
+				player->GetTransform().SetPosition(Vector3(posPacket->posX, posPacket->posY, posPacket->posZ));
 			}
 		}
 		else {
-			if (playerTwo && config && config->networkConfig.isServer) {
-				playerTwo->GetTransform().SetPosition(Vector3(posPacket->posX, posPacket->posY, posPacket->posZ));
+			if (player && config && config->networkConfig.isServer) {
+				player->GetTransform().SetPosition(Vector3(posPacket->posX, posPacket->posY, posPacket->posZ));
 			}
 		}
 	}
@@ -85,16 +76,10 @@ void Level::InitializeLevel()
 	AddMeshToWorldPosition(Vector3(10, 10, 0), kittenMesh, Vector3(1, 1, 1), VolumeType::Sphere, Vector3(1, 1, 1));
 }
 
-void Level::AddPlayerOneToLevel(PlayerOne* playerOne)
+void Level::AddPlayerToLevel(Player* player)
 {
-	this->playerOne = playerOne;
-	this->playerOne->GetRenderObject()->GetTransform()->SetPosition(Vector3(0, 50, 0));
-}
-
-void Level::AddPlayerTwoToLevel(PlayerTwo* playerTwo)
-{
-	this->playerTwo = playerTwo;
-	this->playerTwo->GetRenderObject()->GetTransform()->SetPosition(Vector3(0, 50, 0));
+	this->player = player;
+	this->player->GetRenderObject()->GetTransform()->SetPosition(Vector3(0, 50, 0));
 }
 
 void Level::SetCameraAttributes()

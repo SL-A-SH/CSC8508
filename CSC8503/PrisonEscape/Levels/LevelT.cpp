@@ -9,7 +9,7 @@
 #include "StateGameObject.h"
 #include "GameTechRenderer.h"
 #include "PrisonEscape/Scripts/puzzle/puzzleT.h"
-#include "PrisonEscape/Prefabs/Player/PlayerOne.h" 
+#include "PrisonEscape/Scripts/Player/Player.h" 
 
 #include "PrisonEscape/Core/GameBase.h"
 LevelT::LevelT()
@@ -123,7 +123,7 @@ GameObject* LevelT::AddDoorToWorld(Door* door, const Vector3& position) {
 }
 
 void LevelT::UpdateCubeVisibility() {
-	PlayerOne* player = GetPlayerOne();
+	Player* player = GetPlayer();
 	if (!player) return;
 
 	Vector3 playerPos = player->GetTransform().GetPosition();

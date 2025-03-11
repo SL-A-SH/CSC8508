@@ -22,10 +22,6 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 
 	InitAssets();
 	InitAnimationObjects();
-
-
-	
-
 }	
 
 GameLevelManager::~GameLevelManager()
@@ -63,8 +59,6 @@ GameLevelManager::~GameLevelManager()
 	}
 	mAnimationList.clear();
 
-	delete mPlayerToAdd;
-	delete mPlayerTwoToAdd;
 	delete mRenderer;
 	delete mWorld;
 }
@@ -261,9 +255,10 @@ void GameLevelManager::InitAnimationObjects() const {
 	mAnimator->SetObjectList(mUpdatableObjectList);
 }
 
-PlayerOne* GameLevelManager::AddPlayerOneToWorld(const Transform& transform, const std::string& playerName) {
+Player* GameLevelManager::AddPlayerToWorld(const Transform& transform, const std::string& playerName)
+{
 	std::cout << "Adding Player To World" << std::endl;
-	mPlayerToAdd = new PlayerOne(mWorld, playerName);
+	Player* mPlayerToAdd = new Player(mWorld, playerName);
 	AddComponentsToPlayer(*mPlayerToAdd, transform);
 
 	mWorld->AddGameObject(mPlayerToAdd);
@@ -271,20 +266,7 @@ PlayerOne* GameLevelManager::AddPlayerOneToWorld(const Transform& transform, con
 	std::cout << "mUpdatable Object List Size:    " << mUpdatableObjectList.size() << std::endl;
 	mAnimator->SetObjectList(mUpdatableObjectList);
 
-
 	return mPlayerToAdd;
-}
-PlayerTwo* GameLevelManager::AddPlayerTwoToWorld(const Transform& transform, const std::string& playerName) {
-	mPlayerTwoToAdd = new PlayerTwo(mWorld, playerName);
-	AddComponentsToPlayer(*mPlayerTwoToAdd, transform);
-
-	mWorld->AddGameObject(mPlayerTwoToAdd);
-	mUpdatableObjectList.push_back(mPlayerTwoToAdd);
-	mAnimator->SetObjectList(mUpdatableObjectList);
-
-
-
-	return mPlayerTwoToAdd;
 }
 
 void GameLevelManager::AddComponentsToPlayer(Player& playerObject, const Transform& playerTransform) {

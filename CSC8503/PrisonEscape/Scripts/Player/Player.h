@@ -13,16 +13,15 @@ namespace NCL {
 			Player(GameWorld* world, const std::string& name);
 			~Player();
 
-			virtual void UpdateGame(float dt);
-			virtual void UpdatePlayerMovement(float dt);
-			virtual float GetPlayerSpeed() const { return 10.0f; }  // Default speed
+			void UpdateGame(float dt);
+			void UpdatePlayerMovement(float dt);
 
-			virtual std::string GetName() { return mName; }
+			void InitializeController();
 
 		protected:
 			GameObject* playerObject;
 
-			KeyboardMouseController controller;
+			KeyboardMouseController* controller;
 
 			bool useGravity;
 			bool cameraAttached = false;
@@ -33,7 +32,15 @@ namespace NCL {
 			std::string mName;
 			GameWorld* mWorld;
 
+		private:
+			float playerSpeed = 10.0f;
+
 		public:
+			std::string GetName() { return mName; }
+
+			float GetPlayerSpeed() const { return playerSpeed; }
+			void SetPlayerSpeed(float speed) { playerSpeed = speed; }
+
 			GameObject* GetPlayerObject() const { return playerObject; }
 		};
 	}

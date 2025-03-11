@@ -23,16 +23,14 @@ namespace NCL {
 			void InitAnimationObjects() const;
 
 			// Player Methods
-
-			PlayerOne* AddPlayerOneToWorld(const Transform& transform, const std::string& playerName);
-			PlayerTwo* AddPlayerTwoToWorld(const Transform& transform, const std::string& playerName);
+			Player* AddPlayerToWorld(const Transform& transform, const std::string& playerName);
 			void AddComponentsToPlayer(Player& playerObj, const Transform& transform);
-
 
 		public:
 			Level* GetCurrentLevel() { return mCurrentLevel; }
 			void SetCurrentLevel(Level* level) { mCurrentLevel = level; }
 			void AddLevel(Level* newLevel) { mLevelStack.push(newLevel); }
+
 		private:
 			GameWorld* mWorld;
 			GameTechRenderer* mRenderer;
@@ -53,10 +51,6 @@ namespace NCL {
 			std::map<std::string, MeshAnimation*> mPreLoadedAnimationList;
 
 			bool isPlaying;
-
-			//Player Members
-			PlayerOne* mPlayerToAdd;
-			PlayerTwo* mPlayerTwoToAdd;
 		};
 	}
 }
