@@ -40,13 +40,13 @@ void Level::ReceivePacket(int type, GamePacket* payload, int source) {
 
 		// Update the appropriate player based on ID
 		if (posPacket->playerID == 1) {
-			if (player && config && !config->networkConfig.isServer) {
-				player->GetTransform().SetPosition(Vector3(posPacket->posX, posPacket->posY, posPacket->posZ));
+			if (playerOne && config && !config->networkConfig.isServer) {
+				playerOne->GetTransform().SetPosition(Vector3(posPacket->posX, posPacket->posY, posPacket->posZ));
 			}
 		}
 		else {
-			if (player && config && config->networkConfig.isServer) {
-				player->GetTransform().SetPosition(Vector3(posPacket->posX, posPacket->posY, posPacket->posZ));
+			if (playerTwo && config && config->networkConfig.isServer) {
+				playerTwo->GetTransform().SetPosition(Vector3(posPacket->posX, posPacket->posY, posPacket->posZ));
 			}
 		}
 	}
@@ -78,8 +78,16 @@ void Level::InitializeLevel()
 
 void Level::AddPlayerToLevel(Player* player)
 {
-	this->player = player;
-	this->player->GetRenderObject()->GetTransform()->SetPosition(Vector3(0, 50, 0));
+	if (player->GetName() == "playerOne")
+	{
+		this->playerOne = player;
+		this->playerOne->GetRenderObject()->GetTransform()->SetPosition(Vector3(0, 50, 0));
+	}
+	else if (player->GetName() == "playerTwo")
+	{
+		this->playerTwo = player;
+		this->playerTwo->GetRenderObject()->GetTransform()->SetPosition(Vector3(0, 50, 0));
+	}
 }
 
 void Level::SetCameraAttributes()

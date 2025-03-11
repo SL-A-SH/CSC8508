@@ -123,7 +123,7 @@ GameObject* LevelT::AddDoorToWorld(Door* door, const Vector3& position) {
 }
 
 void LevelT::UpdateCubeVisibility() {
-	Player* player = GetPlayer();
+	Player* player = GetPlayerOne();
 	if (!player) return;
 
 	Vector3 playerPos = player->GetTransform().GetPosition();

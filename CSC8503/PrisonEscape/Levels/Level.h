@@ -29,7 +29,8 @@ namespace NCL {
 			Texture* pauseButton = nullptr;
 			Shader* basicShader = nullptr;
 
-			Player* player = nullptr;
+			Player* playerOne = nullptr;
+			Player* playerTwo = nullptr;
 
 		private:
 			void InitializeAssets();
@@ -40,7 +41,8 @@ namespace NCL {
 			GameObject* AddMeshToWorldPosition(const Vector3& position, Mesh* mesh, const Vector3& meshSize, VolumeType type, const Vector3& volumeSize, const float& inverseMass = 10.0f);
 
 		public:
-			Player* GetPlayer() const { return player; }
+			Player* GetPlayerOne() const { return playerOne; }
+			Player* GetPlayerTwo() const { return playerTwo; }
 
 #pragma region UI
 
