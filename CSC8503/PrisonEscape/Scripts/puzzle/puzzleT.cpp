@@ -1,6 +1,7 @@
 #include "PuzzleT.h"
 #include "PhysicsObject.h"
 #include "RenderObject.h"
+#include "Window.h"
 
 
 using namespace NCL;
@@ -15,19 +16,29 @@ NormalCollidCube::~NormalCollidCube() {
 }
 
 void NormalCollidCube::OnCollisionBegin(GameObject* otherObject) {
-	RenderObject* renderObject = GetRenderObject();
-	if (renderObject && otherObject->GetName() == "player") {
-		static int colorIndex = 0;
-		std::vector<Vector4> colors = {
-			Vector4(1, 0, 0, 1), // Red
-			Vector4(0, 0, 1, 1), // Blue
-			Vector4(0, 1, 0, 1), // Green
-			Vector4(1, 1, 1, 1), // White
-			Vector4(0, 0, 0, 1), // Black
-			Vector4(1, 1, 0, 1)  // Yellow
-		};
-		renderObject->SetColour(colors[colorIndex]);
-		colorIndex = (colorIndex + 1) % colors.size();
+	system("cls");
+	std::cout << "OnCollisionBegin: " << this->GetName() << " with " << otherObject->GetName() << std::endl;
+}
+
+void NormalCollidCube::OnCollisionStay(GameObject* otherObject)
+{
+	std::cout << "OnCollisionStay: " << this->GetName() << " with " << otherObject->GetName() << std::endl;
+	if (Window::GetKeyboard()->KeyPressed(KeyCodes::E)) {
+		std::cout << "Colliding with " << otherObject->GetName() << std::endl;
+		RenderObject* renderObject = GetRenderObject();
+		if (renderObject && otherObject->GetName() == "player") {
+
+			std::vector<Vector4> colors = {
+				Vector4(1, 0, 0, 1), // Red
+				Vector4(0, 0, 1, 1), // Blue
+				Vector4(0, 1, 0, 1), // Green
+				Vector4(1, 1, 1, 1), // White
+				Vector4(0, 0, 0, 1), // Black
+				Vector4(1, 1, 0, 1)  // Yellow
+			};
+			colorIndex = (colorIndex + 1) % colors.size();
+			renderObject->SetColour(colors[colorIndex]);
+		}
 	}
 }
 
@@ -35,15 +46,15 @@ Door::Door() : GameObject("Door") {
 	isOpen = false;
 	openTexture = nullptr;
 	closeTexture = nullptr;
-	
+
 }
 void Door::Open() {
 	isOpen = true;
 	GetRenderObject()->SetDefaultTexture(openTexture);
 
-	Vector3 newPosition = GetTransform().GetPosition() + Vector3(0, 5, 0); 
+	Vector3 newPosition = GetTransform().GetPosition() + Vector3(0, 5, 0);
 	GetTransform().SetPosition(newPosition);
-	
+
 }
 
 void Door::Close() {
@@ -80,7 +91,7 @@ void ButtonTrigger::OnCollisionBegin(GameObject* otherObject) {
 
 		if (linkedDoor) {
 			linkedDoor->Open();// Open the door
-			
+
 		}
 	}
 }

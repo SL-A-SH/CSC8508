@@ -9,7 +9,7 @@ namespace NCL::CSC8503 {
 	class RenderObject;
 	class PhysicsObject;
 
-	class GameObject	{
+	class GameObject {
 	public:
 		GameObject(const std::string& name = "");
 		~GameObject();
@@ -66,7 +66,11 @@ namespace NCL::CSC8503 {
 			//std::cout << "OnCollisionEnd event occured!\n";
 		}
 
-		bool GetBroadphaseAABB(Vector3&outsize) const;
+		virtual void OnCollisionStay(GameObject* otherObject) {
+			//std::cout << "OnCollisionEnd event occured!\n";
+		}
+
+		bool GetBroadphaseAABB(Vector3& outsize) const;
 
 		void UpdateBroadphaseAABB();
 
@@ -77,15 +81,15 @@ namespace NCL::CSC8503 {
 		int		GetWorldID() const {
 			return worldID;
 		}
-		
-		virtual void UpdateGame(float dt); 
+
+		virtual void UpdateGame(float dt);
 	protected:
 		Transform			transform;
 
-		CollisionVolume*	boundingVolume;
-		PhysicsObject*		physicsObject;
-		RenderObject*		renderObject;
-		NetworkObject*		networkObject;
+		CollisionVolume* boundingVolume;
+		PhysicsObject* physicsObject;
+		RenderObject* renderObject;
+		NetworkObject* networkObject;
 
 		bool		isActive;
 		int			worldID;

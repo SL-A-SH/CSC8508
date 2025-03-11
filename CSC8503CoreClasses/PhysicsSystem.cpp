@@ -137,8 +137,8 @@ void PhysicsSystem::Update(float dt) {
 			realDT = idealDT;
 		}
 		if (temp != realHZ) {
-			
-	//		std::cout << "Raising iteration count due to short physics time...(now " << realHZ << ")\n";
+
+			//		std::cout << "Raising iteration count due to short physics time...(now " << realHZ << ")\n";
 		}
 	}
 }
@@ -159,6 +159,11 @@ void PhysicsSystem::UpdateCollisionList() {
 		if ((*i).framesLeft == numCollisionFrames) {
 			i->a->OnCollisionBegin(i->b);
 			i->b->OnCollisionBegin(i->a);
+		}
+		else {
+			// Collision is persisting
+			i->a->OnCollisionStay(i->b);
+			i->b->OnCollisionStay(i->a);
 		}
 
 		CollisionDetection::CollisionInfo& in = const_cast<CollisionDetection::CollisionInfo&>(*i);
@@ -327,9 +332,21 @@ void PhysicsSystem::NarrowPhase() {
 		CollisionDetection::CollisionInfo collisionInfo = *i;
 		if (CollisionDetection::ObjectIntersection(collisionInfo.a, collisionInfo.b, collisionInfo))
 		{
-			collisionInfo.framesLeft = numCollisionFrames;
+
+			auto found = allCollisions.find(collisionInfo);
+			if (found != allCollisions.end()) {
+				// Update the lifetime without resetting it to full,
+				// or simply refresh it while knowing it's already in progress
+				CollisionDetection::CollisionInfo& existingCollision = const_cast<CollisionDetection::CollisionInfo&>(*found);
+				existingCollision.framesLeft = numCollisionFrames;
+			}
+			else {
+				// New collision detected
+				collisionInfo.framesLeft = numCollisionFrames;
+				allCollisions.insert(collisionInfo);
+			}
 			ImpulseResolveCollision(*collisionInfo.a, *collisionInfo.b, collisionInfo.point);
-			allCollisions.insert(collisionInfo);
+
 		}
 	}
 
