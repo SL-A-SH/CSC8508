@@ -31,7 +31,7 @@ MenuState::~MenuState()
 }
 
 void MenuState::OnAwake() {
-	ImGuiManager::Initialize();
+
 	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("MainMenuPanel", [this]() {	DrawMainMenuPanel();});
 	Debug::PrintDebugInfo({ "Menu State", Debug::RED });
 	Window::GetWindow()->ShowOSPointer(true);
