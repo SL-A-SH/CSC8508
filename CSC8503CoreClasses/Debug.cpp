@@ -1,5 +1,6 @@
 #include "Debug.h"
 #include <windows.h>
+#include "Window.h" 
 #include <psapi.h>
 using namespace NCL;
 
@@ -128,6 +129,8 @@ const std::vector<Debug::DebugLineEntry>& Debug::GetDebugLines() {
 const std::vector<Debug::DebugTexEntry>& Debug::GetDebugTex() {
 	return texEntries;
 }
+
+
 void Debug::DrawDebugMenu() {
 	// Set the window position to the top-right corner of the screen
 	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 300, 0), ImGuiCond_Once);
@@ -136,6 +139,9 @@ void Debug::DrawDebugMenu() {
 	// Create a window to hold the debug info
 	if (ImGui::Begin("Debug Menu", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
 
+		if (Window::GetKeyboard()->KeyPressed(KeyCodes::G)) {
+			ImGui::SetWindowFocus();
+		}
 		if (ImGui::CollapsingHeader("Debug Info")) {
 			for (const auto& s : debugEntries) {
 				// Push the color before rendering the text
@@ -169,6 +175,7 @@ void Debug::DrawDebugMenu() {
 		ImGui::End(); // Close the window
 	}
 }
+
 
 size_t Debug::GetCurrentMemoryUsageMB() {
 	PROCESS_MEMORY_COUNTERS_EX pmc;
