@@ -36,3 +36,4 @@ lib/
 *.pdb
 *.sln
 CSC8503/imgui.ini
+Generate.bat
