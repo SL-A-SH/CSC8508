@@ -16,6 +16,7 @@ message("${CMAKE_VS_PLATFORM_NAME} architecture in use")
 if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Prospero")
     add_compile_definitions(USEPROSPERO)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti")
+	add_compile_options(-std=c++17)
     add_compile_options(-Wno-pragma-once-outside-header)
 endif()
 
