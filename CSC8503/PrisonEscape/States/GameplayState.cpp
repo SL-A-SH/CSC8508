@@ -89,7 +89,7 @@ void GamePlayState::OnAwake()
 	{
 		// Single player mode
 		Transform playerTransform;
-		Player* player = manager->AddPlayerToWorld(playerTransform, "player");
+		Player* player = manager->AddPlayerToWorld(playerTransform, "playerOne");
 		player->InitializeController();
 
 		level->AddPlayerToLevel(player);
