@@ -16,7 +16,7 @@ struct InGameObject {
     std::string type;
     Vector3 position;
     Vector3 dimensions;
-    //Vector3 orientation;
+    Vector3 orientation;
 };
 
 struct LevelData {

@@ -34,12 +34,12 @@ void LevelOne::Init()
 	// ramp for player to climb up to platform
 	AddRampToWorld(Vector3(-100, 3, 85), Vector3(20, 3, 20), 20, 0, 0);
 
-	// button
-	button = new Button();
-	button->spawnButton(Vector3(-100, 1, -38));
+	//// button
+	//button = new Button();
+	//button->spawnButton(Vector3(5, 5, 5), Vector3(-100, 1, -38), "button");
 
-	// for this level, button can only be activated by the movable box
-	button->SetBoxActivated(true);
+	//// for this level, button can only be activated by the movable box
+	//button->SetBoxActivated(true);
 
 }
 

@@ -17,10 +17,11 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	mRenderer = existingRenderer;
 	mPhysics = new PhysicsSystem(*mWorld);
 	mPhysics->UseGravity(true);
-	loadMap();
 	// Move to another place if needed
 
 	InitAssets();
+	loadMap();
+	
 	
 
 }
@@ -57,6 +58,19 @@ void GameLevelManager::UpdateGame(float dt)
 			obj->UpdateGame(dt);
 		}
 	}
+
+	for (Button* button : buttons) {
+		if (!button->IsPressed()) {
+			button->pressDetection(pushableBox, "Box");
+		}
+
+		//if (button->IsPressed()) {
+		//	std::cout << "BOOPED";
+		//}
+	}
+
+
+	
 	Debug::Print("LEVELS", Vector2(25, 30), Debug::WHITE);
 }
 
@@ -233,6 +247,7 @@ PlayerOne* GameLevelManager::AddPlayerToWorld(const Transform& transform, const 
 }
 
 void GameLevelManager::AddComponentsToPlayer(Player& playerObject, const Transform& playerTransform) {
+
 	SphereVolume* volume = new SphereVolume(PLAYER_MESH_SIZE/2);
 	playerObject.SetBoundingVolume((CollisionVolume*)volume);
 
@@ -251,6 +266,59 @@ void GameLevelManager::AddComponentsToPlayer(Player& playerObject, const Transfo
 	playerObject.GetPhysicsObject()->InitSphereInertia();
 }
 
+// world gameobjects called in loadMap();
+GameObject* GameLevelManager::AddWallToWorld(Vector3 dimensions, const Vector3& position, float x, float y, float z) {
+
+	Vector3 offset = position + Vector3(0, 2.0f, 0);
+
+	GameObject* wall = new GameObject("Wall");
+
+	Quaternion newOrientation = Quaternion::EulerAnglesToQuaternion(x, y, z);
+	wall->GetTransform().SetOrientation(newOrientation);
+
+	AABBVolume* volume = new AABBVolume(dimensions * 0.5f);
+	wall->SetBoundingVolume((CollisionVolume*)volume);
+	wall->GetTransform()
+		.SetScale(dimensions)
+		.SetPosition(offset);
+
+	wall->SetRenderObject(new RenderObject(&wall->GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+	wall->SetPhysicsObject(new PhysicsObject(&wall->GetTransform(), wall->GetBoundingVolume()));
+
+	wall->GetPhysicsObject()->SetInverseMass(0);
+	wall->GetPhysicsObject()->InitCubeInertia();
+
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(wall);
+	
+	return wall;
+}
+
+GameObject* GameLevelManager::AddBoxToWorld(const Vector3& position, Vector3 dimensions, const std::string name, float inverseMass) {
+	Vector3 offset = position + Vector3(0, 2.0f, 0);
+	
+	GameObject* cube = new GameObject(name);
+
+	AABBVolume* volume = new AABBVolume(dimensions * 0.5f);
+	cube->SetBoundingVolume((CollisionVolume*)volume);
+
+	cube->GetTransform()
+		.SetScale(dimensions)
+		.SetPosition(offset);
+
+
+	cube->SetRenderObject(new RenderObject(&cube->GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+	cube->SetPhysicsObject(new PhysicsObject(&cube->GetTransform(), cube->GetBoundingVolume()));
+
+	cube->GetPhysicsObject()->SetInverseMass(inverseMass);
+	cube->GetPhysicsObject()->InitCubeInertia();
+
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(cube);
+
+	return cube;
+}
+
+
+// map loading from json file
 void GameLevelManager::loadMap() {
 	int level;
 	std::vector<InGameObject> objects;
@@ -259,36 +327,50 @@ void GameLevelManager::loadMap() {
 		for (const auto& obj : objects) {
 			if (obj.type == "Button") {
 				std::cout << "ID: " << obj.id << " Type: " << obj.type << "\n";
-				std::cout << " Position -> X: " << obj.position.x << " Y: " << obj.position.y << " Z: " << obj.position.z << "\n";
-				std::cout << " Dimensions -> X: " << obj.dimensions.x << " Y: " << obj.dimensions.y << " Z: " << obj.dimensions.z << "\n";
+				std::cout << "Position -> x: " << obj.position.x << " y: " << obj.position.y << " z: " << obj.position.z << "\n";
+				std::cout << "Dimensions -> x: " << obj.dimensions.x << " y: " << obj.dimensions.y << " z: " << obj.dimensions.z << "\n";
+				std::cout << "Orientation -> x: " << obj.orientation.x << " y: " << obj.orientation.y << " z: " << obj.orientation.z << "\n";
 				std::cout << "Function to place " + obj.type + "\n\n";
+				Button* newButton = new Button();
+				newButton->spawnButton(obj.dimensions, obj.position, obj.type, mMeshList["Cube"], mShaderList["BasicShader"], mTextureList["DefaultTexture"]);
+				// code to check if box is box activated or something
+				newButton->SetBoxActivated(true);
+				buttons.push_back(newButton);
 			}
 
 			if (obj.type == "Box") {
 				std::cout << "ID: " << obj.id << " Type: " << obj.type << "\n";
-				std::cout << " Position -> X: " << obj.position.x << " Y: " << obj.position.y << " Z: " << obj.position.z << "\n";
-				std::cout << " Dimensions -> X: " << obj.dimensions.x << " Y: " << obj.dimensions.y << " Z: " << obj.dimensions.z << "\n";
+				std::cout << "Position -> x: " << obj.position.x << " y: " << obj.position.y << " z: " << obj.position.z << "\n";
+				std::cout << " Dimensions -> x: " << obj.dimensions.x << " y: " << obj.dimensions.y << " z: " << obj.dimensions.z << "\n";
+				std::cout << "Orientation -> x: " << obj.orientation.x << " y: " << obj.orientation.y << " z: " << obj.orientation.z << "\n";
 				std::cout << "Function to place " + obj.type + "\n\n";
+				pushableBox = AddBoxToWorld(obj.position, obj.dimensions, obj.type);
+
 			}
 
 			if (obj.type == "Wall") {
 				std::cout << "ID: " << obj.id << " Type: " << obj.type << "\n";
-				std::cout << " Position -> X: " << obj.position.x << " Y: " << obj.position.y << " Z: " << obj.position.z << "\n";
-				std::cout << " Dimensions -> X: " << obj.dimensions.x << " Y: " << obj.dimensions.y << " Z: " << obj.dimensions.z << "\n";
+				std::cout << "Position -> x: " << obj.position.x << " y: " << obj.position.y << " z: " << obj.position.z << "\n";
+				std::cout << " Dimensions -> x: " << obj.dimensions.x << " y: " << obj.dimensions.y << " z: " << obj.dimensions.z << "\n";
+				std::cout << "Orientation -> x: " << obj.orientation.x << " y: " << obj.orientation.y << " z: " << obj.orientation.z << "\n";
 				std::cout << "Function to place " + obj.type + "\n\n";
+
+				AddWallToWorld(obj.dimensions, obj.position, obj.orientation.x, obj.orientation.y, obj.orientation.z);
 			}
 
 			if (obj.type == "Exit") {
 				std::cout << "ID: " << obj.id << " Type: " << obj.type << "\n";
-				std::cout << " Position -> X: " << obj.position.x << " Y: " << obj.position.y << " Z: " << obj.position.z << "\n";
-				std::cout << " Dimensions -> X: " << obj.dimensions.x << " Y: " << obj.dimensions.y << " Z: " << obj.dimensions.z << "\n";
+				std::cout << "Position -> x: " << obj.position.x << " y: " << obj.position.y << " z: " << obj.position.z << "\n";
+				std::cout << " Dimensions -> x: " << obj.dimensions.x << " y: " << obj.dimensions.y << " z: " << obj.dimensions.z << "\n";
+				std::cout << "Orientation -> x: " << obj.orientation.x << " y: " << obj.orientation.y << " z: " << obj.orientation.z << "\n";
 				std::cout << "Function to place " + obj.type + "\n\n";
 			}
 
 			if (obj.type == "Floor") {
 				std::cout << "ID: " << obj.id << " Type: " << obj.type << "\n";
-				std::cout << " Position -> X: " << obj.position.x << " Y: " << obj.position.y << " Z: " << obj.position.z << "\n";
-				std::cout << " Dimensions -> X: " << obj.dimensions.x << " Y: " << obj.dimensions.y << " Z: " << obj.dimensions.z << "\n";
+				std::cout << "Position -> x: " << obj.position.x << " y: " << obj.position.y << " z: " << obj.position.z << "\n";
+				std::cout << " Dimensions -> x: " << obj.dimensions.x << " y: " << obj.dimensions.y << " z: " << obj.dimensions.z << "\n";
+				std::cout << "Orientation -> x: " << obj.orientation.x << " y: " << obj.orientation.y << " z: " << obj.orientation.z << "\n";
 				std::cout << "Function to place " + obj.type + "\n\n";
 			}
 

@@ -41,7 +41,6 @@ private:
 	GameObject* AddObstacleToWorld(Vector3 size, const Vector3& position);
 	GameObject* AddBoxToWorld(const Vector3& position, Vector3 dimensions, const std::string name, float inverseMass = 10.0f);
 	GameObject* AddRampToWorld(const Vector3& position, Vector3 dimensions, float x, float y, float z);
-
 	// maybe add levelComplete boolean into level.cpp to keep track of level progress
 	void openExit();
 };

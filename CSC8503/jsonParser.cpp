@@ -12,11 +12,11 @@ bool jsonParser::LoadLevel(const std::string& filename, int& level, std::vector<
     }
 
     json jsonData;
-    file >> jsonData; // Parse JSON file
+    file >> jsonData; 
 
-    level = jsonData["level"]; // Read level number
+    level = jsonData["level"]; 
 
-    objects.clear(); // Ensure objects vector is empty
+    objects.clear();
 
     for (const auto& obj : jsonData["objects"]) {
         InGameObject gameObject;
@@ -24,7 +24,7 @@ bool jsonParser::LoadLevel(const std::string& filename, int& level, std::vector<
         gameObject.type = obj["type"];
         gameObject.position = { obj["position"]["x"], obj["position"]["y"], obj["position"]["z"] };
         gameObject.dimensions = { obj["dimensions"]["x"], obj["dimensions"]["y"], obj["dimensions"]["z"] };
-        //gameObject.orientation = { obj["orientation"]["x"], obj["orientation"]["y"], obj["orientation"]["z"] };
+        gameObject.orientation = { obj["orientation"]["x"], obj["orientation"]["y"], obj["orientation"]["z"] };
 
         objects.push_back(gameObject);
     }

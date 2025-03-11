@@ -6,6 +6,7 @@
 #include "MeshAnimation.h"
 #include "MeshMaterial.h"
 #include "jsonParser.h"
+#include "../CSC8503/PrisonEscape/Scripts/puzzle/Button.h"
 #include "../CSC8503/PrisonEscape/Levels/Level.h"
 #include "../CSC8503/PrisonEscape/Scripts/Player/Player.h"
 
@@ -37,6 +38,11 @@ namespace NCL {
 			GameTechRenderer* mRenderer;
 			PhysicsSystem* mPhysics;
 			Level* mCurrentLevel;
+
+			// for handling multiple buttons/boxes in a level
+			std::vector<GameObject*> boxes;
+			std::vector<Button*> buttons;
+			GameObject* pushableBox;
 			std::stack<Level*> mLevelStack;
 
 
@@ -50,8 +56,8 @@ namespace NCL {
 			std::unordered_map<std::string, vector<int>> mMeshMaterialsList;
 			std::map<std::string, MeshAnimation*> mPreLoadedAnimationList;
 
-
-
+			GameObject* AddWallToWorld(Vector3 wallSize, const Vector3& position, float x, float y, float z);
+			GameObject* AddBoxToWorld(const Vector3& position, Vector3 dimensions, const std::string name, float inverseMass = 10.0f);
 			//Player Members
 			PlayerOne* mPlayerToAdd;
 		};
