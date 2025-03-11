@@ -4,7 +4,7 @@
 #include "GamePlayState.h"
 #include <iostream>
 #include "Debug.h"
-
+#include "PrisonEscape/Core/GameSettingManager.h"
 #include "PrisonEscape/Core/ImGuiManager.h"
 
 using namespace NCL;
@@ -230,7 +230,7 @@ void MenuState::DrawVideoSettingPanel() {
 
 	auto backCallback = [this]() {
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("SettingPanel", [this]() {DrawSettingPanel();});
-		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("VideSettingPanel");
+		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("VideoSettingPanel");
 		};
 
 	ImGuiManager::DrawPanel("Video Settings", {}, sliders, backCallback);
