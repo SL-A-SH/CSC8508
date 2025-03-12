@@ -34,6 +34,10 @@ void GameBase::UpdateGame(float dt) {
 	stateMachine->Update(dt);
 	renderer->Render();
 	Debug::UpdateRenderables(dt);
+	if (Window::GetKeyboard()->KeyPressed(KeyCodes::H))
+	{
+		renderer->USEDEBUGMODE = !renderer->USEDEBUGMODE;
+	}
 }
 
 GameBase* GameBase::GetGameBase()

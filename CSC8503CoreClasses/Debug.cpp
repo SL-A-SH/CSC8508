@@ -139,9 +139,6 @@ void Debug::DrawDebugMenu() {
 	// Create a window to hold the debug info
 	if (ImGui::Begin("Debug Menu", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
 
-		if (Window::GetKeyboard()->KeyPressed(KeyCodes::G)) {
-			ImGui::SetWindowFocus();
-		}
 		if (ImGui::CollapsingHeader("Debug Info")) {
 			for (const auto& s : debugEntries) {
 				// Push the color before rendering the text

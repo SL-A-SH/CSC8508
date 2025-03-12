@@ -38,6 +38,7 @@ namespace NCL {
 
 			GLuint LoadTextureGetID(const std::string& name);
 			std::vector<int> LoadMeshMaterial(Mesh& mesh, MeshMaterial& meshMaterial);
+			bool USEDEBUGMODE = false;
 		protected:
 			void NewRenderLines();
 			void NewRenderText();
