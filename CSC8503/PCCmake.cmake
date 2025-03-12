@@ -23,6 +23,9 @@ function(Create_PC_CSC8503_Files)
         "PrisonEscape/Core/GameLevelManager.h"
         "PrisonEscape/Core/ImGuiManager.cpp"
         "PrisonEscape/Core/ImGuiManager.h"
+        "PrisonEscape/Core/GameSettingManager.h"
+        "PrisonEscape/Core/GameSettingManager.cpp"
+
     )
     source_group("Prison Escape Core" FILES ${Prison_Escape_Core})
 
