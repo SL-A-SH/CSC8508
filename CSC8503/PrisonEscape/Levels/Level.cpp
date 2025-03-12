@@ -82,7 +82,6 @@ void Level::InitializeAssets()
 void Level::InitializeLevel()
 {
 	AddFloorToWorld(Vector3(0, 0, 0), Vector3(200, 2, 200), Vector4(0.5, 0.5, 0.5, 1));
-	AddMeshToWorldPosition(Vector3(10, 10, 0), kittenMesh, Vector3(1, 1, 1), VolumeType::Sphere, Vector3(1, 1, 1));
 }
 
 void Level::AddPlayerOneToLevel(PlayerOne* player)

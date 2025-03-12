@@ -41,7 +41,7 @@ void Door::Open() {
 	isOpen = true;
 	GetRenderObject()->SetDefaultTexture(openTexture);
 
-	Vector3 newPosition = GetTransform().GetPosition() + Vector3(0, 10, 0); // Move up by 10 units
+	Vector3 newPosition = GetTransform().GetPosition() + Vector3(0, 5, 0); 
 	GetTransform().SetPosition(newPosition);
 	
 }
@@ -91,3 +91,13 @@ void ButtonTrigger::SetLinkedDoor(Door* door) {
 	linkedDoor = door;
 }
 
+PressableDoor::PressableDoor() : Door() {
+	isPressed = false;
+}
+
+void PressableDoor::OnCollisionBegin(GameObject* otherObject) {
+	if (!isPressed && otherObject->GetName() == "player") {
+		isPressed = true;
+		Open();
+	}
+}

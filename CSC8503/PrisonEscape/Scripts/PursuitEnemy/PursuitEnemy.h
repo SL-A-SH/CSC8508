@@ -10,18 +10,19 @@
 
 namespace NCL {
     namespace CSC8503 {
-        class PatrolEnemy : public GameObject {
+        class PursuitEnemy : public GameObject {
         public:
-            PatrolEnemy(GameWorld* world);
-            ~PatrolEnemy();
+            PursuitEnemy(GameWorld* world);
+            ~PursuitEnemy();
 
             void Update(float dt);
             void SetPatrolPoints(const std::vector<Vector3>& points);
             void SetPlayerObject(GameObject* player);
 
-            void OnCatch(GameObject* otherObject) {
+            void OnCollisionBegin(GameObject* otherObject) override {
                 if (otherObject == playerObject) {
                     currentState = PATROL;
+                    pursuitTimer = 0.0f;
                     patrolCounter = 0;
 
                     playerObject->GetTransform().SetPosition(Vector3(0, 5, 0));
@@ -44,12 +45,16 @@ namespace NCL {
             int currentPatrolPoint;
             int patrolCounter;
             float warningTimer;
+            float pursuitTimer;
 
+
+            const float MAX_PURSUIT_TIME = 5.0f;
             const float VISION_RANGE = 15.0f;
 
             enum AIState {
                 PATROL,
-                CAUGHT
+                CAUGHT,
+                PURSUIT
             };
             AIState currentState;
         };

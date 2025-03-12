@@ -1,43 +1,43 @@
-#include "PatrolEnemy.h"
+#include "PursuitEnemy.h"
 
 using namespace NCL;
 using namespace CSC8503;
 
-PatrolEnemy::PatrolEnemy(GameWorld* world) : GameObject("PatrolEnemy") {
+PursuitEnemy::PursuitEnemy(GameWorld* world) : GameObject("PursuitEnemy") {
     gameWorld = world;
     currentPatrolPoint = 0;
     patrolCounter = 0;
+    pursuitTimer = 0.0f;
     currentState = PATROL;
     playerObject = nullptr;
     visible = true;
-    warningTimer = 2.0f;
     InitBehaviourTree();
 }
 
-PatrolEnemy::~PatrolEnemy() {
+PursuitEnemy::~PursuitEnemy() {
     delete rootSequence;
 }
 
-void PatrolEnemy::Update(float dt) {
+void PursuitEnemy::Update(float dt) {
 
     std::string stateStr;
     switch (currentState) {
     case PATROL:  stateStr = "PATROL"; break;
-    case CAUGHT: stateStr = "CAUGHT"; break;
+    case PURSUIT: stateStr = "PURSUIT"; break;
     }
 
     rootSequence->Execute(dt);
 }
 
-void PatrolEnemy::SetPatrolPoints(const std::vector<Vector3>& points) {
+void PursuitEnemy::SetPatrolPoints(const std::vector<Vector3>& points) {
     patrolPoints = points;
 }
 
-void PatrolEnemy::SetPlayerObject(GameObject* player) {
+void PursuitEnemy::SetPlayerObject(GameObject* player) {
     playerObject = player;
 }
 
-bool PatrolEnemy::CanSeePlayer() const {
+bool PursuitEnemy::CanSeePlayer() const {
     if (!playerObject) return false;
 
     if (!visible) return false;
@@ -58,7 +58,7 @@ bool PatrolEnemy::CanSeePlayer() const {
     return false;
 }
 
-void PatrolEnemy::InitBehaviourTree() {
+void PursuitEnemy::InitBehaviourTree() {
     BehaviourAction* patrolAction = new BehaviourAction("Patrol",
         [&](float dt, BehaviourState state) -> BehaviourState {
             if (currentState != PATROL) {
@@ -66,7 +66,8 @@ void PatrolEnemy::InitBehaviourTree() {
             }
 
             if (CanSeePlayer()) {
-                currentState = CAUGHT;
+                currentState = PURSUIT;
+                pursuitTimer = MAX_PURSUIT_TIME;
                 return Success;
             }
 
@@ -88,23 +89,28 @@ void PatrolEnemy::InitBehaviourTree() {
             return Ongoing;
         });
 
-    BehaviourAction* pursuitAction = new BehaviourAction("Caught",
+    BehaviourAction* pursuitAction = new BehaviourAction("Pursuit",
         [&](float dt, BehaviourState state) -> BehaviourState {
-            if (currentState != CAUGHT) {
+            if (currentState != PURSUIT) {
                 return Failure;
             }
 
-            if (warningTimer > 0.0f) {
-				Debug::Print("Warning: " + std::to_string(warningTimer), Vector2(10, 10));
-                warningTimer -= dt;
-            }
-
-            else {
-                warningTimer = 2.0f;
-				OnCatch(playerObject);
-				currentState = PATROL;
+            pursuitTimer -= dt;
+            if (pursuitTimer <= 0.0f) {
+                currentState = PATROL;
                 return Success;
             }
+
+            if (playerObject) {
+                Vector3 direction = playerObject->GetTransform().GetPosition() - transform.GetPosition();
+                Vector3 force = Vector::Normalise(direction) * 100.0f;
+                GetPhysicsObject()->AddForce(force);
+
+                Vector3 currentVel = GetPhysicsObject()->GetLinearVelocity();
+                GetPhysicsObject()->AddForce(-currentVel * 10.0f);
+            }
+
+
             return Ongoing;
         });
 
