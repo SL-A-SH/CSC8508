@@ -289,8 +289,8 @@ void MenuState::DrawConnectionMessagePanel()
 	auto cancelCallback = [this]() {
 		isConnecting = false;
 		connectionStage = ConnectionStage::None;
-		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("ConnectionPanel", [this]() {DrawMultiplayerPanel();});
-		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MultiplayerPanel");
+		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("MultiplayerPanel", [this]() {DrawMultiplayerPanel();});
+		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("ConnectionPanel");
 
 		};
 

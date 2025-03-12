@@ -26,6 +26,8 @@ namespace NCL {
 				GameBase::GetGameBase()->SetGameConfig(gameConfig);
 			}
 
+			void DrawHUDPanel();
+
 		private:
 			GameLevelManager* manager;
 			GameConfigManager* gameConfig;

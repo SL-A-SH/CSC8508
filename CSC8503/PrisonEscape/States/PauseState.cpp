@@ -12,8 +12,8 @@ using namespace NCL;
 using namespace CSC8503;
 
 void PauseState::OnAwake() {
-
 	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("PauseMenuPanel", [this]() { DrawPauseMenuPanel(); });
+	GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("HUDPanel");
 	Window::GetWindow()->ShowOSPointer(true);
 }
 

@@ -1,4 +1,5 @@
 #include "GameplayState.h"
+#include "GameoverState.h"
 #include "PrisonEscape/Levels/SampleLevel.h"
 #include "PrisonEscape/Levels/LevelT.h"
 #include "PauseState.h"
@@ -9,10 +10,6 @@ using namespace CSC8503;
 GamePlayState::GamePlayState(bool multiplayer, bool asServer)
 {
 	manager = new GameLevelManager(GameBase::GetGameBase()->GetWorld(), GameBase::GetGameBase()->GetRenderer());
-}
-
-void GamePlayState::OnAwake()
-{
 	Level* level = new LevelT();
 	level->Init();
 
@@ -64,6 +61,13 @@ void GamePlayState::OnAwake()
 	manager->SetCurrentLevel(level);
 }
 
+void GamePlayState::OnAwake()
+{
+	GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("ConnectionPanel");
+
+	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("HUDPanel", [this]() { DrawHUDPanel(); });
+}
+
 GamePlayState::~GamePlayState()
 {
 	delete manager;
@@ -109,5 +113,26 @@ PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** 
 	}
 	manager->UpdateGame(dt);
 
+	if (Window::GetKeyboard()->KeyPressed(KeyCodes::F1))
+	{
+		*newState = new GameOverState(GameOverReason::OutOfLives);
+		return PushdownResult::Push;
+	}
+
 	return PushdownResult::NoChange;
+}
+
+void GamePlayState::DrawHUDPanel(){
+	
+	ImGui::Begin("HUD Panel", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+
+	// Display Timer
+	ImGui::Text("Time: %.2f s", 25.0f);
+
+	// Display Health Bar
+	ImGui::Text("Health:");
+	ImGui::ProgressBar(50/ 100.0f, ImVec2(200, 20));
+
+
+	ImGui::End();
 }

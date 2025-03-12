@@ -4,7 +4,7 @@
 
 void GameOverState::OnAwake() {
 	Window::GetWindow()->ShowOSPointer(true);
-	DrawGameOverPanel();
+	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("GameOverPanel", [this]() { DrawGameOverPanel(); });
 }
 
 PushdownState::PushdownResult GameOverState::OnUpdate(float dt, PushdownState** newState) {
