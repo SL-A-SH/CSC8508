@@ -12,7 +12,7 @@ namespace NCL {
 	namespace CSC8503 {
 		class GamePlayState : public GameState {
 		public:
-			GamePlayState(bool multiplayer, bool asServer);
+			GamePlayState(bool multiplayer, bool asServer, GameConfigManager* config);
 			~GamePlayState();
 
 			void OnAwake() override;

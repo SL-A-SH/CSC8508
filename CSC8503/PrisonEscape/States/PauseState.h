@@ -14,7 +14,7 @@ namespace NCL {
 	namespace CSC8503 {
 		enum ButtonClicked
 		{
-			Default,
+			None,
 			Resume,
 			Settings,
 			Exit
@@ -39,7 +39,7 @@ namespace NCL {
 			int volume = 50;
 			int brightness = 50;
 
-			ButtonClicked buttonClicked = ButtonClicked::Default;
+			ButtonClicked buttonClicked = ButtonClicked::None;
 
 		};
 	}

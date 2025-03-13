@@ -33,7 +33,7 @@ void GameOverState::DrawGameOverPanel() {
 
 	std::vector<PanelButton> buttons = {
 		{"Retry", [this]() {
-			stateChangeAction = [](PushdownState** newState) { *newState = new GamePlayState(false, false); };
+			stateChangeAction = [](PushdownState** newState) { *newState = new GamePlayState(false, false, new GameConfigManager() ); };
 		}, 0.35f},
 		{"Continue", [this]() {
 			stateChangeAction = [](PushdownState** newState) { *newState = new MenuState(); };

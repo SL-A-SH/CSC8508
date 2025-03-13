@@ -7,12 +7,12 @@
 using namespace NCL;
 using namespace CSC8503;
 
-GamePlayState::GamePlayState(bool multiplayer, bool asServer)
+GamePlayState::GamePlayState(bool multiplayer, bool asServer, GameConfigManager* config)
 {
 	manager = new GameLevelManager(GameBase::GetGameBase()->GetWorld(), GameBase::GetGameBase()->GetRenderer());
 	Level* level = new LevelT();
 	level->Init();
-
+	this->gameConfig = config;
 	if (gameConfig->networkConfig.isMultiplayer)
 	{
 		if (gameConfig->networkConfig.isServer)

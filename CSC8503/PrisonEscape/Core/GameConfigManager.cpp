@@ -5,6 +5,7 @@ using namespace CSC8503;
 
 GameConfigManager::GameConfigManager()
 {
+	std::cout << "Created Manager" << std::endl;
 }
 
 GameConfigManager::~GameConfigManager()

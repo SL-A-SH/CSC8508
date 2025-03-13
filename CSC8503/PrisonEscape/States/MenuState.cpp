@@ -133,9 +133,10 @@ PushdownState::PushdownResult MenuState::OnUpdate(float dt, PushdownState** newS
 				isConnecting = false;
 
 				stateChangeAction = [this](PushdownState** newState) {
-					*newState = new GamePlayState(true, networkAsServer);
+					
 					//GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(nullptr);
 					if (this->gameConfig) {
+						*newState = new GamePlayState(true, networkAsServer, gameConfig);
 						dynamic_cast<GamePlayState*>(*newState)->SetGameConfig(this->gameConfig);
 						this->gameConfig = nullptr; // Transfer ownership
 					}
@@ -176,14 +177,17 @@ void MenuState::DrawMainMenuPanel() {
 	std::vector<PanelButton> buttons = {
 		{"Single Player", [this]() {
 			std::cout << "Single Player" << std::endl;
-			stateChangeAction = [this](PushdownState** newState) { 
-				*newState = new GamePlayState(false, false);
+			stateChangeAction = [this](PushdownState** newState) {
+				
 				gameConfig = new GameConfigManager();
 				gameConfig->networkConfig.isMultiplayer = false;
+
 				if (this->gameConfig) {
-					dynamic_cast<GamePlayState*>(*newState)->SetGameConfig(this->gameConfig);
+					*newState = new GamePlayState(false, false, gameConfig);
+					//dynamic_cast<GamePlayState*>(*newState)->SetGameConfig(this->gameConfig);
 					this->gameConfig = nullptr; // Transfer ownership
 				}
+
 			};
 		}, 0.25f},
 		{"Multiplayer", [this]() {
