@@ -10,7 +10,7 @@ GameTechRenderer* GameBase::renderer = nullptr;
 GameWorld* GameBase::world = nullptr;
 GameBase* GameBase::instance = nullptr;
 
-AudioManager audioManager;  // Create an instance of AudioManager
+AudioManager audio;  // Create an instance of AudioManager
 
 GameBase::GameBase()
 {
@@ -21,7 +21,7 @@ GameBase::~GameBase() {
     delete stateMachine;
     delete renderer;
     delete world;
-    audioManager.Shutdown();  // Shutdown the audio manager when the game is destroyed
+    // Shutdown the audio manager when the game is destroyed
 }
 
 void GameBase::InitialiseGame() {
@@ -30,15 +30,22 @@ void GameBase::InitialiseGame() {
     stateMachine = nullptr;
     stateMachine = new PushdownMachine(new MenuState());
 
-    // Initialize the audio manager and load a sound
-    if (audioManager.Initialize()) {
-        if (audioManager.LoadSound("PrisonEscape/Assets/SFX/Shotgun.wav", "explosion")) {
-            std::cout << "Sound loaded successfully!\n";
-        }
-        else {
-            std::cerr << "Failed to load sound!\n";
-        }
+    if (!audio.Initialize()) {
+        std::cerr << "Failed to initialize AudioManager!" << std::endl;
+        return;
     }
+
+    std::string soundFile = "PrisonEscape/Assets/SFX/Shotgun.wav"; // Replace with actual file path
+    audio.LoadSound(soundFile);
+    audio.PlaySound(soundFile, false); // Play sound once
+
+    // Let sound play for a few seconds
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+
+    // Stop the sound
+    audio.StopSound(soundFile);
+
+    return;
 
 }
 
@@ -49,9 +56,7 @@ void GameBase::UpdateGame(float dt) {
     Debug::UpdateRenderables(dt);
     bool spamsound = true;
     // Example: Play the sound in the Update loop (or trigger it based on some condition)
-    if (spamsound) {  // Replace with an actual condition to play the sound
-        audioManager.PlaySound("explosion");
-    }
+    
 }
 
 GameBase* GameBase::GetGameBase()
