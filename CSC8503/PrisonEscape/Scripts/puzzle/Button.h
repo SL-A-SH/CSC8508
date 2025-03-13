@@ -14,7 +14,7 @@ namespace NCL {
 			Button();
 			~Button();
 
-			void spawnButton(Vector3 position);
+			void spawnButton(Vector3 size, Vector3 position, std::string name, Mesh* mesh, Shader* shader, Texture* texture);
 			void SetPlayerActivated(bool state) { playerActivated = state; }
 			void SetBoxActivated(bool state) { boxActivated = state; }
 
@@ -22,14 +22,13 @@ namespace NCL {
 			bool IsBoxActivated() const { return boxActivated; }
 			bool IsPressed() const { return pressed; }
 
-			void pressDetection(GameObject* otherObject, const std::string desiredName);
-
+			void pressDetection(const std::vector<GameObject*>& boxes);
 		private:
 			bool pressed;
 			bool playerActivated;
 			bool boxActivated;
 
-			GameObject* AddButtonToWorld(Vector3 size, const Vector3& position, const std::string name);
+			GameObject* AddButtonToWorld(Vector3 size, const Vector3& position, const std::string name, Mesh* mesh, Shader* shader, Texture* texture);
 			void InitializeAssets();
 
 			// "animate" the button that gets pressed down (move it down lower so it seems like its been pressed)

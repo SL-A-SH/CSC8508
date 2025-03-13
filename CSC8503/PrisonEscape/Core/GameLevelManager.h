@@ -1,10 +1,11 @@
 #pragma once
-
 #include "GameWorld.h"
 #include "PhysicsSystem.h"
 #include "GameTechRenderer.h"
 #include "MeshAnimation.h"
 #include "MeshMaterial.h"
+#include "jsonParser.h"
+#include "../CSC8503/PrisonEscape/Scripts/puzzle/Button.h"
 #include "../CSC8503/PrisonEscape/Levels/Level.h"
 #include "../CSC8503/PrisonEscape/Scripts/Player/Player.h"
 #include "../CSC8503/PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
@@ -33,17 +34,25 @@ namespace NCL {
 
 			PatrolEnemy* AddPatrolEnemyToWorld(const Transform& transform);
 			void AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const Transform& transform);
+			void loadMap();
 
 		public:
 			Level* GetCurrentLevel() { return mCurrentLevel; }
 			void SetCurrentLevel(Level* level) { mCurrentLevel = level; }
 			void AddLevel(Level* newLevel) { mLevelStack.push(newLevel); }
 
+			
 		private:
 			GameWorld* mWorld;
 			GameTechRenderer* mRenderer;
 			PhysicsSystem* mPhysics;
 			Level* mCurrentLevel;
+
+			// for handling multiple buttons/boxes in a level
+			int boxNumber;
+			std::vector<GameObject*> boxes;
+			std::vector<Button*> buttons;
+			GameObject* pushableBox;
 			std::stack<Level*> mLevelStack;
 			AnimationController* mAnimator;
 
@@ -58,6 +67,8 @@ namespace NCL {
 			std::unordered_map<std::string, vector<int>> mMeshMaterialsList;
 			std::map<std::string, MeshAnimation*> mPreLoadedAnimationList;
 
+			GameObject* AddWallToWorld(Vector3 wallSize, const Vector3& position, float x, float y, float z);
+			GameObject* AddBoxToWorld(const Vector3& position, Vector3 dimensions, const std::string name, float inverseMass = 10.0f);
 			//Player Members
 			Player* mPlayerToAdd;
 
