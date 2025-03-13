@@ -40,6 +40,7 @@ namespace NCL {
 			Level* mCurrentLevel;
 
 			// for handling multiple buttons/boxes in a level
+			int boxNumber;
 			std::vector<GameObject*> boxes;
 			std::vector<Button*> buttons;
 			GameObject* pushableBox;

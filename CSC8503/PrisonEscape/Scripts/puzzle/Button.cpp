@@ -34,19 +34,41 @@ void Button::pressDownButton() {
 	}
 }
 
-void Button::pressDetection(GameObject* otherObject, const std::string desiredName) {
+
+//void Button::pressDetection(GameObject* otherObject) {
+//	if (!otherObject || !buttonObject) return;
+//
+//	CollisionDetection::CollisionInfo info;
+//	if (CollisionDetection::ObjectIntersection(this->buttonObject, otherObject, info)) {
+//		bool isBox = otherObject->GetName().find("Box") != std::string::npos; 
+//		bool isPlayer = otherObject->GetName() == "player";
+//
+//		if ((boxActivated && isBox) || (playerActivated && isPlayer)) {
+//			pressDownButton();
+//		}
+//	}
+//}
+
+void Button::pressDetection(const std::vector<GameObject*>& boxes) {
 	CollisionDetection::CollisionInfo info;
-	if (CollisionDetection::ObjectIntersection(this->buttonObject, otherObject, info)) {
-		if (desiredName == otherObject->GetName()) {
-			if (boxActivated && otherObject->GetName() == "Box") {
+
+	for (GameObject* box : boxes) {
+		if (box && CollisionDetection::ObjectIntersection(this->buttonObject, box, info)) {
+			if (boxActivated) {
 				pressDownButton();
-			}
-			if (playerActivated && otherObject->GetName() == "player") {
-				pressDownButton();
+				return;
 			}
 		}
 	}
+
+
+	//if (player && CollisionDetection::ObjectIntersection(this->buttonObject, player, info)) {
+	//	if (playerActivated) {
+	//		pressDownButton();
+	//	}
+	//}
 }
+
 
 GameObject* Button::AddButtonToWorld(Vector3 size, const Vector3& position, const std::string name, Mesh* mesh, Shader* shader, Texture* texture) {
 	Vector3 offset = position + Vector3(0, 2.5f, 0);

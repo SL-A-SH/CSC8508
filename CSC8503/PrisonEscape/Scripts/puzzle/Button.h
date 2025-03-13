@@ -22,8 +22,7 @@ namespace NCL {
 			bool IsBoxActivated() const { return boxActivated; }
 			bool IsPressed() const { return pressed; }
 
-			void pressDetection(GameObject* otherObject, const std::string desiredName);
-
+			void pressDetection(const std::vector<GameObject*>& boxes);
 		private:
 			bool pressed;
 			bool playerActivated;

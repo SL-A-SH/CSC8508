@@ -29,7 +29,7 @@ void LevelOne::Init()
 	AddObstacleToWorld(Vector3(20, 7, 40), Vector3(-100, 6, 28));
 
 	// box that's part of the puzzle
-	box = AddBoxToWorld(Vector3(-100, 11, 9), Vector3(5, 5, 5), "box");
+	box = AddBoxToWorld(Vector3(-100, 11, 9), Vector3(5, 5, 5), "box269");
 
 	// ramp for player to climb up to platform
 	AddRampToWorld(Vector3(-100, 3, 85), Vector3(20, 3, 20), 20, 0, 0);
@@ -47,9 +47,9 @@ void LevelOne::Update(float dt)
 {
 	GameBase::GetGameBase()->GetWorld()->GetMainCamera().UpdateCamera(dt);
 	Level::Update(dt);
-	if (button->IsPressed() == false) {
-		button->pressDetection(box, "box");
-	}
+	//if (button->IsPressed() == false) {
+	//	button->pressDetection(boxes);
+	//}
 }
 
 GameObject* LevelOne::AddWallToWorld(Vector3 wallSize, const Vector3& position) {

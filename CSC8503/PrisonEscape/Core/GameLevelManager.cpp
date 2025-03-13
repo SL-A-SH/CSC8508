@@ -20,9 +20,8 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	// Move to another place if needed
 
 	InitAssets();
+	boxNumber = 0;
 	loadMap();
-	
-	
 
 }
 
@@ -61,7 +60,7 @@ void GameLevelManager::UpdateGame(float dt)
 
 	for (Button* button : buttons) {
 		if (!button->IsPressed()) {
-			button->pressDetection(pushableBox, "Box");
+			button->pressDetection(boxes);
 		}
 
 		//if (button->IsPressed()) {
@@ -336,8 +335,9 @@ void GameLevelManager::loadMap() {
 
 			if (obj.type == "Box") {
 
-				pushableBox = AddBoxToWorld(obj.position, obj.dimensions, obj.type);
-
+				pushableBox = AddBoxToWorld(obj.position, obj.dimensions, (obj.type + std::to_string(++boxNumber)));
+				std::cout << pushableBox->GetName() + " one box\n";
+				boxes.push_back(pushableBox);
 			}
 
 			if (obj.type == "Wall") {
