@@ -1,4 +1,6 @@
 #pragma once
+
+
 #include "OGLRenderer.h"
 #include "OGLShader.h"
 #include "OGLTexture.h"
@@ -32,7 +34,7 @@ namespace NCL {
 			void UpdatePanelList();
 			MeshMaterial* LoadMaterial(const std::string& name);
 			MeshAnimation* LoadAnimation(const std::string& name);
-		
+
 
 			GLuint LoadTextureGetID(const std::string& name);
 			int FindTextureIndex(GLuint texId);
@@ -42,6 +44,7 @@ namespace NCL {
 
 			void GenerateObjectDataUBOs();
 
+			bool USEDEBUGMODE = false;
 		protected:
 
 			enum BufferNames {

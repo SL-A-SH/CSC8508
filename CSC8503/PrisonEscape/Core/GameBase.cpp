@@ -1,6 +1,7 @@
 #include "GameBase.h"
 #include "PrisonEscape/States/GameState.h"
 #include "PrisonEscape/States/MenuState.h"
+#include "PrisonEscape/Core/ImGuiManager.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -25,12 +26,17 @@ void GameBase::InitialiseGame() {
 	renderer = new GameTechRenderer(*world);
 	stateMachine = nullptr;
 	stateMachine = new PushdownMachine(new MenuState());
+	ImGuiManager::Initialize();
 }
 
 void GameBase::UpdateGame(float dt) {
 	stateMachine->Update(dt);
 	renderer->Render();
 	Debug::UpdateRenderables(dt);
+	if (Window::GetKeyboard()->KeyPressed(KeyCodes::H))
+	{
+		renderer->USEDEBUGMODE = !renderer->USEDEBUGMODE;
+	}
 }
 
 GameBase* GameBase::GetGameBase()

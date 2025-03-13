@@ -23,7 +23,7 @@ void Level::Init()
 	InitializeAssets();
 	InitializeLevel();
 	SetCameraAttributes();
-	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("PauseButton", [this]() {DrawPauseButton();});
+	//GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("PauseButton", [this]() {DrawPauseButton();});
 	GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MainMenuPanel");
 }
 
@@ -197,17 +197,17 @@ GameObject* Level::AddMeshToWorldPosition(const Vector3& position, Mesh* mesh, c
 
 #pragma region UI
 
-void Level::DrawPauseButton()
-{
-	ImVec2 windowSize = ImGui::GetWindowSize();
-	ImGui::SetCursorPos(ImVec2(windowSize.x * .9f, windowSize.y * .05f));
-	GLuint texID = ((OGLTexture*)pauseButton)->GetObjectID();
-
-	if (ImGui::ImageButton("Test", texID, ImVec2(100, 100)))
-	{
-		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("PauseMenu", [this]() {DrawPauseButton();});
-	}
-}
+//void Level::DrawPauseButton()
+//{
+//	ImVec2 windowSize = ImGui::GetWindowSize();
+//	ImGui::SetCursorPos(ImVec2(windowSize.x * .9f, windowSize.y * .05f));
+//	GLuint texID = ((OGLTexture*)pauseButton)->GetObjectID();
+//
+//	if (ImGui::ImageButton("Test", texID, ImVec2(100, 100)))
+//	{
+//		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("PauseMenu", [this]() {DrawPauseMenu();});
+//	}
+//}
 
 void Level::DrawPauseMenu()
 {

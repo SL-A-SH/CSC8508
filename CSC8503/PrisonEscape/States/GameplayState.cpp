@@ -1,6 +1,8 @@
 #include "GameplayState.h"
+#include "GameoverState.h"
 #include "PrisonEscape/Levels/SampleLevel.h"
 #include "PrisonEscape/Levels/LevelT.h"
+#include "PauseState.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -8,10 +10,6 @@ using namespace CSC8503;
 GamePlayState::GamePlayState(bool multiplayer, bool asServer)
 {
 	manager = new GameLevelManager(GameBase::GetGameBase()->GetWorld(), GameBase::GetGameBase()->GetRenderer());
-}
-
-void GamePlayState::OnAwake()
-{
 	Level* level = new LevelT();
 	level->Init();
 
@@ -40,7 +38,7 @@ void GamePlayState::OnAwake()
 			gameConfig->networkConfig.server->RegisterPacketHandler(Player_ID_Assignment, level);
 			gameConfig->networkConfig.server->RegisterPacketHandler(Player_Position, level);
 		}
-		else if(gameConfig->networkConfig.client)
+		else if (gameConfig->networkConfig.client)
 		{
 			Transform playerOneTransform;
 			Player* playerOne = manager->AddPlayerToWorld(playerOneTransform, "playerOne");
@@ -80,13 +78,20 @@ void GamePlayState::OnAwake()
 	manager->SetCurrentLevel(level);
 }
 
-GamePlayState::~GamePlayState() 
+void GamePlayState::OnAwake()
+{
+	GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("ConnectionPanel");
+
+	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("HUDPanel", [this]() { DrawHUDPanel(); });
+}
+
+GamePlayState::~GamePlayState()
 {
 	delete manager;
 	delete gameConfig;
 }
 
-PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** newState) 
+PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** newState)
 {
 	if (gameConfig->networkConfig.isMultiplayer) {
 		if (gameConfig->networkConfig.isServer) 
@@ -102,7 +107,7 @@ PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** 
 
 			gameConfig->networkConfig.server->UpdateServer();
 		}
-		else if (gameConfig->networkConfig.client) 
+		else if (gameConfig->networkConfig.client)
 		{
 			// Client: Send PlayerTwo position to server
 			Level* level = manager->GetCurrentLevel();
@@ -117,7 +122,33 @@ PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** 
 		}
 	}
 
+	if (Window::GetKeyboard()->KeyPressed(KeyCodes::P))
+	{
+		*newState = new PauseState();
+		return PushdownResult::Push;
+	}
 	manager->UpdateGame(dt);
 
+	if (Window::GetKeyboard()->KeyPressed(KeyCodes::F1))
+	{
+		*newState = new GameOverState(GameOverReason::OutOfLives);
+		return PushdownResult::Push;
+	}
+
 	return PushdownResult::NoChange;
+}
+
+void GamePlayState::DrawHUDPanel(){
+	
+	ImGui::Begin("HUD Panel", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+
+	// Display Timer
+	ImGui::Text("Time: %.2f s", 25.0f);
+
+	// Display Health Bar
+	ImGui::Text("Health:");
+	ImGui::ProgressBar(50/ 100.0f, ImVec2(200, 20));
+
+
+	ImGui::End();
 }
