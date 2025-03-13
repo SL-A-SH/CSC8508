@@ -223,7 +223,7 @@ void MenuState::DrawSettingPanel() {
 }
 
 void MenuState::DrawAudioSettingPanel() {
-	std::vector<PanelSlider> sliders = { {"Master Volume", &volume, 0, 100, 0.36f} };
+	std::vector<PanelSlider> sliders = { {"Master Volume", &volume, 0, 100, 0.36f, 0.36f} };
 
 	auto backCallback = [this]() {
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("SettingPanel", [this]() {DrawSettingPanel(); });
@@ -234,7 +234,7 @@ void MenuState::DrawAudioSettingPanel() {
 }
 
 void MenuState::DrawVideoSettingPanel() {
-	std::vector<PanelSlider> sliders = { {"Brightness", &brightness, 0, 100, 0.36f} };
+	std::vector<PanelSlider> sliders = { {"Brightness", &brightness, 0, 100, 0.36f, 0.36f} };
 
 	auto backCallback = [this]() {
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("SettingPanel", [this]() {DrawSettingPanel(); });
