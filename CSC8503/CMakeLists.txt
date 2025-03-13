@@ -216,3 +216,20 @@ if(USE_VULKAN)
 
     add_dependencies(${PROJECT_NAME} SHADER_FILES)
 endif()
+# Set FMOD PS5 SDK path (Update this if your install path is different)
+set(FMOD_PS5_PATH "C:\\FMOD\\PS5\\api\\core")
+
+# Include FMOD headers
+include_directories(${FMOD_PS5_PATH}/inc)
+
+# Link FMOD libraries
+set(FMOD_LIBS
+    ${FMOD_PS5_PATH}/lib/libfmod.prx
+    ${FMOD_PS5_PATH}/lib/libfmodstudio.prx
+)
+
+# Add FMOD to your target executable
+target_link_libraries(${PROJECT_NAME} PRIVATE ${FMOD_LIBS})
+
+# Ensure FMOD binaries are copied to the output directory
+file(COPY ${FMOD_PS5_PATH}/bin/ DESTINATION ${CMAKE_BINARY_DIR})

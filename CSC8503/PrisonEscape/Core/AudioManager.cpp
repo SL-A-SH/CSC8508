@@ -1,102 +1,86 @@
-#include "audiomanager.h"
+#include "AudioManager.h"
 #include <iostream>
-#include <Include/AL/al.h>
-#include <Include/AL/alc.h>
-#include <vector>
-#include <fstream>
 
-AudioManager::AudioManager()
-    : device(nullptr), context(nullptr) {
-}
+AudioManager::AudioManager() : system(nullptr) {}
 
 AudioManager::~AudioManager() {
-    Shutdown();
+    // Release all sounds and the FMOD system when the AudioManager is destroyed
+    for (auto& soundPair : sounds) {
+        soundPair.second->release();
+    }
+    system->close();
+    system->release();
 }
 
 bool AudioManager::Initialize() {
-    // Open the default device
-    device = alcOpenDevice(nullptr);
-    if (!device) {
-        std::cerr << "Failed to open an OpenAL device!" << std::endl;
+    FMOD_RESULT result = FMOD::System_Create(&system);
+    if (result != FMOD_OK) {
+        std::cerr << "Failed to create FMOD system!" << std::endl;
         return false;
     }
 
-    // Create a context for the device
-    context = alcCreateContext(device, nullptr);
-    if (!context || !alcMakeContextCurrent(context)) {
-        std::cerr << "Failed to create or set OpenAL context!" << std::endl;
-        alcCloseDevice(device);
+    result = system->init(512, FMOD_INIT_NORMAL, nullptr);
+    if (result != FMOD_OK) {
+        std::cerr << "Failed to initialize FMOD!" << std::endl;
         return false;
     }
 
     return true;
 }
 
-void AudioManager::Shutdown() {
-    for (auto& sound : sounds) {
-        alDeleteBuffers(1, &sound.second);
+void AudioManager::LoadSound(const std::string& filePath) {
+    if (sounds.find(filePath) != sounds.end()) {
+        std::cerr << "Sound already loaded: " << filePath << std::endl;
+        return;
     }
 
-    if (context) {
-        alcMakeContextCurrent(nullptr);
-        alcDestroyContext(context);
+    FMOD::Sound* sound = nullptr;
+    FMOD_RESULT result = system->createSound(filePath.c_str(), FMOD_DEFAULT, nullptr, &sound);
+    if (result != FMOD_OK) {
+        std::cerr << "Failed to load sound: " << filePath << std::endl;
+        return;
     }
-    if (device) {
-        alcCloseDevice(device);
-    }
+
+    sounds[filePath] = sound;
+    std::cout << "Sound loaded: " << filePath << std::endl;
 }
 
-bool AudioManager::LoadSound(const std::string& filePath, const std::string& soundName) {
-    ALuint buffer = LoadWavFile(filePath);
-    if (buffer == 0) {
-        std::cerr << "Failed to load sound file: " << filePath << std::endl;
-        return false;
+void AudioManager::PlaySound(const std::string& filePath, bool loop) {
+    // Check if sound is loaded
+    if (sounds.find(filePath) == sounds.end()) {
+        std::cerr << "Sound not loaded: " << filePath << std::endl;
+        return;
     }
 
-    sounds[soundName] = buffer;
-    return true;
+    FMOD::Sound* sound = sounds[filePath];
+    FMOD::Channel* channel = nullptr;
+
+    // If we want to loop, set the loop flag in the sound creation
+    FMOD_RESULT result = system->playSound(sound, nullptr, true, &channel);
+    if (result != FMOD_OK) {
+        std::cerr << "Failed to play sound: " << filePath << std::endl;
+        return;
+    }
+
+    // Set looping if requested
+    channel->setLoopCount(loop ? -1 : 0);
+    channels[filePath] = channel;
 }
 
-void AudioManager::PlaySound(const std::string& soundName) {
-    if (sounds.find(soundName) != sounds.end()) {
-        ALuint source;
-        alGenSources(1, &source);
-        alSourcei(source, AL_BUFFER, sounds[soundName]);
-        alSourcePlay(source);
+void AudioManager::StopSound(const std::string& filePath) {
+    // Check if the sound is playing
+    if (channels.find(filePath) == channels.end()) {
+        std::cerr << "Sound is not playing: " << filePath << std::endl;
+        return;
     }
-    else {
-        std::cerr << "Sound not found: " << soundName << std::endl;
-    }
+
+    FMOD::Channel* channel = channels[filePath];
+    channel->stop();
+    channels.erase(filePath);
+    std::cout << "Stopped sound: " << filePath << std::endl;
 }
 
-void AudioManager::StopSound(const std::string& soundName) {
-    if (sounds.find(soundName) != sounds.end()) {
-        ALuint source;
-        alGenSources(1, &source);
-        alSourcei(source, AL_BUFFER, sounds[soundName]);
-        alSourceStop(source);
-        alDeleteSources(1, &source);
-    }
-    else {
-        std::cerr << "Sound not found: " << soundName << std::endl;
-    }
-}
-
-ALuint AudioManager::LoadWavFile(const std::string& filePath) {
-    // For simplicity, let's assume this function loads a WAV file and returns an OpenAL buffer.
-    // You can use an external library like stb_vorbis or stb_wav to load the WAV file and get audio data.
-    std::ifstream file(filePath, std::ios::binary);
-    if (!file) {
-        std::cerr << "Failed to open WAV file!" << std::endl;
-        return 0;
-    }
-
-    // For simplicity, we'll assume the file is small enough and use raw data.
-    std::vector<char> data((std::istreambuf_iterator<char>(file)),
-        std::istreambuf_iterator<char>());
-
-    ALuint buffer;
-    alGenBuffers(1, &buffer);
-    alBufferData(buffer, AL_FORMAT_MONO16, data.data(), data.size(), 44100); // Assuming 44100Hz sample rate, mono format, etc.
-    return buffer;
+void AudioManager::Update() {
+    // This updates the FMOD system, typically called once per frame
+    system->update();
 }

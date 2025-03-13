@@ -1,9 +1,7 @@
-#pragma once
 #ifndef AUDIOMANAGER_H
 #define AUDIOMANAGER_H
 
-#include <Include/AL/al.h>
-#include <Include/AL/alc.h>
+#include <fmod.hpp>
 #include <string>
 #include <unordered_map>
 
@@ -13,18 +11,15 @@ public:
     ~AudioManager();
 
     bool Initialize();
-    void Shutdown();
-    
-    bool LoadSound(const std::string& filePath, const std::string& soundName);
-    void PlaySound(const std::string& soundName);
-    void StopSound(const std::string& soundName);
+    void LoadSound(const std::string& filePath);
+    void PlaySound(const std::string& filePath, bool loop = false);
+    void StopSound(const std::string& filePath);
+    void Update();
 
 private:
-    ALCdevice* device;
-    ALCcontext* context;
-    std::unordered_map<std::string, ALuint> sounds;
-    
-    ALuint LoadWavFile(const std::string& filePath);
+    FMOD::System* system;
+    std::unordered_map<std::string, FMOD::Sound*> sounds;
+    std::unordered_map<std::string, FMOD::Channel*> channels;
 };
 
 #endif // AUDIOMANAGER_H
