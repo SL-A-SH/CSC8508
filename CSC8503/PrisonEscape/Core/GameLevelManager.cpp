@@ -326,11 +326,7 @@ void GameLevelManager::loadMap() {
 	if (jsonParser::LoadLevel("../CSC8503/PrisonEscape/Levels/levelTest.json", level, objects)) {
 		for (const auto& obj : objects) {
 			if (obj.type == "Button") {
-				std::cout << "ID: " << obj.id << " Type: " << obj.type << "\n";
-				std::cout << "Position -> x: " << obj.position.x << " y: " << obj.position.y << " z: " << obj.position.z << "\n";
-				std::cout << "Dimensions -> x: " << obj.dimensions.x << " y: " << obj.dimensions.y << " z: " << obj.dimensions.z << "\n";
-				std::cout << "Orientation -> x: " << obj.orientation.x << " y: " << obj.orientation.y << " z: " << obj.orientation.z << "\n";
-				std::cout << "Function to place " + obj.type + "\n\n";
+
 				Button* newButton = new Button();
 				newButton->spawnButton(obj.dimensions, obj.position, obj.type, mMeshList["Cube"], mShaderList["BasicShader"], mTextureList["DefaultTexture"]);
 				// code to check if box is box activated or something
@@ -339,21 +335,12 @@ void GameLevelManager::loadMap() {
 			}
 
 			if (obj.type == "Box") {
-				std::cout << "ID: " << obj.id << " Type: " << obj.type << "\n";
-				std::cout << "Position -> x: " << obj.position.x << " y: " << obj.position.y << " z: " << obj.position.z << "\n";
-				std::cout << " Dimensions -> x: " << obj.dimensions.x << " y: " << obj.dimensions.y << " z: " << obj.dimensions.z << "\n";
-				std::cout << "Orientation -> x: " << obj.orientation.x << " y: " << obj.orientation.y << " z: " << obj.orientation.z << "\n";
-				std::cout << "Function to place " + obj.type + "\n\n";
+
 				pushableBox = AddBoxToWorld(obj.position, obj.dimensions, obj.type);
 
 			}
 
 			if (obj.type == "Wall") {
-				std::cout << "ID: " << obj.id << " Type: " << obj.type << "\n";
-				std::cout << "Position -> x: " << obj.position.x << " y: " << obj.position.y << " z: " << obj.position.z << "\n";
-				std::cout << " Dimensions -> x: " << obj.dimensions.x << " y: " << obj.dimensions.y << " z: " << obj.dimensions.z << "\n";
-				std::cout << "Orientation -> x: " << obj.orientation.x << " y: " << obj.orientation.y << " z: " << obj.orientation.z << "\n";
-				std::cout << "Function to place " + obj.type + "\n\n";
 
 				AddWallToWorld(obj.dimensions, obj.position, obj.orientation.x, obj.orientation.y, obj.orientation.z);
 			}
@@ -372,6 +359,7 @@ void GameLevelManager::loadMap() {
 				std::cout << " Dimensions -> x: " << obj.dimensions.x << " y: " << obj.dimensions.y << " z: " << obj.dimensions.z << "\n";
 				std::cout << "Orientation -> x: " << obj.orientation.x << " y: " << obj.orientation.y << " z: " << obj.orientation.z << "\n";
 				std::cout << "Function to place " + obj.type + "\n\n";
+
 			}
 
 
