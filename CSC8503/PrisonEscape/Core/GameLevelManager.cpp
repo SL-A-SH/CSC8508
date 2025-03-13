@@ -16,17 +16,19 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	mWorld = existingWorld;
 	mRenderer = existingRenderer;
 	mPhysics = new PhysicsSystem(*mWorld);
+	mAnimator = new AnimationController(*mWorld, mPreLoadedAnimationList);
 	mPhysics->UseGravity(true);
 	// Move to another place if needed
 
-	InitAssets();
-	
 
-}
+	InitAssets();
+	InitAnimationObjects();
+}	
 
 GameLevelManager::~GameLevelManager()
 {
 	delete mPhysics;
+	delete mAnimator;
 
 	for (int i = 0; i < mUpdatableObjectList.size(); i++) {
 		delete(mUpdatableObjectList[i]);
@@ -38,25 +40,52 @@ GameLevelManager::~GameLevelManager()
 	}
 	mMeshList.clear();
 
-	delete mPlayerToAdd;
+	for (auto& texture : mTextureList) {
+		delete texture.second;
+	}
+	mTextureList.clear();
+
+	for (auto& shader : mShaderList) {
+		delete shader.second;
+	}
+	mShaderList.clear();
+
+	for (auto& material : mMaterialList) {
+		delete material.second;
+	}
+	mMaterialList.clear();
+
+	for (auto& anim : mAnimationList) {
+		delete anim.second;
+	}
+	mAnimationList.clear();
+
 	delete mRenderer;
 	delete mWorld;
 }
 
 void GameLevelManager::UpdateGame(float dt)
 {
+	if (mUpdatableObjectList.size() >= 1) {
+		mRenderer->SetGameReady(true);
+	}
+
 	// TODO: Level Updates
 	// TODO: Remove Debug
 	mPhysics->Update(dt);
-
+	mAnimator->Update(dt, mUpdatableObjectList);
 	GetCurrentLevel()->Update(dt);
+
+	//mWorld->UpdateWorld(dt);
 
 	if ((mUpdatableObjectList.size() > 0)) {
 		for (GameObject* obj : mUpdatableObjectList) {
 			obj->UpdateGame(dt);
 		}
 	}
-	Debug::Print("LEVELS", Vector2(25, 30), Debug::WHITE);
+
+
+	
 }
 
 
@@ -128,17 +157,21 @@ void GameLevelManager::InitAssets()
 
 			else if (group == "anim") {
 				std::cout << "Found Animation: " << groupInfo[1] << std::endl;
+
+				if (animationLoadThread.joinable()) {
+					animationLoadThread.join();
+				}
 				animationLoadThread = std::thread([this, groupInfo, &animationLines] {
 					for (int i = 0; i < groupInfo.size(); i += 3) {
 						mAnimationList[groupInfo[i]] = mRenderer->LoadAnimation(groupInfo[i + 1]);
-						animationLines;
+						animationLines++;
 					}
 					});
 			}
 
 			else if (group == "shader") {
 				std::cout << "Found Shader: " << groupInfo[1] << std::endl;
-				for (int i = 0; i < groupInfo.size(); i +=3) {
+				for (int i = 0; i < groupInfo.size(); i += 3) {
 					mShaderList[groupInfo[i]] = mRenderer->LoadShader(groupInfo[i + 1], groupInfo[i + 2]);
 					lines++;
 				}
@@ -154,13 +187,17 @@ void GameLevelManager::InitAssets()
 
 			else if (group == "material") {
 				std::cout << "Found Material: " << groupInfo[1] << std::endl;
+				if (materialLoadThread.joinable()) {
+					materialLoadThread.join();
+				}
 				materialLoadThread = std::thread([this, groupInfo, &materialLines] {
 					for (int i = 0; i < groupInfo.size(); i += 3) {
 						mMaterialList[groupInfo[i]] = mRenderer->LoadMaterial(groupInfo[i + 1]);
-						materialLines;
+						materialLines++;
 					}
 					});
 			}
+	
 			group = assetInfo[0];
 			groupInfo.clear();
 
@@ -172,25 +209,63 @@ void GameLevelManager::InitAssets()
 
 	}
 	delete[] assetInfo;
-	animationLoadThread.join();
 
+	if (animationLoadThread.joinable()) {
+		animationLoadThread.join();
+	}
 	mPreLoadedAnimationList.insert(std::make_pair("PlayerIdle", mAnimationList["PlayerIdle"]));
+	mPreLoadedAnimationList.insert(std::make_pair("PlayerWalk", mAnimationList["PlayerWalk"]));
 
-	materialLoadThread.join();
+	if (materialLoadThread.joinable()) {
+		materialLoadThread.join();
+	}
 
+
+
+	//std::cout << "Material List Size: " << mMaterialList.size() << std::endl;
 	//for (auto const& [key, val] : mMaterialList) {
-	//	if (key.substr(0, 6) == "Player") {
-	//		mMeshMaterialsList[key] = mRenderer->LoadMeshMaterial();
-	//	}
+	//	std::cout << "Material Loaded: " << key << std::endl;
 	//}
+
+	//std::cout << "Mesh List Size: " << mMeshList.size() << std::endl;
+	//for (auto const& [key, val] : mMeshList) {
+	//	std::cout << "Mesh Loaded: " << key << std::endl;
+	//}
+
+
+
+	for (auto const& [key, val] : mMaterialList) {
+		if (key.substr(0, 6) == "Player") {
+			std::cout << "Loading Player Mesh Materials" << std::endl;
+			mMeshMaterialsList[key] = mRenderer->LoadMeshMaterial(*mMeshList["Player"], *val);
+			std::cout << "Finished Loaded Player Mesh Materials" << std::endl;
+		}
+		else {
+			std::cout << "Loading Other Mesh Materials" << std::endl;
+			std::cout << "Processing Material for mesh: " << key << std::endl;
+			mMeshMaterialsList[key] = mRenderer->LoadMeshMaterial(*mMeshList[key], *val);
+		}
+		lines++;
+	}
+	std::cout << "Loading Successful!" << std::endl;
+	ready = true;
 }
 
-PlayerOne* GameLevelManager::AddPlayerToWorld(const Transform& transform, const std::string& playerName) {
-	mPlayerToAdd = new PlayerOne(mWorld, playerName);
+
+void GameLevelManager::InitAnimationObjects() const {
+	mAnimator->SetObjectList(mUpdatableObjectList);
+}
+
+Player* GameLevelManager::AddPlayerToWorld(const Transform& transform, const std::string& playerName)
+{
+	std::cout << "Adding Player To World" << std::endl;
+	Player* mPlayerToAdd = new Player(mWorld, playerName);
 	AddComponentsToPlayer(*mPlayerToAdd, transform);
 
 	mWorld->AddGameObject(mPlayerToAdd);
 	mUpdatableObjectList.push_back(mPlayerToAdd);
+	std::cout << "mUpdatable Object List Size:    " << mUpdatableObjectList.size() << std::endl;
+	mAnimator->SetObjectList(mUpdatableObjectList);
 
 	return mPlayerToAdd;
 }
@@ -204,9 +279,12 @@ void GameLevelManager::AddComponentsToPlayer(Player& playerObject, const Transfo
 		.SetPosition(playerTransform.GetPosition())
 		.SetOrientation(playerTransform.GetOrientation());
 
-	playerObject.SetRenderObject(new RenderObject(&playerObject.GetTransform(), mMeshList["PlayerMesh"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+	playerObject.SetRenderObject(new RenderObject(&playerObject.GetTransform(), mMeshList["Player"], mTextureList["DefaultTexture"], mShaderList["Animation"]));
+	playerObject.GetRenderObject()->SetAnimObject(new AnimationObject(AnimationObject::AnimationType::player, mAnimationList["PlayerWalk"]));
 
 	playerObject.SetPhysicsObject(new PhysicsObject(&playerObject.GetTransform(), playerObject.GetBoundingVolume()));
+
+	playerObject.GetRenderObject()->SetMaterialTextures(mMeshMaterialsList["Player"]);
 
 	playerObject.GetPhysicsObject()->SetInverseMass(PLAYER_INVERSE_MASS);
 	playerObject.GetPhysicsObject()->InitSphereInertia();

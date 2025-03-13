@@ -6,9 +6,7 @@
 #include "Shader.h"
 #include "imgui/imgui.h"
 #include "NetworkBase.h"
-
-#include "PrisonEscape/Prefabs/Player/PlayerOne.h"
-#include "PrisonEscape/Prefabs/Player/PlayerTwo.h"
+#include "PrisonEscape/Scripts/Player/Player.h"
 
 namespace NCL {
 	namespace CSC8503 {
@@ -17,11 +15,10 @@ namespace NCL {
 		public:
 			Level();
 			~Level() {}
-			virtual void Init();
-			void AddPlayerOneToLevel(PlayerOne* player);
-			void AddPlayerTwoToLevel();
-
 			virtual void Update(float dt);
+
+			virtual void Init();
+			void AddPlayerToLevel(Player* player);
 
 			void ReceivePacket(int type, GamePacket* packet, int source) override;
 
@@ -32,8 +29,8 @@ namespace NCL {
 			Texture* pauseButton = nullptr;
 			Shader* basicShader = nullptr;
 
-			PlayerOne* playerOne = nullptr;
-			PlayerTwo* playerTwo = nullptr;
+			Player* playerOne = nullptr;
+			Player* playerTwo = nullptr;
 
 		private:
 			void InitializeAssets();
@@ -44,9 +41,8 @@ namespace NCL {
 			GameObject* AddMeshToWorldPosition(const Vector3& position, Mesh* mesh, const Vector3& meshSize, VolumeType type, const Vector3& volumeSize, const float& inverseMass = 10.0f);
 
 		public:
-			PlayerOne* GetPlayerOne() const { return playerOne; }
-			PlayerTwo* GetPlayerTwo() const { return playerTwo; }
-
+			Player* GetPlayerOne() const { return playerOne; }
+			Player* GetPlayerTwo() const { return playerTwo; }
 
 #pragma region UI
 

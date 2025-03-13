@@ -59,6 +59,7 @@ const Matrix4* MeshAnimation::GetJointData(size_t frame) const {
 	if (frame >= frameCount) {
 		return nullptr;
 	}
+
 	int matStart = frame * jointCount;
 
 	Matrix4* dataStart = (Matrix4*)allJoints.data();

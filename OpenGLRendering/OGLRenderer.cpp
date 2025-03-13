@@ -124,6 +124,7 @@ void OGLRenderer::DrawBoundMesh(int subLayer, int numInstances) {
 		}
 	}
 	else {
+		//std::cout << "subLayer count is:" << subLayer << std::endl;
 		const SubMesh* m = boundMesh->GetSubMesh(subLayer);
 		offset = m->start;
 		count  = m->count;

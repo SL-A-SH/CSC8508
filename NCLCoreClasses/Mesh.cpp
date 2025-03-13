@@ -142,12 +142,31 @@ void Mesh::SetSubMeshNames(const std::vector < std::string>& newNames) {
 	subMeshNames = newNames;
 }
 
+void NCL::Rendering::Mesh::SetBindPoseIndices(const std::vector<int>& newIndices) //new
+{
+	bindPoseIndices = newIndices;
+}
+
+void NCL::Rendering::Mesh::SetBindPoseStates(std::vector<SubMeshPoses>& newState)
+{
+	bindPoseStates = newState;
+}
+
+
 void Mesh::CalculateInverseBindPose() {
 	inverseBindPose.resize(bindPose.size());
 
 	for (int i = 0; i < bindPose.size(); ++i) {
 		inverseBindPose[i] = Matrix::Inverse(bindPose[i]);
 	}
+}
+
+bool Mesh::GetBindPoseState(int subMesh, SubMeshPoses& pose) const {
+	if (subMesh < 0 || subMesh >= (int)bindPoseStates.size()) {
+		return false;
+	}
+	pose = bindPoseStates[subMesh];
+	return true;
 }
 
 bool Mesh::ValidateMeshData() {

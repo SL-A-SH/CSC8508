@@ -7,7 +7,6 @@
 
 #include "../CSC8503/PrisonEscape/Core/GameConfigManager.h"
 #include "../CSC8503/PrisonEscape/Core/GameLevelManager.h"
-#include "../CSC8503/PrisonEscape/Prefabs/Player/PlayerOne.h" 
 
 namespace NCL {
 	namespace CSC8503 {

@@ -9,6 +9,7 @@ https://research.ncl.ac.uk/game/
 #pragma once
 #include "Vector.h"
 #include "Matrix.h"
+#include "Mesh.h"
 
 using std::vector;
 
@@ -33,7 +34,9 @@ namespace NCL::Rendering {
 		BindPoseInv = 1 << 12,
 		Material = 1 << 13,
 		SubMeshes = 1 << 14,
-		SubMeshNames = 1 << 15
+		SubMeshNames = 1 << 15,
+		BindPoseIndices = 1 << 16,
+		BindPoseStates = 1 << 17
 	};
 
 	enum class GeometryChunkData {
@@ -60,6 +63,8 @@ namespace NCL::Rendering {
 		static void ReadJointNames(std::ifstream& file, std::vector<std::string>& names);
 		static void ReadSubMeshes(std::ifstream& file, int count, std::vector<struct SubMesh>& subMeshes);
 		static void ReadSubMeshNames(std::ifstream& file, int count, std::vector<std::string>& names);
+		static void ReadIntegerArray(std::ifstream& file, vector<int>& into);
+		static void ReadBindposes(std::ifstream& file, vector<Mesh::SubMeshPoses>& bindPoses);
 
 		MshLoader() {}
 		~MshLoader() {}

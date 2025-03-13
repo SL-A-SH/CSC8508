@@ -35,8 +35,28 @@ namespace NCL {
 		
 
 			GLuint LoadTextureGetID(const std::string& name);
+			int FindTextureIndex(GLuint texId);
 			std::vector<int> LoadMeshMaterial(Mesh& mesh, MeshMaterial& meshMaterial);
+
+			void SetGameReady(bool ready) { gameReady = ready; }
+
+			void GenerateObjectDataUBOs();
+
 		protected:
+
+			enum BufferNames {
+				objectsUBO,
+			};
+
+			struct TextureHandleData {
+				GLuint64 handles[256] = { 0 };
+			};
+
+			struct TextureHandles {
+				int albedoIndex = 0;
+				int normalIndex = 0;
+			};
+
 			void NewRenderLines();
 			void NewRenderText();
 			void NewRenderTextures();
@@ -54,6 +74,8 @@ namespace NCL {
 			void RenderSkybox();
 
 			void LoadSkybox();
+
+
 
 			void SetDebugStringBufferSizes(size_t newVertCount);
 			void SetDebugLineBufferSizes(size_t newVertCount);
@@ -99,6 +121,10 @@ namespace NCL {
 			size_t textCount;
 
 			std::unordered_map<std::string, GLuint> mLoadedTextureList;
+
+			bool gameReady = false;
+
+			vector<std::pair<GLuint, GLuint64>> mTextureIDList;
 		};
 	}
 }

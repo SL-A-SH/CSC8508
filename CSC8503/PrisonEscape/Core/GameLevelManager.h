@@ -8,6 +8,7 @@
 #include "../CSC8503/PrisonEscape/Levels/Level.h"
 #include "../CSC8503/PrisonEscape/Scripts/Player/Player.h"
 #include "../CSC8503/PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
+#include "AnimationController.h"
 
 namespace NCL {
 	constexpr float PLAYER_MESH_SIZE = 3.0f;
@@ -22,10 +23,10 @@ namespace NCL {
 			virtual void UpdateGame(float dt);
 
 			void InitAssets();
+			void InitAnimationObjects() const;
 
 			// Player Methods
-
-			PlayerOne* AddPlayerToWorld(const Transform& transform, const std::string& playerName);
+			Player* AddPlayerToWorld(const Transform& transform, const std::string& playerName);
 			void AddComponentsToPlayer(Player& playerObj, const Transform& transform);
 
 			// Enemy Methods
@@ -37,12 +38,14 @@ namespace NCL {
 			Level* GetCurrentLevel() { return mCurrentLevel; }
 			void SetCurrentLevel(Level* level) { mCurrentLevel = level; }
 			void AddLevel(Level* newLevel) { mLevelStack.push(newLevel); }
+
 		private:
 			GameWorld* mWorld;
 			GameTechRenderer* mRenderer;
 			PhysicsSystem* mPhysics;
 			Level* mCurrentLevel;
 			std::stack<Level*> mLevelStack;
+			AnimationController* mAnimator;
 
 
 			vector<GameObject*> mUpdatableObjectList;
@@ -60,6 +63,7 @@ namespace NCL {
 
 			//Enemy Members
 			PatrolEnemy* mEnemyToAdd;
+			bool isPlaying;
 		};
 	}
 }

@@ -18,7 +18,9 @@ AnimationObject::~AnimationObject() {
 }
 
 void AnimationObject::Update(float dt) {
-	if (animation == nullptr) return;
+	if (animation == nullptr) {
+		return;
+	}
 	frameTime -= frameRate * dt; // scale by frame rate to change speed of animation
 
 	while (frameTime < 0.0f) {
