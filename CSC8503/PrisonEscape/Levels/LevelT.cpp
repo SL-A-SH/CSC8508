@@ -12,6 +12,7 @@
 #include "PrisonEscape/Prefabs/Player/PlayerOne.h" 
 
 #include "PrisonEscape/Core/GameBase.h"
+#include <PrisonEscape/Scripts/puzzle/HidingArea.h>
 LevelT::LevelT()
 {
 	doorCloseTex = GameBase::GetGameBase()->GetRenderer()->LoadTexture("Default.png");
@@ -28,6 +29,8 @@ void LevelT::Init()
 	Level::Init();
 	CreateCollidingCube(Vector3(10, 3, 0));
 	CreateCollidingCube(Vector3(15, 3, 0));
+
+	AddHidingAreaToWorld(Vector3(20, 3, 0), Vector3(1,1,1));
 
 	Door* door = new Door();
 	door->SetTextures(doorCloseTex, doorOpenTex);

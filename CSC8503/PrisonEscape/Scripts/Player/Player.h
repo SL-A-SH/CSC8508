@@ -38,7 +38,7 @@ namespace NCL {
 
 			std::string mName;
 			GameWorld* mWorld;
-
+			bool isDetectable;
 		public:
 			GameObject* GetPlayerObject() const { return playerObject; }
 

@@ -5,6 +5,7 @@
 #include "PhysicsObject.h"
 #include <string>
 #include <fstream>
+#include <PrisonEscape/Scripts/puzzle/HidingArea.h>
 
 
 using namespace NCL;

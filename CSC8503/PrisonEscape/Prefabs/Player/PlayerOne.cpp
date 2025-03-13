@@ -1,7 +1,8 @@
 #include "PlayerOne.h"
 #include "PhysicsObject.h"
-
+#define M_PI 3.14159265358979323846
 #include "PrisonEscape/Core/GameBase.h"
+
 
 using namespace NCL;
 using namespace CSC8503;
@@ -9,6 +10,8 @@ using namespace CSC8503;
 PlayerOne::PlayerOne(GameWorld* world, const std::string& name) : Player(world, name)
 {
     GameObject::SetName(name);
+    
+    isDetectable = true;
 }
 
 PlayerOne::~PlayerOne()
@@ -39,7 +42,7 @@ void PlayerOne::UpdatePlayerMovement(float dt) {
         mainCamera.SetPosition(playerPosition + cameraOffset);
 
         float forward = controller.GetAxis(2);
-        float sidestep = -controller.GetAxis(0);
+        float sidestep = controller.GetAxis(0);
 
         Vector3 currentVelocity = GetPhysicsObject()->GetLinearVelocity();
 
@@ -52,19 +55,27 @@ void PlayerOne::UpdatePlayerMovement(float dt) {
         }
         if (sidestep != 0.0f) 
         {
-            sidestep = -sidestep;
+            sidestep = sidestep;
+        }
+        float sprintMultiplier = 1.0f;
+        if (Window::GetKeyboard()->KeyDown(KeyCodes::SHIFT)) {
+            sprintMultiplier = 5.0f; // Adjust the multiplier as needed
         }
 
         Vector3 movement(0, 0, 0);
-        if (forward != 0.0f) 
-        {
-            movement += forwardVec * forward * GetPlayerSpeed();
+        if (forward != 0.0f) {
+            movement += forwardVec * forward * GetPlayerSpeed() * sprintMultiplier;
         }
-        if (sidestep != 0.0f) 
-        {
-            movement += rightVec * sidestep * GetPlayerSpeed();
+        if (sidestep != 0.0f) {
+            movement += rightVec * sidestep * GetPlayerSpeed() * sprintMultiplier;
         }
-
+        if (movement.Length() > 0.0f) {
+            float angle = atan2(-movement.x, -movement.z);
+            Quaternion targetOrientation = Quaternion::EulerAnglesToQuaternion(0, angle * 180.0f / M_PI, 0);
+            Quaternion currentOrientation = GetTransform().GetOrientation();
+            Quaternion newOrientation = Quaternion::Slerp(currentOrientation, targetOrientation, dt * 2.0f); // Adjust the interpolation speed as needed
+            GetTransform().SetOrientation(newOrientation);
+        }
         if (useGravity) 
         {
             if (fabs(currentVelocity.y) < 1.0f) {
@@ -79,6 +90,7 @@ void PlayerOne::UpdatePlayerMovement(float dt) {
                 }
             }
 
+			
             currentVelocity.y -= 25.0f * dt;
             GetPhysicsObject()->SetLinearVelocity(Vector3(movement.x, currentVelocity.y, movement.z));
         }
@@ -86,5 +98,7 @@ void PlayerOne::UpdatePlayerMovement(float dt) {
         {
             GetPhysicsObject()->SetLinearVelocity(movement);
         }
+        
+        
     }
 }
