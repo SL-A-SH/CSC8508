@@ -30,8 +30,6 @@ void LevelT::Init()
 	CreateCollidingCube(Vector3(10, 3, 0));
 	CreateCollidingCube(Vector3(15, 3, 0));
 
-	AddHidingAreaToWorld(Vector3(20, 3, 0), Vector3(1,1,1));
-
 	Door* door = new Door();
 	door->SetTextures(doorCloseTex, doorOpenTex);
 	AddDoorToWorld(door, Vector3(10, 5, 10));
