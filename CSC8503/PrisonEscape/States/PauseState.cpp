@@ -80,8 +80,8 @@ void PauseState::DrawAudioSettingPanel() {
 	std::vector<PanelSlider> sliders = { {"Master Volume", &volume, 0, 100, 0.36f} };
 
 	auto backCallback = [this]() {
-		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("SettingPanel", [this]() {DrawSettingPanel();});
-		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("AudioSettingPanel");
+		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("PauseSettingPanel", [this]() {DrawSettingPanel(); });
+		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("PauseAudioSettingPanel");
 		};
 
 	ImGuiManager::DrawPanel("Audio Settings", {}, sliders, backCallback);

@@ -32,7 +32,7 @@ MenuState::~MenuState()
 
 void MenuState::OnAwake() {
 
-	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("MainMenuPanel", [this]() {	DrawMainMenuPanel();});
+	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("MainMenuPanel", [this]() {	DrawMainMenuPanel(); });
 	Debug::PrintDebugInfo({ "Menu State", Debug::RED });
 	Window::GetWindow()->ShowOSPointer(true);
 }
@@ -177,37 +177,45 @@ void MenuState::DrawMainMenuPanel() {
 		{"Single Player", [this]() {
 			std::cout << "Single Player" << std::endl;
 			stateChangeAction = [](PushdownState** newState) { *newState = new GamePlayState(false, false); };
-		}, 0.25f},
+		}, 0.32f, 0.25f}, // Adjusted positions
+
 		{"Multiplayer", [this]() {
-		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MainMenuPanel");
-		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("MultiplayerPanel", [this]() {DrawMultiplayerPanel();});
-		}, 0.45f},
+			GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MainMenuPanel");
+			GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("MultiplayerPanel", [this]() {DrawMultiplayerPanel(); });
+		}, 0.32f, 0.40f}, // Adjusted positions
+
 		{"Settings", [this]() {
 			Debug::PrintDebugInfo({ "Setting"});
-		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("SettingPanel", [this]() {DrawSettingPanel();});
-		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MainMenuPanel");
-		}, 0.65f}
+			GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("SettingPanel", [this]() {DrawSettingPanel(); });
+			GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MainMenuPanel");
+		}, 0.32f, 0.55f}, // Adjusted positions
+
+		{"Quit Game", []() {
+			std::cout << "Quitting game..." << std::endl;
+			GameBase::GetGameBase()->QuitGame();
+		}, 0.32f, 0.70f}  // Adjusted positions
 	};
 
 	ImGuiManager::DrawPanel("PRISON ESCAPE", buttons);
 }
+
 
 void MenuState::DrawSettingPanel() {
 
 
 	std::vector<PanelButton> buttons = {
 		{"Audio", [this]() {
-				GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("AudioSettingPanel", [this]() {DrawAudioSettingPanel();});
+				GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("AudioSettingPanel", [this]() {DrawAudioSettingPanel(); });
 				GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("SettingPanel");
-		}, 0.25f},
+		}, 0.10f, .35f},
 		{"Graphic", [this]() {
-				GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("GraphicSettingPanel", [this]() {DrawVideoSettingPanel();});
+				GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("GraphicSettingPanel", [this]() {DrawVideoSettingPanel(); });
 				GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("SettingPanel");
-		}, 0.45f}
+		},0.55f, .35f}
 	};
 
 	auto backCallback = [this]() {
-		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("MainMenuPanel", [this]() {DrawMainMenuPanel();});
+		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("MainMenuPanel", [this]() {DrawMainMenuPanel(); });
 		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("SettingPanel");
 		};
 
@@ -218,7 +226,7 @@ void MenuState::DrawAudioSettingPanel() {
 	std::vector<PanelSlider> sliders = { {"Master Volume", &volume, 0, 100, 0.36f} };
 
 	auto backCallback = [this]() {
-		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("SettingPanel", [this]() {DrawSettingPanel();});
+		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("SettingPanel", [this]() {DrawSettingPanel(); });
 		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("AudioSettingPanel");
 		};
 
@@ -229,8 +237,8 @@ void MenuState::DrawVideoSettingPanel() {
 	std::vector<PanelSlider> sliders = { {"Brightness", &brightness, 0, 100, 0.36f} };
 
 	auto backCallback = [this]() {
-		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("SettingPanel", [this]() {DrawSettingPanel();});
-		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("VideoSettingPanel");
+		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("SettingPanel", [this]() {DrawSettingPanel(); });
+		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("GraphicSettingPanel");
 		};
 
 	ImGuiManager::DrawPanel("Video Settings", {}, sliders, backCallback);
@@ -241,15 +249,15 @@ void MenuState::DrawMultiplayerPanel() {
 		{"Host", [this]() {
 			networkAsServer = true;
 			StartServerProcess();
-		}, 0.25f},
+		},0.32f, 0.25f},
 		{"Join", [this]() {
 			networkAsServer = false;
 			StartClientProcess();
-		}, 0.45f}
+		},0.32f, 0.45f}
 	};
 
 	auto backCallback = [this]() {
-		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("MainMenuPanel", [this]() {DrawMainMenuPanel();});
+		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("MainMenuPanel", [this]() {DrawMainMenuPanel(); });
 		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MultiplayerPanel");
 		};
 	ImGuiManager::DrawPanel("Multiplayer", buttons, {}, backCallback);
@@ -263,7 +271,7 @@ void MenuState::StartServerProcess()
 	connectionTimer = 0.0f;
 	isConnecting = true;
 
-	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("ConnectionPanel", [this]() {DrawConnectionMessagePanel();});
+	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("ConnectionPanel", [this]() {DrawConnectionMessagePanel(); });
 	GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MultiplayerPanel");
 
 }
@@ -275,7 +283,7 @@ void MenuState::StartClientProcess()
 	connectionTimer = 0.0f;
 	isConnecting = true;
 
-	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("ConnectionPanel", [this]() {DrawConnectionMessagePanel();});
+	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("ConnectionPanel", [this]() {DrawConnectionMessagePanel(); });
 	GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MultiplayerPanel");
 
 }
@@ -289,7 +297,7 @@ void MenuState::DrawConnectionMessagePanel()
 	auto cancelCallback = [this]() {
 		isConnecting = false;
 		connectionStage = ConnectionStage::None;
-		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("MultiplayerPanel", [this]() {DrawMultiplayerPanel();});
+		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("MultiplayerPanel", [this]() {DrawMultiplayerPanel(); });
 		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("ConnectionPanel");
 
 		};
