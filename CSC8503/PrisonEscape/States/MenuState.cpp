@@ -173,7 +173,15 @@ void MenuState::DrawMainMenuPanel() {
 	std::vector<PanelButton> buttons = {
 		{"Single Player", [this]() {
 			std::cout << "Single Player" << std::endl;
-			stateChangeAction = [](PushdownState** newState) { *newState = new GamePlayState(false, false); };
+			stateChangeAction = [this](PushdownState** newState) { 
+				*newState = new GamePlayState(false, false);
+				gameConfig = new GameConfigManager();
+				gameConfig->networkConfig.isMultiplayer = false;
+				if (this->gameConfig) {
+					dynamic_cast<GamePlayState*>(*newState)->SetGameConfig(this->gameConfig);
+					this->gameConfig = nullptr; // Transfer ownership
+				}
+			};
 		}, 0.25f},
 		{"Multiplayer", [this]() {
 		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MainMenuPanel");

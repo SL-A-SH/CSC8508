@@ -59,7 +59,7 @@ namespace NCL {
 			std::map<std::string, MeshAnimation*> mPreLoadedAnimationList;
 
 			//Player Members
-			PlayerOne* mPlayerToAdd;
+			Player* mPlayerToAdd;
 
 			//Enemy Members
 			PatrolEnemy* mEnemyToAdd;

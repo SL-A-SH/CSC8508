@@ -11,6 +11,8 @@ function(Create_PC_CSC8503_Files)
         "NetworkPlayer.h"
         "StateGameObject.h"
         "TutorialGame.h"
+        "AnimationController.h"
+        "AnimationObject.h"
     )
     source_group("Header Files" FILES ${Header_Files})
 
@@ -42,11 +44,7 @@ function(Create_PC_CSC8503_Files)
         "PrisonEscape/Prefabs/PatrolEnemy/PatrollingEnemy.cpp"
         "PrisonEscape/Prefabs/PatrolEnemy/PatrollingEnemy.h" 
 		"PrisonEscape/Prefabs/PursuitEnemy/PursuingEnemy.cpp"
-        "PrisonEscape/Prefabs/PursuitEnemy/PursuingEnemy.h"	
-        "PrisonEscape/Prefabs/Player/PlayerOne.cpp" 
-        "PrisonEscape/Prefabs/Player/PlayerOne.h"
-        "PrisonEscape/Prefabs/Player/PlayerTwo.cpp"    
-        "PrisonEscape/Prefabs/Player/PlayerTwo.h"
+        "PrisonEscape/Prefabs/PursuitEnemy/PursuingEnemy.h"
     )
     source_group("Prison Escape Prefabs" FILES ${Prison_Escape_Prefabs})
 
@@ -82,6 +80,8 @@ function(Create_PC_CSC8503_Files)
         "NetworkPlayer.cpp"
         "StateGameObject.cpp"
         "TutorialGame.cpp"
+        "AnimationController.cpp"
+        "AnimationObject.cpp"
     )
 
     if(USE_VULKAN)
