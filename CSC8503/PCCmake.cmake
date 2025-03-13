@@ -13,6 +13,7 @@ function(Create_PC_CSC8503_Files)
         "TutorialGame.h"
         "AnimationController.h"
         "AnimationObject.h"
+        "jsonParser.h"
     )
     source_group("Header Files" FILES ${Header_Files})
 
@@ -89,6 +90,8 @@ function(Create_PC_CSC8503_Files)
         "TutorialGame.cpp"
         "AnimationController.cpp"
         "AnimationObject.cpp"
+        "json.hpp"
+        "jsonParser.cpp"
     )
 
     if(USE_VULKAN)
