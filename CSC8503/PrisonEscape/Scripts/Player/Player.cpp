@@ -20,6 +20,7 @@ Player::~Player()
 {
 	delete(playerObject);
 }
+
 void Player::UpdateGame(float dt)
 {
 	UpdatePlayerMovement(dt);

@@ -12,7 +12,7 @@ namespace NCL {
     namespace CSC8503 {
         class PatrolEnemy : public GameObject {
         public:
-            PatrolEnemy(GameWorld* world);
+            PatrolEnemy(GameWorld* world, const std::string& name);
             ~PatrolEnemy();
 
             void Update(float dt);

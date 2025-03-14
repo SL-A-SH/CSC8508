@@ -3,8 +3,9 @@
 using namespace NCL;
 using namespace CSC8503;
 
-PatrolEnemy::PatrolEnemy(GameWorld* world) : GameObject("PatrolEnemy") {
+PatrolEnemy::PatrolEnemy(GameWorld* world, const std::string& name) : GameObject() {
     gameWorld = world;
+    GameObject::SetName(name);
     currentPatrolPoint = 0;
     patrolCounter = 0;
     currentState = PATROL;

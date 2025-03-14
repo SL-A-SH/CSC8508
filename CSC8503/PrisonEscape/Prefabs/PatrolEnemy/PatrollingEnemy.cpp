@@ -3,7 +3,7 @@
 using namespace NCL;
 using namespace CSC8503;
 
-PatrollingEnemy::PatrollingEnemy(GameWorld* world) : PatrolEnemy(world) {
+PatrollingEnemy::PatrollingEnemy(GameWorld* world, const std::string& name) : PatrolEnemy(world, name) {
 
 }
 

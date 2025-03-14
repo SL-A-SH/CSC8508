@@ -32,7 +32,7 @@ namespace NCL {
 
 			// Enemy Methods
 
-			PatrolEnemy* AddPatrolEnemyToWorld(const Transform& transform);
+			PatrolEnemy* AddPatrolEnemyToWorld(const std::string& enemyName);
 			void AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const Transform& transform);
 			void loadMap();
 
@@ -69,11 +69,7 @@ namespace NCL {
 
 			GameObject* AddWallToWorld(Vector3 wallSize, const Vector3& position, float x, float y, float z);
 			GameObject* AddBoxToWorld(const Vector3& position, Vector3 dimensions, const std::string name, float inverseMass = 10.0f);
-			//Player Members
-			Player* mPlayerToAdd;
 
-			//Enemy Members
-			PatrolEnemy* mEnemyToAdd;
 			bool isPlaying;
 		};
 	}

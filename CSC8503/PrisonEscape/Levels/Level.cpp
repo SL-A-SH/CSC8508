@@ -9,6 +9,7 @@
 #include "GameTechRenderer.h"
 
 #include "PrisonEscape/Core/GameBase.h"
+#include "PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -86,6 +87,14 @@ void Level::AddPlayerToLevel(Player* player)
 	{
 		this->playerTwo = player;
 		this->playerTwo->GetRenderObject()->GetTransform()->SetPosition(Vector3(0, 50, 0));
+	}
+}
+
+void Level::AddEnemyToLevel(PatrolEnemy* enemy)
+{
+	if (enemy) {
+		enemies.push_back(enemy);
+		enemy->GetRenderObject()->GetTransform()->SetPosition(Vector3(50, 50, 0));
 	}
 }
 

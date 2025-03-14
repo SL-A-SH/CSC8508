@@ -311,8 +311,9 @@ void GameLevelManager::AddComponentsToPlayer(Player& playerObject, const Transfo
 
 //Should add enemy to the world, needs testing
 
-PatrolEnemy* GameLevelManager::AddPatrolEnemyToWorld(const Transform& transform) {
-	mEnemyToAdd = new PatrolEnemy(mWorld);
+PatrolEnemy* GameLevelManager::AddPatrolEnemyToWorld(const std::string& enemyName) {
+	Transform transform;
+	PatrolEnemy* mEnemyToAdd = new PatrolEnemy(mWorld, enemyName);
 	AddComponentsToPatrolEnemy(*mEnemyToAdd, transform);
 
 	mWorld->AddGameObject(mEnemyToAdd);
@@ -339,6 +340,7 @@ void GameLevelManager::AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const T
 	enemyObj.GetPhysicsObject()->SetInverseMass(PATROL_ENEMY_INVERSE_MASS);
 	enemyObj.GetPhysicsObject()->InitSphereInertia();
 }
+
 // world gameobjects called in loadMap();
 GameObject* GameLevelManager::AddWallToWorld(Vector3 dimensions, const Vector3& position, float x, float y, float z) {
 

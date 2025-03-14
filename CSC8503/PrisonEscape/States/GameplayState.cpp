@@ -4,6 +4,7 @@
 #include "PrisonEscape/Levels/LevelOne.h"
 #include "PrisonEscape/Levels/LevelT.h"
 #include "PauseState.h"
+#include "PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -73,6 +74,9 @@ GamePlayState::GamePlayState(bool multiplayer, bool asServer, GameConfigManager*
 		level->AddPlayerToLevel(player);
 		Vector3 playerPosition = level->GetPlayerOne()->GetTransform().GetPosition();
 		GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(Vector3(playerPosition.x, playerPosition.y, playerPosition.z));
+
+		PatrolEnemy* patrolEnemyOne = manager->AddPatrolEnemyToWorld("enemyOne");
+		level->AddEnemyToLevel(patrolEnemyOne);
 	}
 
 	manager->AddLevel(level);
