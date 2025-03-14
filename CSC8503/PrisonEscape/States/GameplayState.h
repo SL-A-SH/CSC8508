@@ -32,6 +32,9 @@ namespace NCL {
 			GameLevelManager* manager;
 			GameConfigManager* gameConfig;
 
+			Texture* heartFilledTexture = nullptr;
+			Texture* heartEmptyTexture = nullptr;
+
 		public:
 			GameConfigManager* GetGameConfig() const { return gameConfig; }
 		};
