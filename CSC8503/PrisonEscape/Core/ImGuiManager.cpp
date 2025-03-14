@@ -1,5 +1,7 @@
 #include "ImGuiManager.h"
-
+#include "Texture.h"
+#include "GameBase.h"
+#include "PrisonEscape/States/MenuState.h"
 using namespace NCL;
 using namespace CSC8503;
 
@@ -10,6 +12,7 @@ ImFont* ImGuiManager::messageFont = nullptr;
 
 
 void ImGuiManager::Initialize() {
+
 	ImGuiIO& imguiIO = ImGui::GetIO();
 	buttonFont = imguiIO.Fonts->AddFontFromFileTTF("../Assets/Fonts/BebasNeue-Regular.ttf", 30.0f, NULL, imguiIO.Fonts->GetGlyphRangesDefault());
 	headerFont = imguiIO.Fonts->AddFontFromFileTTF("../Assets/Fonts/BebasNeue-Regular.ttf", 60.0f, NULL, imguiIO.Fonts->GetGlyphRangesDefault());
@@ -136,12 +139,16 @@ void ImGuiManager::DrawButton(const std::string& label, const std::function<void
 	ImGui::PushFont(buttonFont);
 	// Set cursor position using the new x and y positions
 	ImGui::SetCursorPos(ImVec2(windowSize.x * xPos, windowSize.y * yPos));
-
+	//nEED TO FIND A WAY TO LOAD tEXTURE HERE THIS WON'T WORL
+	/*Texture* tex = GameBase::GetGameBase()->GetRenderer()->LoadTexture("button.png");
+	GLuint texID = ((OGLTexture*)tex)->GetObjectID();*/
 	if (ImGui::Button(label.c_str(), ImVec2(windowSize.x * BUTTON_WIDTH_RATIO, windowSize.y * BUTTON_HEIGHT_RATIO))) {
 		if (callback) {
 			callback();
 		}
 	}
+
+
 
 	ImGui::PopFont();
 }
