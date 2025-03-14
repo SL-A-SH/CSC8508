@@ -39,18 +39,18 @@ void PauseState::DrawPauseMenuPanel() {
 			this->buttonClicked = ButtonClicked::Resume;
 			//GameBase::GetGameBase()->GetStateMachine()->PopState();
 			GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("PauseMenuPanel");
-		}, 0.25f},
+		}, .32f,0.25f},
 		{"Settings", [this]() {
 			this->buttonClicked = ButtonClicked::Settings;
 			GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("PauseSettingPanel", [this]() { DrawSettingPanel(); });
 			GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("PauseMenuPanel");
-		}, 0.45f},
+		},.32f, 0.45f},
 		{"Exit to Main Menu", [this]() {
 			this->buttonClicked = ButtonClicked::Exit;
 			//GameBase::GetGameBase()->GetStateMachine()->PushState(new MenuState);
 			GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("PauseMenuPanel");
 
-		}, 0.65f}
+		},.32f, 0.65f}
 	};
 
 	ImGuiManager::DrawPanel("Pause Menu", buttons);
@@ -61,11 +61,11 @@ void PauseState::DrawSettingPanel() {
 		{"Audio", [this]() {
 			GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("PauseAudioSettingPanel", [this]() { DrawAudioSettingPanel(); });
 			GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("PauseSettingPanel");
-		}, 0.25f},
+		},0.10f, 0.35f},
 		{"Graphics", [this]() {
 			GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("PauseGraphicSettingPanel", [this]() { DrawVideoSettingPanel(); });
 			GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("PauseSettingPanel");
-		}, 0.45f}
+		},0.55f, 0.35f}
 	};
 
 	auto backCallback = [this]() {
@@ -77,18 +77,18 @@ void PauseState::DrawSettingPanel() {
 }
 
 void PauseState::DrawAudioSettingPanel() {
-	std::vector<PanelSlider> sliders = { {"Master Volume", &volume, 0, 100, 0.36f} };
+	std::vector<PanelSlider> sliders = { {"Master Volume", &volume, 0, 100,0.36f, 0.36f} };
 
 	auto backCallback = [this]() {
-		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("SettingPanel", [this]() {DrawSettingPanel();});
-		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("AudioSettingPanel");
+		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("PauseSettingPanel", [this]() {DrawSettingPanel(); });
+		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("PauseAudioSettingPanel");
 		};
 
 	ImGuiManager::DrawPanel("Audio Settings", {}, sliders, backCallback);
 }
 
 void PauseState::DrawVideoSettingPanel() {
-	std::vector<PanelSlider> sliders = { {"Brightness", &brightness, 0, 100, 0.36f} };
+	std::vector<PanelSlider> sliders = { {"Brightness", &brightness, 0, 100, 0.36f, 0.36f} };
 
 	auto backCallback = [this]() {
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("PauseSettingPanel", [this]() { DrawSettingPanel(); });

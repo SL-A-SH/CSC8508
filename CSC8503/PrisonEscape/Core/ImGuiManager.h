@@ -9,7 +9,8 @@ namespace NCL {
 		struct PanelButton {
 			std::string label;
 			std::function<void()> callback;
-			float verticalPosition; // Position from 0.0 to 1.0
+			float xPosition; // Horizontal position (0.0 to 1.0 as percentage of panel width)
+			float yPosition; // Vertical position (0.0 to 1.0 as percentage of panel height)
 		};
 
 		struct PanelSlider {
@@ -17,8 +18,10 @@ namespace NCL {
 			int* value;
 			int min;
 			int max;
-			float verticalPosition; // Position from 0.0 to 1.0
+			float xPosition; // Horizontal position (0.0 to 1.0 as percentage of panel width)
+			float yPosition; // Vertical position (0.0 to 1.0 as percentage of panel height)
 		};
+
 
 		class ImGuiManager {
 		public:
@@ -34,8 +37,8 @@ namespace NCL {
 			);
 
 			static void DrawHeader(const std::string& title);
-			static void DrawButton(const std::string& label, const std::function<void()>& callback, float verticalPos);
-			static void DrawSlider(const std::string& label, int* value, int min, int max, float verticalPos);
+			static void DrawButton(const std::string& label, const std::function<void()>& callback, float verticalPos, float horizontalPos);
+			static void DrawSlider(const std::string& label, int* value, int min, int max, float verticalPos, float horizontalPos);
 			static void DrawBackButton(const std::function<void()>& callback);
 			static void DrawFooter(const std::string& text);
 			static void DrawMessagePanel(const std::string& title, const std::string& message, const ImVec4& messageColor = ImVec4(1, 1, 1, 1), std::function<void()> cancelCallback = nullptr);
@@ -46,7 +49,7 @@ namespace NCL {
 			static ImFont* footerFont;
 			static ImFont* messageFont;
 
-			static constexpr float BUTTON_WIDTH_RATIO = 0.3f;
+			static constexpr float BUTTON_WIDTH_RATIO = 0.35f;
 			static constexpr float BUTTON_HEIGHT_RATIO = 0.1f;
 			static constexpr float HEADER_VERTICAL_POS = 0.1f;
 			static constexpr float BACK_BUTTON_VERTICAL_POS = 0.65f;
