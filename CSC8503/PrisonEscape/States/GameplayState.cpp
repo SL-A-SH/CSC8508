@@ -77,6 +77,11 @@ GamePlayState::GamePlayState(bool multiplayer, bool asServer, GameConfigManager*
 
 	manager->AddLevel(level);
 	manager->SetCurrentLevel(level);
+	heartFilledTexture = GameBase::GetGameBase()->GetRenderer()->LoadTexture("heart_filled.png");
+	heartEmptyTexture = GameBase::GetGameBase()->GetRenderer()->LoadTexture("heart_empty.png");
+
+
+
 }
 
 void GamePlayState::OnAwake()
@@ -139,17 +144,47 @@ PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** 
 	return PushdownResult::NoChange;
 }
 
-void GamePlayState::DrawHUDPanel(){
-	
-	ImGui::Begin("HUD Panel", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+void GamePlayState::DrawHUDPanel() {
+	// Set cursor to the top-left corner
+	ImGui::SetCursorPos(ImVec2(25, 25));
+
+	// Define the remaining lives and max number of hearts (e.g., 5 hearts)
+	int remainingLives = 3; // Number of filled hearts
+	int maxLives = 5;       // Maximum number of hearts to display
+
+	GLuint texIDFilled = ((OGLTexture*)heartFilledTexture)->GetObjectID();  // Filled heart texture
+	GLuint texIDUnfilled = ((OGLTexture*)heartEmptyTexture)->GetObjectID(); // Unfilled heart texture
+
+	// Calculate the size of the heart icon
+	ImVec2 heartSize = ImVec2(40, 40); // Size of each heart
+
+	// Initial position for hearts
+	ImVec2 heartPos = ImGui::GetCursorScreenPos(); // This gets the current position for the heart drawing
+
+	// Loop through to draw the hearts
+	for (int i = 0; i < maxLives; i++) {
+		ImVec2 heartPosition = ImVec2(heartPos.x + (i * heartSize.x), heartPos.y); // Adjust position for each heart
+		ImVec2 heartEndPos = ImVec2(heartPosition.x + heartSize.x, heartPosition.y + heartSize.y); // Set the end position based on heart size
+
+		// Draw filled heart for remaining lives
+		if (i < remainingLives) {
+			ImGui::GetWindowDrawList()->AddImage((ImTextureID)texIDFilled, heartPosition, heartEndPos); // Draw filled heart
+		}
+		// Draw unfilled heart for remaining hearts
+		else {
+			ImGui::GetWindowDrawList()->AddImage((ImTextureID)texIDUnfilled, heartPosition, heartEndPos); // Draw unfilled heart
+		}
+
+		// Debugging: output the position of each heart
+		std::cout << "Drawing heart at: " << heartPosition.x << ", " << heartPosition.y << std::endl;
+	}
+
+	// Set next cursor position for Timer text
+	ImGui::SetCursorPos(ImVec2(25, 75)); // Set cursor to below the hearts
 
 	// Display Timer
-	ImGui::Text("Time: %.2f s", 25.0f);
-
-	// Display Health Bar
-	ImGui::Text("Health:");
-	ImGui::ProgressBar(50/ 100.0f, ImVec2(200, 20));
+	ImGui::Text("Time: %.2f s", 20.0f);
 
 
-	ImGui::End();
+
 }
