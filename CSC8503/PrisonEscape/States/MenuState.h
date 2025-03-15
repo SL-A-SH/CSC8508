@@ -11,8 +11,9 @@
 
 namespace NCL {
 	namespace CSC8503 {
-		class MenuState : public GameState {
+		class SteamManager;
 
+		class MenuState : public GameState {
 		public:
 			MenuState();
 			~MenuState();
@@ -30,6 +31,9 @@ namespace NCL {
 			void StartServerProcess();
 			void StartClientProcess();
 			void DrawConnectionMessagePanel();
+
+			void InitializeSteam();
+			void HandleSteamInvite(uint64_t friendSteamID);
 
 		private:
 			enum class ConnectionStage {
@@ -51,6 +55,8 @@ namespace NCL {
 			float connectionTimer;
 			int connectionAttempt;
 			GameConfigManager* gameConfig;
+
+			SteamManager* steamManager;
 		};
 	}
 }

@@ -6,6 +6,7 @@
 #include "Debug.h"
 #include "PrisonEscape/Core/GameSettingManager.h"
 #include "PrisonEscape/Core/ImGuiManager.h"
+#include "PrisonEscape/Core/Networking/SteamManager.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -17,7 +18,8 @@ MenuState::MenuState() :
 	networkAsServer(false),
 	connectionTimer(0.0f),
 	connectionAttempt(0),
-	gameConfig(nullptr)
+	gameConfig(nullptr),
+	steamManager(nullptr)
 {
 
 }
@@ -51,42 +53,51 @@ PushdownState::PushdownResult MenuState::OnUpdate(float dt, PushdownState** newS
 				connectionStage = ConnectionStage::Connecting;
 				connectionTimer = 0.0f;
 
-				GameConfigManager* gameConfig = new GameConfigManager();
+				gameConfig = new GameConfigManager();
 				gameConfig->networkConfig.isMultiplayer = true;
 				gameConfig->networkConfig.isServer = networkAsServer;
-				gameConfig->InitNetwork();
 
-				if (networkAsServer) {
-					try {
-						gameConfig->CreateServer();
+				#ifdef ENABLE_STEAM
+					InitializeSteam();
+				#endif
 
-						this->gameConfig = gameConfig;
+				if (!steamManager || !steamManager->IsInitialized())
+				{
+					gameConfig->networkConfig.isUsingSteam = false;
+					gameConfig->InitNetwork();
 
-						connectionStage = ConnectionStage::Success;
-						connectionTimer = 0.0f;
+					if (networkAsServer) {
+						try {
+							gameConfig->CreateServer();
+
+							this->gameConfig = gameConfig;
+
+							connectionStage = ConnectionStage::Success;
+							connectionTimer = 0.0f;
+						}
+						catch (std::exception& e) {
+							delete gameConfig;
+							this->gameConfig = nullptr;
+
+							connectionStage = ConnectionStage::Failed;
+							connectionTimer = 0.0f;
+						}
 					}
-					catch (std::exception& e) {
-						delete gameConfig;
-						this->gameConfig = nullptr;
+					else {
+						try {
+							gameConfig->CreateClient();
+							this->gameConfig = gameConfig;
 
-						connectionStage = ConnectionStage::Failed;
-						connectionTimer = 0.0f;
-					}
-				}
-				else {
-					try {
-						gameConfig->CreateClient();
-						this->gameConfig = gameConfig;
+							connectionStage = ConnectionStage::Connecting;
+							connectionTimer = 0.0f;
+						}
+						catch (std::exception& e) {
+							delete gameConfig;
+							this->gameConfig = nullptr;
 
-						connectionStage = ConnectionStage::Connecting;
-						connectionTimer = 0.0f;
-					}
-					catch (std::exception& e) {
-						delete gameConfig;
-						this->gameConfig = nullptr;
-
-						connectionStage = ConnectionStage::Failed;
-						connectionTimer = 0.0f;
+							connectionStage = ConnectionStage::Failed;
+							connectionTimer = 0.0f;
+						}
 					}
 				}
 			}
@@ -135,12 +146,12 @@ PushdownState::PushdownResult MenuState::OnUpdate(float dt, PushdownState** newS
 				stateChangeAction = [this](PushdownState** newState) {
 					
 					//GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(nullptr);
-					if (this->gameConfig) {
+					if (gameConfig) {
 						*newState = new GamePlayState(true, networkAsServer, gameConfig);
-						dynamic_cast<GamePlayState*>(*newState)->SetGameConfig(this->gameConfig);
-						this->gameConfig = nullptr; // Transfer ownership
+						dynamic_cast<GamePlayState*>(*newState)->SetGameConfig(gameConfig);
+						gameConfig = nullptr; // Transfer ownership
 					}
-					};
+				};
 
 				connectionStage = ConnectionStage::None;
 			}
@@ -163,6 +174,10 @@ PushdownState::PushdownResult MenuState::OnUpdate(float dt, PushdownState** newS
 		default:
 			break;
 		}
+	}
+
+	if (steamManager && steamManager->IsInitialized()) {
+		steamManager->Update();
 	}
 
 	if (stateChangeAction) {
@@ -379,5 +394,46 @@ void MenuState::DrawConnectionMessagePanel()
 	}
 	else {
 		ImGuiManager::DrawMessagePanel(title, message, messageColor, cancelCallback);
+	}
+}
+
+void MenuState::InitializeSteam()
+{
+#ifdef ENABLE_STEAM
+	// Initialize Steam manager
+	steamManager = SteamManager::GetInstance();
+
+	if (steamManager->Initialize())
+	{
+		std::cout << "Steam initialized successfully. User: " << steamManager->GetSteamUserName() << std::endl;
+
+		// Set up Steam networking based on host/client status
+		if (gameConfig->networkConfig.isServer)
+		{
+			// Create a Steam lobby
+			steamManager->CreateLobby(8);
+
+			gameConfig->networkConfig.isUsingSteam = true;
+
+			connectionStage = ConnectionStage::Success;
+			connectionTimer = 0.0f;
+		}
+	}
+	else
+	{
+		gameConfig->networkConfig.isUsingSteam = false;
+		std::cout << "Steam initialization failed. Using regular networking." << std::endl;
+		delete steamManager;
+		steamManager = nullptr;
+	}
+#endif
+}
+
+void MenuState::HandleSteamInvite(uint64_t friendSteamID)
+{
+	if (steamManager && steamManager->IsInitialized())
+	{
+		std::cout << "Sending game invite to friend: " << friendSteamID << std::endl;
+		steamManager->SendGameInvite(friendSteamID);
 	}
 }

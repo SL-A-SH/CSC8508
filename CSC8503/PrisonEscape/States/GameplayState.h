@@ -10,6 +10,8 @@
 
 namespace NCL {
 	namespace CSC8503 {
+		class Level;
+
 		class GamePlayState : public GameState {
 		public:
 			GamePlayState(bool multiplayer, bool asServer, GameConfigManager* config);
@@ -30,6 +32,8 @@ namespace NCL {
 		private:
 			GameLevelManager* manager;
 			GameConfigManager* gameConfig;
+
+			void InitializeSteamMultiplayer(Level* level);
 
 		public:
 			GameConfigManager* GetGameConfig() const { return gameConfig; }
