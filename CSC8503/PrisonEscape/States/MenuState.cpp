@@ -21,7 +21,7 @@ MenuState::MenuState() :
 	gameConfig(nullptr),
 	steamManager(nullptr)
 {
-
+	gameConfig = new GameConfigManager();
 }
 
 MenuState::~MenuState()
@@ -53,7 +53,6 @@ PushdownState::PushdownResult MenuState::OnUpdate(float dt, PushdownState** newS
 				connectionStage = ConnectionStage::Connecting;
 				connectionTimer = 0.0f;
 
-				gameConfig = new GameConfigManager();
 				gameConfig->networkConfig.isMultiplayer = true;
 				gameConfig->networkConfig.isServer = networkAsServer;
 
@@ -275,20 +274,65 @@ void MenuState::DrawMultiplayerPanel() {
 		{"Host", [this]() {
 			networkAsServer = true;
 			StartServerProcess();
-		},0.32f, 0.25f},
+		},0.32f, 0.35f},
 		{"Join", [this]() {
 			networkAsServer = false;
 			StartClientProcess();
-		},0.32f, 0.45f}
+		},0.32f, 0.50f}
 	};
 
 	auto backCallback = [this]() {
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("MainMenuPanel", [this]() {DrawMainMenuPanel(); });
 		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MultiplayerPanel");
-		};
+	};
+
 	ImGuiManager::DrawPanel("Multiplayer", buttons, {}, backCallback);
 
+	ImVec2 windowSize = ImGui::GetWindowSize();
 
+	ImGui::SetCursorPos(ImVec2(windowSize.x * 0.32f, windowSize.y * 0.2f));
+
+	ImGui::PushFont(ImGuiManager::GetButtonFont());
+	bool useSteamNetworking = gameConfig->networkConfig.isUsingSteam;
+	bool oldValue = useSteamNetworking;
+	ImGui::Checkbox("Use Steam Networking", &useSteamNetworking);
+
+	if (oldValue != useSteamNetworking) {
+		if (useSteamNetworking) {
+			steamManager = SteamManager::GetInstance();
+			if (!steamManager->Initialize()) {
+				GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("SteamErrorPanel", [this]() {
+					ImGuiManager::DrawMessagePanel("Steam Error",
+						"Failed to initialize Steam. Make sure Steam is running.",
+						ImVec4(1, 0, 0, 1),
+						[this]() {
+							GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("SteamErrorPanel");
+						});
+					});
+				useSteamNetworking = false;
+				gameConfig->networkConfig.isUsingSteam = false;
+			}
+			else {
+				std::cout << "Steam initialized successfully. User: " << steamManager->GetSteamUserName() << std::endl;
+				gameConfig->networkConfig.isUsingSteam = true;
+			}
+		}
+		else {
+			if (steamManager) {
+				steamManager->Shutdown();
+				steamManager = nullptr;
+				gameConfig->networkConfig.isUsingSteam = false;
+			}
+		}
+	}
+
+	// Display info text about Steam status
+	if (useSteamNetworking && steamManager && steamManager->IsInitialized()) {
+		ImGui::SetCursorPos(ImVec2(windowSize.x * 0.1f, windowSize.y * 0.27f));
+		ImGui::TextColored(ImVec4(0, 1, 0, 1), "Steam user: %s", steamManager->GetSteamUserName().c_str());
+	}
+
+	ImGui::PopFont();
 }
 
 void MenuState::StartServerProcess()
