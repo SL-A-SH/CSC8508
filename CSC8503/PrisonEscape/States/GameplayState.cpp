@@ -55,7 +55,7 @@ GamePlayState::GamePlayState(bool multiplayer, bool asServer, GameConfigManager*
 
 			level->AddPlayerToLevel(playerOne);
 			//Position it somewhere off to the side initially
-			if (level->GetPlayerOne() && level->GetPlayerOne()->GetPlayerObject()) {
+			if (level->GetPlayerOne() && level->GetPlayerOne()->GetRenderObject()) {
 				level->GetPlayerOne()->GetTransform().SetPosition(Vector3(10, -100, 10));
 			}
 

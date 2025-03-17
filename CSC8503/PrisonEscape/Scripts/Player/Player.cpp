@@ -8,17 +8,16 @@
 
 Player::Player(GameWorld* world, const std::string& name) : GameObject()
 {
-	playerObject = nullptr;
 	useGravity = true;
 	cameraAttached = true;
 
+    state = Default;
 	GameObject::SetName(name);
     mName = name;
 }
 
 Player::~Player()
 {
-	delete(playerObject);
 }
 void Player::UpdateGame(float dt)
 {
@@ -30,6 +29,7 @@ void Player::UpdatePlayerMovement(float dt)
     if (!renderObject) {
         return;
     }
+    bool isIdle = true;
 
     GameConfigManager* config = GameBase::GetGameBase()->GetGameConfig();
 
@@ -63,20 +63,25 @@ void Player::UpdatePlayerMovement(float dt)
     if (forward != 0.0f)
     {
         forwardVec = -forwardVec;
+        
+        isIdle = false;
     }
     if (sidestep != 0.0f)
     {
         sidestep = -sidestep;
+        isIdle = false;
     }
 
     Vector3 movement(0, 0, 0);
     if (forward != 0.0f)
     {
         movement += forwardVec * forward * GetPlayerSpeed();
+        isIdle = false;
     }
     if (sidestep != 0.0f)
     {
         movement += rightVec * sidestep * GetPlayerSpeed();
+        isIdle = false;
     }
 
     if (useGravity)
@@ -99,6 +104,13 @@ void Player::UpdatePlayerMovement(float dt)
     else
     {
         GetPhysicsObject()->SetLinearVelocity(movement);
+    }
+    
+    if (isIdle) {
+        SetObjectAnimationState(Idle);
+    }
+    else if (!isIdle) {
+        SetObjectAnimationState(Walk);
     }
 }
 

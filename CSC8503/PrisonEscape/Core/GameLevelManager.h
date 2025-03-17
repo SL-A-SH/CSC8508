@@ -44,9 +44,14 @@ namespace NCL {
 			void SetCurrentLevel(Level* level) { mCurrentLevel = level; }
 			void AddLevel(Level* newLevel) { mLevelStack.push(newLevel); }
 
+			AnimationController* GetAnimator() { return mAnimator; }
+			
+			static GameLevelManager* GetGameLevelManager() { return manager; }
+
 			
 		private:
 			GameWorld* mWorld;
+			static GameLevelManager* manager;
 			GameTechRenderer* mRenderer;
 			PhysicsSystem* mPhysics;
 			Level* mCurrentLevel;

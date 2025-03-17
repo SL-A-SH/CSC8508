@@ -86,6 +86,8 @@ namespace NCL::CSC8503 {
 		
 		virtual void UpdateGame(float dt); 
 
+		void SetObjectAnimationState(AnimationState newState);
+
 
 	protected:
 		Transform			transform;

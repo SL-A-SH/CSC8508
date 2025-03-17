@@ -17,8 +17,6 @@ namespace NCL {
 
 
 		protected:
-			GameObject* playerObject;
-
 			KeyboardMouseController* controller;
 
 			bool useGravity;
@@ -38,8 +36,6 @@ namespace NCL {
 
 			float GetPlayerSpeed() const { return playerSpeed; }
 			void SetPlayerSpeed(float speed) { playerSpeed = speed; }
-
-			GameObject* GetPlayerObject() const { return playerObject; }
 
 
 			RayCollision closestCollision;

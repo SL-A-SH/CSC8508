@@ -14,6 +14,8 @@
 using namespace NCL;
 using namespace CSC8503;
 
+GameLevelManager* GameLevelManager::manager = nullptr;
+
 GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer)
 {
 	mWorld = existingWorld;
@@ -21,7 +23,7 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	mPhysics = new PhysicsSystem(*mWorld);
 	mAnimator = new AnimationController(*mWorld, mPreLoadedAnimationList);
 	mPhysics->UseGravity(true);
-	// Move to another place if needed
+	manager = this;
 
 	InitAssets();
 	boxNumber = 0;
