@@ -7,8 +7,10 @@
 #include "OrientationConstraint.h"
 #include "StateGameObject.h"
 #include "GameTechRenderer.h"
-
+#include "../CSC8503/PrisonEscape/Core/GameConfigManager.h"
 #include "PrisonEscape/Core/GameBase.h"
+#include "PrisonEscape/Scripts/Player/Player.h"
+
 
 using namespace NCL;
 using namespace CSC8503;

@@ -1,16 +1,17 @@
 #pragma once
 
-#include "GameTechRenderer.h"
 #include "PushdownMachine.h"
 #include "GameWorld.h"
 
-#include "PrisonEscape/Core/GameConfigManager.h"
+
 
 namespace NCL {
 	namespace CSC8503 {
+		class GameTechRenderer;
+		class GameConfigManager;
 		class GameBase {
-
 		public:
+
 			GameBase();
 			~GameBase();
 

@@ -1,4 +1,6 @@
 #include "GameObject.h"
+#include "../CSC8503/AnimationController.h"
+#include "../CSC8503/PrisonEscape/Core/GameLevelManager.h"
 #include "CollisionDetection.h"
 #include "PhysicsObject.h"
 #include "RenderObject.h"

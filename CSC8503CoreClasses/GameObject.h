@@ -85,8 +85,12 @@ namespace NCL::CSC8503 {
 		}
 		
 		virtual void UpdateGame(float dt); 
+
+
 	protected:
 		Transform			transform;
+
+		AnimationState		state;
 
 		CollisionVolume*	boundingVolume;
 		PhysicsObject*		physicsObject;

@@ -1,4 +1,5 @@
 #include "GameLevelManager.h"
+#include "GameTechRenderer.h"
 #include "PrisonEscape/Levels/SampleLevel.h"
 #include "Assets.h"
 #include "RenderObject.h"
@@ -8,7 +9,7 @@
 #include <PrisonEscape/Scripts/puzzle/HidingArea.h>
 #include <iostream>
 #include "jsonParser.h"
-
+#include "AnimationController.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -91,15 +92,15 @@ void GameLevelManager::UpdateGame(float dt)
 
 
 	
-	for (Button* button : buttons) {
-		if (!button->IsPressed()) {
-			button->pressDetection(boxes);
-		}
+	//for (Button* button : buttons) {
+	//	if (!button->IsPressed()) {
+	//		button->pressDetection(boxes);
+	//	}
 
-		//if (button->IsPressed()) {
-		//	std::cout << "BOOPED";
-		//}
-	}
+	//	//if (button->IsPressed()) {
+	//	//	std::cout << "BOOPED";
+	//	//}
+	//}
 
 
 	
@@ -396,12 +397,12 @@ void GameLevelManager::loadMap() {
 	int level;
 	std::vector<InGameObject> objects;
 
-	if (jsonParser::LoadLevel("../CSC8503/PrisonEscape/Levels/levelTest.json", level, objects)) {
+	if (::jsonParser::LoadLevel("../CSC8503/PrisonEscape/Levels/levelTest.json", level, objects)) {
 		for (const auto& obj : objects) {
 			if (obj.type == "Button") {
 
 				Button* newButton = new Button();
-				newButton->spawnButton(obj.dimensions, obj.position, obj.type, mMeshList["Cube"], mShaderList["BasicShader"], mTextureList["DefaultTexture"]);
+				//newButton->spawnButton(obj.dimensions, obj.position, obj.type, mMeshList["Cube"], mShaderList["BasicShader"], mTextureList["DefaultTexture"]);
 				// code to check if box is box activated or something
 				newButton->SetBoxActivated(true);
 				buttons.push_back(newButton);

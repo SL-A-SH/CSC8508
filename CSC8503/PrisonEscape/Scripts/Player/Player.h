@@ -1,10 +1,7 @@
 #pragma once
 
 #include "../NCLCoreClasses/KeyboardMouseController.h"
-#include "GameTechRenderer.h"
 #include "PhysicsSystem.h"
-#include "Window.h"
-#include "Vector.h"
 
 namespace NCL {
 	namespace CSC8503 {
