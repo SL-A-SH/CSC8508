@@ -55,15 +55,15 @@ void AudioManager::PlaySound(const std::string& filePath, bool loop) {
 
     FMOD::Sound* sound = sounds[filePath];
     FMOD::Channel* channel = nullptr;
-
+    
     std::cout << "Attempting to play sound: " << filePath << std::endl;
-
-    FMOD_RESULT result = system->playSound(sound, nullptr, true, &channel);
+    bool isMuted = false;
+    FMOD_RESULT result = system->playSound(sound, nullptr, isMuted, &channel);
     if (result != FMOD_OK) {
         std::cerr << "Failed to play sound: " << FMOD_ErrorString(result) << std::endl;
         return;
     }
-    bool isMuted = false;
+   
     FMOD_RESULT result2 = channel->getMute(&isMuted);
 
     if (result != FMOD_OK) {
@@ -106,6 +106,7 @@ void AudioManager::PlaySound(const std::string& filePath, bool loop) {
     }
 
     channels[filePath] = channel;
+    
 }
 
 void AudioManager::StopSound(const std::string& filePath) {

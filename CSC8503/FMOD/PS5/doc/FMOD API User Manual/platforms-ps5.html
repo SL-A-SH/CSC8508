@@ -1,0 +1,204 @@
+<html>
+<head>
+<title>Platform Details | PlayStation 5</title>
+<link rel="stylesheet" href="style/docs.css">
+<link rel="stylesheet" href="style/code_highlight.css">
+<script type="text/javascript" src="scripts/language-selector.js"></script></head>
+<body>
+<div class="docs-body">
+<div class="manual-toc">
+<p>FMOD Engine User Manual 2.02</p>
+<ul>
+<li><a href="welcome.html">Welcome to the FMOD Engine</a></li>
+<li><a href="studio-guide.html">Studio API Guide</a></li>
+<li><a href="core-guide.html">Core API Guide</a></li>
+<li class="manual-current-chapter manual-inactive-chapter"><a href="platforms.html">Platform Details</a><ul class="subchapters"><li><a href="platforms-win.html">Windows</a></li><li><a href="platforms-mac.html">Mac</a></li><li><a href="platforms-linux.html">Linux</a></li><li><a href="platforms-ios.html">iOS</a></li><li><a href="platforms-android.html">Android</a></li><li><a href="platforms-openharmony.html">Open Harmony</a></li><li><a href="platforms-uwp.html">Universal Windows Platform</a></li><li><a href="platforms-html5.html">HTML5</a></li><li class="manual-current-chapter manual-active-chapter"><a href="platforms-ps5.html">PlayStation 5</a></li></ul></li>
+<li><a href="white-papers.html">White Papers</a></li>
+<li><a href="studio-api.html">Studio API Reference</a></li>
+<li><a href="core-api.html">Core API Reference</a></li>
+<li><a href="fsbank-api.html">FSBank API Reference</a></li>
+<li><a href="plugin-api.html">Plug-in API Reference</a></li>
+<li><a href="effects-reference.html">Effects Reference</a></li>
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+</ul>
+</div>
+<div class="manual-content api">
+<h1>4. Platform Details | PlayStation 5</h1>
+<div class="toc">
+<ul>
+<li><a href="#ps5-specific-starter-guide">PS5 Specific Starter Guide</a><ul>
+<li><a href="#sdk-version">SDK Version</a></li>
+<li><a href="#libraries">Libraries</a></li>
+<li><a href="#thread-affinity">Thread Affinity</a></li>
+<li><a href="#thread-priority">Thread Priority</a></li>
+<li><a href="#master-submission">Master Submission</a></li>
+<li><a href="#exporting-at9-banks-in-fmod-studio-and-fsbank">Exporting AT9 Banks in FMOD Studio and FSBank</a></li>
+<li><a href="#recording">Recording</a></li>
+<li><a href="#object-spatialization-for-3d-audio-audioout2">Object Spatialization for 3D Audio (AudioOut2)</a></li>
+<li><a href="#port-support">Port Support</a><ul>
+<li><a href="#background-music">Background Music</a></li>
+<li><a href="#user-specific-audio-output">User Specific Audio Output</a></li>
+<li><a href="#vibration">Vibration</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#performance-reference">Performance Reference</a><ul>
+<li><a href="#format-choice">Format Choice</a></li>
+<li><a href="#channel-count">Channel Count</a><ul>
+<li><a href="#settings">Settings</a></li>
+<li><a href="#test-device">Test Device</a></li>
+<li><a href="#results">Results</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h2 id="ps5-specific-starter-guide"><a href="#ps5-specific-starter-guide">PS5 Specific Starter Guide</a></h2>
+<h3 id="sdk-version"><a href="#sdk-version">SDK Version</a></h3>
+<p>FMOD is compiled using the following tools.</p>
+<ul>
+<li><strong>Visual Studio</strong> - version 2019 targeting SDK 10.00.00.40.</li>
+</ul>
+<h3 id="libraries"><a href="#libraries">Libraries</a></h3>
+<p><em>FMOD is distributed as a dynamic library. The PRX files must be copied into your package and loaded at runtime. See sceKernelLoadStartModule for details on runtime loading of PRX modules.</em></p>
+<p>Core API library</p>
+<ul>
+<li><strong>/api/core/lib/libfmod_stub_weak.a</strong> - Release dynamic binary for production code (requires libfmod.prx at runtime).</li>
+<li><strong>/api/core/lib/libfmodL_stub_weak.a</strong> - Release dynamic binary with logging enabled for development (requires libfmodL.prx at runtime).</li>
+</ul>
+<p>Studio API library (used in conjunction with the Core API library)</p>
+<ul>
+<li><strong>/api/studio/lib/libfmodstudio_stub_weak.a</strong> - Release dynamic binary for production code (requires libfmodstudio.prx at runtime).</li>
+<li><strong>/api/studio/lib/libfmodstudioL_stub_weak.a</strong> - Release dynamic binary with logging enabled for development (requires libfmodstudioL.prx at runtime).</li>
+</ul>
+<h3 id="thread-affinity"><a href="#thread-affinity">Thread Affinity</a></h3>
+<p>Threads may be assigned to cores up to and including <a class="apilink" href="core-api-common.html#fmod_thread_affinity_core_12">FMOD_THREAD_AFFINITY_CORE_12</a>, by default threads are assigned in groups and the mapping for this platform is as follows:</p>
+<ul>
+<li><a class="apilink" href="core-api-common.html#fmod_thread_affinity_group_a">FMOD_THREAD_AFFINITY_GROUP_A</a> ~ <a class="apilink" href="core-api-common.html#fmod_thread_affinity_core_1">FMOD_THREAD_AFFINITY_CORE_1</a></li>
+<li><a class="apilink" href="core-api-common.html#fmod_thread_affinity_group_b">FMOD_THREAD_AFFINITY_GROUP_B</a> ~ <a class="apilink" href="core-api-common.html#fmod_thread_affinity_core_2">FMOD_THREAD_AFFINITY_CORE_2</a></li>
+<li><a class="apilink" href="core-api-common.html#fmod_thread_affinity_group_c">FMOD_THREAD_AFFINITY_GROUP_C</a> ~ <a class="apilink" href="core-api-common.html#fmod_thread_affinity_core_3">FMOD_THREAD_AFFINITY_CORE_3</a></li>
+</ul>
+<h3 id="thread-priority"><a href="#thread-priority">Thread Priority</a></h3>
+<p>The relationship between FMOD platform agnostic thread priority and the platform specific values is as follows:</p>
+<ul>
+<li><a class="apilink" href="core-api-common.html#fmod_thread_priority_low">FMOD_THREAD_PRIORITY_LOW</a>       ~ 720</li>
+<li><a class="apilink" href="core-api-common.html#fmod_thread_priority_medium">FMOD_THREAD_PRIORITY_MEDIUM</a>    ~ 700 (SCE_KERNEL_PRIO_FIFO_DEFAULT)</li>
+<li><a class="apilink" href="core-api-common.html#fmod_thread_priority_high">FMOD_THREAD_PRIORITY_HIGH</a>      ~ 280</li>
+<li><a class="apilink" href="core-api-common.html#fmod_thread_priority_very_high">FMOD_THREAD_PRIORITY_VERY_HIGH</a> ~ 270</li>
+<li><a class="apilink" href="core-api-common.html#fmod_thread_priority_extreme">FMOD_THREAD_PRIORITY_EXTREME</a>   ~ 260</li>
+<li><a class="apilink" href="core-api-common.html#fmod_thread_priority_critical">FMOD_THREAD_PRIORITY_CRITICAL</a>  ~ 256 (SCE_KERNEL_PRIO_FIFO_HIGHEST)</li>
+</ul>
+<h3 id="master-submission"><a href="#master-submission">Master Submission</a></h3>
+<p>When completing the MDT form you will be required to specify which audio modes the game supports.</p>
+<p>FMOD will always output 8 channels of PCM audio, the console will handle any downmixing or encoding required.<br />
+Therefore you should tick 2ch (required by Sony), 7.1ch (supported by FMOD) and consider ticking 5.1ch (supported via system downmix). Make sure to test all ticked configurations for quality.</p>
+<p>Additionally, if your title makes use of the FMOD Object Spatializer then you should also tick the 3D audio box.</p>
+<h3 id="exporting-at9-banks-in-fmod-studio-and-fsbank"><a href="#exporting-at9-banks-in-fmod-studio-and-fsbank">Exporting AT9 Banks in FMOD Studio and FSBank</a></h3>
+<p><a href="glossary.html#fmod-studio">FMOD Studio</a> and FSBank require the Sony provided libatrac9.dll to be copied into the same directory as the executable. To install the required libatrac9.dll using the SDK Manager you must select the "ATRAC9 Windows Library" package from "SDK #.### -&gt; SDK / Development Tools -&gt; Tools For Development (Other) -&gt; External Tools". You will need to use the 64bit version of either tool to support AT9 compression as there is no 32bit libatrac9.dll available.</p>
+<h3 id="recording"><a href="#recording">Recording</a></h3>
+<p>Each logged in user has two associated endpoints that FMOD can record audio from: Voice Chat and General. If you wish to find the device for a SceUserServiceUserId, iterate the devices with <a class="apilink" href="core-api-system.html#system_getrecorddriverinfo">System::getRecordDriverInfo</a> and match the value against FMOD_GUID.Data1. FMOD_GUID.Data2 contains the endpoint type. The device index will not change, even if users log in and out.</p>
+<h3 id="object-spatialization-for-3d-audio-audioout2"><a href="#object-spatialization-for-3d-audio-audioout2">Object Spatialization for 3D Audio (AudioOut2)</a></h3>
+<p>Platform-specific object spatialization technologies can potentially offer more accurate spatialization than the <a href="effects-reference.html#pan">FMOD spatializer effect</a>. To take advantage of the PlayStation 5's AudioOut2 system to spatialize your events, you can use an <a href="effects-reference.html#object-panner">FMOD object spatializer effect</a> instead of an FMOD spatializer. Doing so will bypass any subsequent effects or sends, instead routing the event's audio from the FMOD object spatializer directly to AudioOut2 for object spatialization. FMOD supports up to 128 simultaneous audio objects on PS5.</p>
+<p>For more information about object spatialization,  see the <a href="https://fmod.com/docs/2.02/studio/advanced-topics.html#spatialization-options">Spatialization Options</a> and <a href="https://fmod.com/docs/2.02/studio/advanced-topics.html#auditioning-object-spatialization-and-height-panning">Auditioning Object Spatialization and Height Panning</a> sections of the <a href="https://fmod.com/docs/2.02/studio/welcome-to-fmod-studio.html">FMOD Studio User Manual</a> and the <a href="https://fmod.com/docs/2.02/api/white-papers-spatial-audio.html">Spatial Audio White Paper</a> section of the <a href="https://fmod.com/docs/2.02/api/welcome.html">FMOD Engine User Manual</a>.</p>
+<h3 id="port-support"><a href="#port-support">Port Support</a></h3>
+<p>PS5 supports the following port types:</p>
+<ul>
+<li><a class="apilink" href="core-api-system.html#fmod_port_type_music">FMOD_PORT_TYPE_MUSIC</a></li>
+<li><a class="apilink" href="core-api-system.html#fmod_port_type_copyright_music">FMOD_PORT_TYPE_COPYRIGHT_MUSIC</a></li>
+<li><a class="apilink" href="core-api-system.html#fmod_port_type_voice">FMOD_PORT_TYPE_VOICE</a></li>
+<li><a class="apilink" href="core-api-system.html#fmod_port_type_controller">FMOD_PORT_TYPE_CONTROLLER</a></li>
+<li><a class="apilink" href="core-api-system.html#fmod_port_type_personal">FMOD_PORT_TYPE_PERSONAL</a></li>
+<li><a class="apilink" href="core-api-system.html#fmod_port_type_vibration">FMOD_PORT_TYPE_VIBRATION</a></li>
+<li><a class="apilink" href="core-api-system.html#fmod_port_type_aux">FMOD_PORT_TYPE_AUX</a></li>
+</ul>
+<p>For user specific ports pass the user's SceUserServiceUserId as the port index, see below for examples. If you are using FMOD Studio, refer to the <a href="https://fmod.com/docs/2.02/studio/mixing.html#port-buses">Port Buses</a> section of the FMOD Studio documentation for details on setting up specific port types.</p>
+<h4 id="background-music"><a href="#background-music">Background Music</a></h4>
+<p>To allow the console to automatically mute game music in response to the user playing their music you can use the FMOD port API. This allows you to register a special background music channel group which you can play audio on. If you are using FMOD Studio, no code is required for this.</p>
+<div class="highlight language-cpp"><pre><span></span><span class="c1">// Using Core API</span>
+<span class="n">FMOD</span><span class="o">::</span><span class="n">ChannelGroup</span> <span class="o">*</span><span class="n">bgm</span><span class="p">;</span>
+<span class="n">system</span><span class="o">-&gt;</span><span class="n">createChannelGroup</span><span class="p">(</span><span class="s">&quot;BGM&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">bgm</span><span class="p">);</span>
+<span class="n">system</span><span class="o">-&gt;</span><span class="n">attachChannelGroupToPort</span><span class="p">(</span><span class="n">FMOD_PORT_TYPE_MUSIC</span><span class="p">,</span> <span class="n">FMOD_PORT_INDEX_NONE</span><span class="p">,</span> <span class="n">bgm</span><span class="p">);</span>
+
+<span class="n">FMOD</span><span class="o">::</span><span class="n">Channel</span> <span class="o">*</span><span class="n">channel</span><span class="p">;</span>
+<span class="n">system</span><span class="o">-&gt;</span><span class="n">playSound</span><span class="p">(</span><span class="n">your_music_sound</span><span class="p">,</span> <span class="n">bgm</span><span class="p">,</span> <span class="nb">false</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">channel</span><span class="p">);</span>
+</pre></div>
+
+<p>If the background music contains copyright works that cannot be broadcast use the port <a class="apilink" href="core-api-system.html#fmod_port_type_copyright_music">FMOD_PORT_TYPE_COPYRIGHT_MUSIC</a>.</p>
+<h4 id="user-specific-audio-output"><a href="#user-specific-audio-output">User Specific Audio Output</a></h4>
+<p>If you wish to route audio to a user specific audio device connected to the system you can use the FMOD port API. Audio devices include the controller, headsets, or other personal devices. You need to use the SceUserServiceUserId of the user associated with the device as the port index. If you are using FMOD Studio you only need to associate the port bus with the user ID, see below.</p>
+<div class="highlight language-cpp"><pre><span></span><span class="c1">// Using Core API</span>
+<span class="n">SceUserServiceUserId</span> <span class="n">user0</span><span class="p">;</span>
+<span class="n">sceUserServiceGetInitialUser</span><span class="p">(</span><span class="o">&amp;</span><span class="n">user0</span><span class="p">);</span>
+
+<span class="n">FMOD</span><span class="o">::</span><span class="n">ChannelGroup</span> <span class="o">*</span><span class="n">con0</span><span class="p">;</span>
+<span class="n">system</span><span class="o">-&gt;</span><span class="n">createChannelGroup</span><span class="p">(</span><span class="s">&quot;CON0&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">con0</span><span class="p">);</span>
+<span class="n">system</span><span class="o">-&gt;</span><span class="n">attachChannelGroupToPort</span><span class="p">(</span><span class="n">FMOD_PORT_TYPE_CONTROLLER</span><span class="p">,</span> <span class="n">user0</span><span class="p">,</span> <span class="n">con0</span><span class="p">);</span>
+
+<span class="n">FMOD</span><span class="o">::</span><span class="n">Channel</span> <span class="o">*</span><span class="n">channel</span><span class="p">;</span>
+<span class="n">system</span><span class="o">-&gt;</span><span class="n">playSound</span><span class="p">(</span><span class="n">your_controller_sound</span><span class="p">,</span> <span class="n">con0</span><span class="p">,</span> <span class="nb">false</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">channel</span><span class="p">);</span>
+</pre></div>
+
+<div class="highlight language-cpp"><pre><span></span><span class="c1">// Using Studio API</span>
+<span class="n">SceUserServiceUserId</span> <span class="n">user0</span><span class="p">;</span>
+<span class="n">sceUserServiceGetInitialUser</span><span class="p">(</span><span class="o">&amp;</span><span class="n">user0</span><span class="p">);</span>
+
+<span class="n">FMOD</span><span class="o">::</span><span class="n">Studio</span><span class="o">::</span><span class="n">Bus</span> <span class="o">*</span><span class="n">con0</span><span class="p">;</span>
+<span class="n">system</span><span class="o">-&gt;</span><span class="n">getBus</span><span class="p">(</span><span class="s">&quot;port:/your_controller_port_name&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">con0</span><span class="p">);</span>
+
+<span class="n">con0</span><span class="o">-&gt;</span><span class="n">setPortIndex</span><span class="p">(</span><span class="n">user0</span><span class="p">);</span>
+</pre></div>
+
+<h4 id="vibration"><a href="#vibration">Vibration</a></h4>
+<p>To control the haptic vibration of the DualSense controller follow the above guide for "user specific audio output" but direct the <a href="glossary.html#signal">signal</a> to a vibration port bus or attach a ChannelGroup to <a class="apilink" href="core-api-system.html#fmod_port_type_vibration">FMOD_PORT_TYPE_VIBRATION</a> (for Core API usage). To direct vibration signal to the PSVR2 controllers instead of the DualSense controller, OR in the <a class="apilink" href="core-api-system.html#fmod_port_index_flag_vr_controller">FMOD_PORT_INDEX_FLAG_VR_CONTROLLER</a> flag.</p>
+<div class="highlight language-cpp"><pre><span></span><span class="c1">// Using Core API</span>
+<span class="n">system</span><span class="o">-&gt;</span><span class="n">attachChannelGroupToPort</span><span class="p">(</span><span class="n">FMOD_PORT_TYPE_VIBRATION</span><span class="p">,</span> <span class="n">user0</span> <span class="o">|</span> <span class="n">FMOD_PORT_INDEX_FLAG_VR_CONTROLLER</span><span class="p">,</span> <span class="n">your_vibration_channel_group</span><span class="p">);</span>
+</pre></div>
+
+<div class="highlight language-cpp"><pre><span></span><span class="c1">// Using Studio API</span>
+<span class="n">your_vibration_bus</span><span class="o">-&gt;</span><span class="n">setPortIndex</span><span class="p">(</span><span class="n">user0</span> <span class="o">|</span> <span class="n">FMOD_PORT_INDEX_FLAG_VR_CONTROLLER</span><span class="p">);</span>
+</pre></div>
+
+<h2 id="performance-reference"><a href="#performance-reference">Performance Reference</a></h2>
+<p>This section is a companion for the <a href="white-papers-cpu-performance.html">CPU Performance</a> white paper and serves as a quick reference of facts targeting this platform.</p>
+<h3 id="format-choice"><a href="#format-choice">Format Choice</a></h3>
+<p>Each compression format provided in FMOD has a reason for being included, the below list will detail our recommendations for this platform. Formats listed as primary are considering the best choice, secondary formats should only be considered if the primary doesn't satisfy your requirements.</p>
+<ul>
+<li><strong>Opus</strong>: Primary format for all sounds, hardware assisted.</li>
+<li><strong>AT9</strong>: Hardware assisted.</li>
+<li><strong>Vorbis</strong>: Not recommended.</li>
+<li><strong>FADPCM</strong>: Not recommended.</li>
+<li><strong>PCM</strong>: Not recommended.</li>
+<li><strong>XMA</strong>: Unavailable.</li>
+</ul>
+<h3 id="channel-count"><a href="#channel-count">Channel Count</a></h3>
+<p>To give developers an idea about the costs of a particular format we provide synthetic benchmark results. These results are based on simple usage of the Studio API using recommended configuration settings.</p>
+<h4 id="settings"><a href="#settings">Settings</a></h4>
+<ul>
+<li><strong>Real channel count:</strong> 128</li>
+<li><strong>Sample rate:</strong> 48 kHz</li>
+<li><strong>Speaker mode:</strong> 7.1</li>
+<li><strong>DSP block size:</strong> 512 samples</li>
+</ul>
+<h4 id="test-device"><a href="#test-device">Test Device</a></h4>
+<ul>
+<li><strong>CPU:</strong> PS5 DevKit</li>
+<li><strong>OS:</strong> 7.01.01.00-00.00.00.0.1</li>
+</ul>
+<h4 id="results"><a href="#results">Results</a></h4>
+<ul>
+<li><strong>DSP with Opus:</strong> 3.59% (+/- 4.57%)</li>
+<li><strong>DSP with AT9:</strong> 3.56% (+/- 4.57%)</li>
+<li><strong>DSP with Vorbis:</strong> 11.19% (+/- 0.73%)</li>
+<li><strong>DSP with FADPCM:</strong> 3.60% (+/- 0.08%)</li>
+<li><strong>DSP with PCM:</strong> 1.85% (+/- 0.06%)</li>
+<li><strong>Update at 60 FPS:</strong> 0.58% (+/- 0.06%)</li>
+</ul></div>
+
+<p class="manual-footer">FMOD Engine User Manual 2.02.26 (2024-12-11). &copy; 2024 Firelight Technologies Pty Ltd.</p>
+</body>
+</html>
+
+</div>
