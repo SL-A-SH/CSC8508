@@ -16,70 +16,17 @@ GamePlayState::GamePlayState(bool multiplayer, bool asServer, GameConfigManager*
 	this->gameConfig = config;
 	if (gameConfig->networkConfig.isMultiplayer)
 	{
-		if (gameConfig->networkConfig.isServer)
-		{
-			//messy do not keep
-			Transform playerOneTransform;
-			Player* playerOne = manager->AddPlayerToWorld(playerOneTransform, "playerOne");
-			playerOne->InitializeController();
-
-			level->AddPlayerToLevel(playerOne);
-			Vector3 playerPosition = level->GetPlayerOne()->GetTransform().GetPosition();
-			GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(Vector3(playerPosition.x, playerPosition.y, playerPosition.z));
-
-			gameConfig->networkConfig.server->SetPlayerConnectedCallback(
-				[this, level](int playerID) {
-					Transform playerTwoTransform;
-					Player* playerTwo = this->manager->AddPlayerToWorld(playerTwoTransform, "playerTwo");
-					playerTwo->InitializeController();
-					level->AddPlayerToLevel(playerTwo);
-				}
-			);
-
-			gameConfig->networkConfig.server->RegisterPacketHandler(Player_ID_Assignment, level);
-			gameConfig->networkConfig.server->RegisterPacketHandler(Player_Position, level);
-		}
-		else if (gameConfig->networkConfig.client)
-		{
-			Transform playerOneTransform;
-			Player* playerOne = manager->AddPlayerToWorld(playerOneTransform, "playerOne");
-			playerOne->InitializeController();
-
-			Transform playerTwoTransform;
-			Player* playerTwo = manager->AddPlayerToWorld(playerTwoTransform, "playerTwo");
-			playerTwo->InitializeController();
-
-			level->AddPlayerToLevel(playerTwo);
-			Vector3 playerPosition = level->GetPlayerTwo()->GetTransform().GetPosition();
-			GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(Vector3(playerPosition.x, playerPosition.y, playerPosition.z));
-
-			level->AddPlayerToLevel(playerOne);
-			//Position it somewhere off to the side initially
-			if (level->GetPlayerOne() && level->GetPlayerOne()->GetPlayerObject()) {
-				level->GetPlayerOne()->GetTransform().SetPosition(Vector3(10, -100, 10));
-			}
-
-			gameConfig->networkConfig.client->RegisterPacketHandler(Player_Position, level);
-			gameConfig->networkConfig.client->RegisterPacketHandler(Player_ID_Assignment, level);
-		}
+		InitializeMultiplayer(level, asServer);
 	}
 	else
 	{
-		// Single player mode
-		Transform playerTransform;
-		Player* player = manager->AddPlayerToWorld(playerTransform, "playerOne");
-		player->InitializeController();
-
-		level->AddPlayerToLevel(player);
-		Vector3 playerPosition = level->GetPlayerOne()->GetTransform().GetPosition();
-		GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(Vector3(playerPosition.x, playerPosition.y, playerPosition.z));
+		InitializeSinglePlayer(level);
 	}
 
 	manager->AddLevel(level);
 	manager->SetCurrentLevel(level);
-	heartFilledTexture = GameBase::GetGameBase()->GetRenderer()->LoadTexture("heart_filled.png");
-	heartEmptyTexture = GameBase::GetGameBase()->GetRenderer()->LoadTexture("heart_empty.png");
 
+	LoadTextures();
 
 
 }
@@ -100,7 +47,7 @@ GamePlayState::~GamePlayState()
 PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** newState)
 {
 	if (gameConfig->networkConfig.isMultiplayer) {
-		if (gameConfig->networkConfig.isServer) 
+		if (gameConfig->networkConfig.isServer)
 		{
 			// Server: Send PlayerOne position to clients
 			Level* level = manager->GetCurrentLevel();
@@ -142,6 +89,101 @@ PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** 
 	}
 
 	return PushdownResult::NoChange;
+}
+
+void GamePlayState::InitializeSinglePlayer(Level* level)
+{
+	Transform playerTransform;
+	Player* player = manager->AddPlayerToWorld(playerTransform, "playerOne");
+	player->InitializeController();
+
+	level->AddPlayerToLevel(player);
+	SetCameraToPlayer(level->GetPlayerOne());
+}
+
+void GamePlayState::InitializeMultiplayer(Level* level, bool asServer)
+{
+	if (asServer)
+	{
+		SetupServer(level);
+	}
+	else
+	{
+		SetupClient(level);
+	}
+}
+
+void GamePlayState::SetupServer(Level* level)
+{
+	Transform playerOneTransform;
+	Player* playerOne = manager->AddPlayerToWorld(playerOneTransform, "playerOne");
+	playerOne->InitializeController();
+
+	level->AddPlayerToLevel(playerOne);
+	SetCameraToPlayer(level->GetPlayerOne());
+
+	gameConfig->networkConfig.server->SetPlayerConnectedCallback(
+		[this, level](int playerID) {
+			Transform playerTwoTransform;
+			Player* playerTwo = manager->AddPlayerToWorld(playerTwoTransform, "playerTwo");
+			playerTwo->InitializeController();
+			level->AddPlayerToLevel(playerTwo);
+		});
+
+	RegisterServerPacketHandlers(level);
+}
+
+void GamePlayState::SetupClient(Level* level)
+{
+	Transform playerOneTransform, playerTwoTransform;
+	Player* playerOne = manager->AddPlayerToWorld(playerOneTransform, "playerOne");
+	Player* playerTwo = manager->AddPlayerToWorld(playerTwoTransform, "playerTwo");
+
+	playerOne->InitializeController();
+	playerTwo->InitializeController();
+
+	level->AddPlayerToLevel(playerTwo);
+	SetCameraToPlayer(level->GetPlayerTwo());
+
+	level->AddPlayerToLevel(playerOne);
+	PositionInitialClientPlayer(level);
+
+	RegisterClientPacketHandlers(level);
+}
+
+void GamePlayState::SetCameraToPlayer(Player* player)
+{
+	if (player)
+	{
+		Vector3 playerPosition = player->GetTransform().GetPosition();
+		GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(playerPosition);
+	}
+}
+
+void GamePlayState::PositionInitialClientPlayer(Level* level)
+{
+	if (level->GetPlayerOne() && level->GetPlayerOne()->GetPlayerObject())
+	{
+		level->GetPlayerOne()->GetTransform().SetPosition(Vector3(10, -100, 10));
+	}
+}
+
+void GamePlayState::RegisterServerPacketHandlers(Level* level)
+{
+	gameConfig->networkConfig.server->RegisterPacketHandler(Player_ID_Assignment, level);
+	gameConfig->networkConfig.server->RegisterPacketHandler(Player_Position, level);
+}
+
+void GamePlayState::RegisterClientPacketHandlers(Level* level)
+{
+	gameConfig->networkConfig.client->RegisterPacketHandler(Player_Position, level);
+	gameConfig->networkConfig.client->RegisterPacketHandler(Player_ID_Assignment, level);
+}
+
+void GamePlayState::LoadTextures()
+{
+	heartFilledTexture = GameBase::GetGameBase()->GetRenderer()->LoadTexture("heart_filled.png");
+	heartEmptyTexture = GameBase::GetGameBase()->GetRenderer()->LoadTexture("heart_empty.png");
 }
 
 void GamePlayState::DrawHUDPanel() {

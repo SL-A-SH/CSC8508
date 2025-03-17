@@ -36,6 +36,20 @@ namespace NCL {
 
 		public:
 			GameConfigManager* GetGameConfig() const { return gameConfig; }
+
+			void InitializeSinglePlayer(Level* level);
+			void InitializeMultiplayer(Level* level, bool asServer);
+			void SetupServer(Level* level);
+			void SetupClient(Level* level);
+
+			void SetCameraToPlayer(Player* player);
+			void PositionInitialClientPlayer(Level* level);
+
+			void RegisterServerPacketHandlers(Level* level);
+			void RegisterClientPacketHandlers(Level* level);
+
+			void LoadTextures();
+
 		};
 	}
 }
