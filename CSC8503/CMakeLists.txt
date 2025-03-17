@@ -218,43 +218,41 @@ if(USE_VULKAN)
     add_dependencies(${PROJECT_NAME} SHADER_FILES)
 endif()
 
-
+set(FMOD_PATHPC "C:/FMOD/Windows/api/core")
+set(FMOD_PATHPS5 "C:/FMOD/PS5/api/core")
 # Detect Platform
 if(WIN32)
-    message(STATUS "Configuring FMOD for Windows...")  # Debugging output
-
-    set(FMOD_PATH ${FMOD_ROOT}/Windows/api/core)
-    set(FMOD_PATH2 ${FMOD_ROOT}/Windows/api/studio)
-
-    # Set FMOD Library Paths
+    set(FMOD_PATH "C:/FMOD/Windows/api/core")
+    set(FMOD_PATH2 "C:/FMOD/Windows/api/studio")  # Adjust if your path is different
     set(FMOD_LIBS
         ${FMOD_PATH}/lib/x64/fmod_vc.lib
         ${FMOD_PATH2}/lib/x64/fmodstudio_vc.lib
     )
-
-    # Include FMOD Headers
+    
     include_directories(
-        ${FMOD_PATH}/inc
-        ${FMOD_PATH2}/inc
+        ${FMOD_PATH}/inc           # Include core FMOD headers
+        ${FMOD_PATH2}/inc          # Include studio FMOD headers
     )
+    include_directories(${FMOD_PATH}/inc)
+    include_directories(${FMOD_PATH2}/inc)
+    # Ensure core directory is included
+    include_directories(${FMOD_PATH})  # This should work if FMOD is installed correctly
+    include_directories(${FMOD_PATHPC})
 elseif(PS5)
-    message(STATUS "Configuring FMOD for PlayStation 5...")
-
-    set(FMOD_PATH ${FMOD_ROOT}/PS5/api/core)
-    set(FMOD_PATH2 ${FMOD_ROOT}/PS5/api/studio)
-
+    set(FMOD_PATH "C:/FMOD/PS5/api/core")
+    set(FMOD_PATH2 "C:/FMOD/PS5/api/studio")
     set(FMOD_LIBS
         ${FMOD_PATH}/lib/libfmod.prx
         ${FMOD_PATH2}/lib/libfmodstudio.prx
     )
-
-    include_directories(
-        ${FMOD_PATH}/inc
-        ${FMOD_PATH2}/inc
-    )
+    include_directories(${FMOD_PATH}/inc)
+    include_directories(${FMOD_PATH2}/inc)
+    include_directories(${FMOD_PATH})
+    include_directories(${FMOD_PATHPS5})
 endif()
 
-
+# Include FMOD headers (make sure this is correct)
+include_directories(${FMOD_PATH}/inc)
 
 # Link FMOD libraries
 target_link_libraries(${PROJECT_NAME} PRIVATE ${FMOD_LIBS})
