@@ -29,13 +29,12 @@ private:
 	Texture* doorCloseTex = nullptr;
 	Texture* doorOpenTex = nullptr;
 
-
-	//void InitializeAssets();
-
 	void AddCubeSetToTheLevel();
 	void CreateCollidingCube(Vector3 position);
 	void UpdateCubeVisibility();
 	GameObject* AddDoorToWorld(Door* door, const Vector3& position);
+
+	GameObject* AddPressableDoorToWorld(PressableDoor* door, const Vector3& position);
 
 	GameObject* AddButtonToWorld(ButtonTrigger* button, const Vector3& position, Door* linkedDoor);
 

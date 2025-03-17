@@ -45,13 +45,13 @@ TutorialGame::TutorialGame() : controller(*Window::GetWindow()->GetKeyboard(), *
 	ImGuiIO& imguiIO = ImGui::GetIO();
 	mHeaderFont = imguiIO.Fonts->AddFontFromFileTTF("BebasNeue-Regular.ttf", 100.f, NULL, imguiIO.Fonts->GetGlyphRangesDefault());
 	imguiIO.Fonts->Build();
-	renderer->SetImguiCanvasFunc(std::bind(&TutorialGame::DrawCanvas, this));
+	//renderer->AddDrawableFunction(std::bind(&TutorialGame::DrawCanvas, this));
 
 }
 
 void TutorialGame::DrawCanvas()
 {
-	
+
 
 	ImVec2 windowSize = ImGui::GetWindowSize();
 	ImGui::SetCursorPos(ImVec2(windowSize.x * .35f, windowSize.y * .55f));

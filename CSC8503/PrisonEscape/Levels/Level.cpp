@@ -15,7 +15,7 @@ using namespace CSC8503;
 
 Level::Level()
 {
-	
+
 }
 
 void Level::Init()
@@ -23,21 +23,13 @@ void Level::Init()
 	InitializeAssets();
 	InitializeLevel();
 	SetCameraAttributes();
-
-	GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&Level::DrawPauseButton, this));
+	//GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("PauseButton", [this]() {DrawPauseButton();});
+	GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MainMenuPanel");
 }
 
 void Level::Update(float dt)
 {
-	if (playerOne)
-	{
-		playerOne->UpdateGame(dt);
-	}
-
-	if (playerTwo)
-	{
-		playerTwo->UpdateGame(dt);
-	}
+	
 }
 
 void Level::ReceivePacket(int type, GamePacket* payload, int source) {
@@ -49,12 +41,12 @@ void Level::ReceivePacket(int type, GamePacket* payload, int source) {
 		// Update the appropriate player based on ID
 		if (posPacket->playerID == 1) {
 			if (playerOne && config && !config->networkConfig.isServer) {
-				playerOne->GetPlayerObject()->GetTransform().SetPosition(Vector3(posPacket->posX, posPacket->posY, posPacket->posZ));
+				playerOne->GetTransform().SetPosition(Vector3(posPacket->posX, posPacket->posY, posPacket->posZ));
 			}
 		}
 		else {
 			if (playerTwo && config && config->networkConfig.isServer) {
-				playerTwo->GetPlayerObject()->GetTransform().SetPosition(Vector3(posPacket->posX, posPacket->posY, posPacket->posZ));
+				playerTwo->GetTransform().SetPosition(Vector3(posPacket->posX, posPacket->posY, posPacket->posZ));
 			}
 		}
 	}
@@ -81,19 +73,20 @@ void Level::InitializeAssets()
 void Level::InitializeLevel()
 {
 	AddFloorToWorld(Vector3(0, 0, 0), Vector3(200, 2, 200), Vector4(0.5, 0.5, 0.5, 1));
-	AddMeshToWorldPosition(Vector3(10, 10, 0), kittenMesh, Vector3(1, 1, 1), VolumeType::Sphere, Vector3(1, 1, 1));
 }
 
-void Level::AddPlayerOneToLevel()
+void Level::AddPlayerToLevel(Player* player)
 {
-	playerOne = new PlayerOne();
-	playerOne->SpawnPlayer(Vector3(0, 50, 0));
-}
-
-void Level::AddPlayerTwoToLevel()
-{
-	playerTwo = new PlayerTwo();
-	playerTwo->SpawnPlayer(Vector3(0, 50, 0));
+	if (player->GetName() == "playerOne")
+	{
+		this->playerOne = player;
+		this->playerOne->GetRenderObject()->GetTransform()->SetPosition(Vector3(0, 50, 0));
+	}
+	else if (player->GetName() == "playerTwo")
+	{
+		this->playerTwo = player;
+		this->playerTwo->GetRenderObject()->GetTransform()->SetPosition(Vector3(0, 50, 0));
+	}
 }
 
 void Level::SetCameraAttributes()
@@ -204,19 +197,17 @@ GameObject* Level::AddMeshToWorldPosition(const Vector3& position, Mesh* mesh, c
 
 #pragma region UI
 
-void Level::DrawPauseButton()
-{
-	ImVec2 windowSize = ImGui::GetWindowSize();
-	ImGui::SetCursorPos(ImVec2(windowSize.x * .9f, windowSize.y * .05f));
-
-
-	GLuint texID = ((OGLTexture*)pauseButton)->GetObjectID();
-
-	if (ImGui::ImageButton("Test", texID, ImVec2(100, 100)))
-	{
-		GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(std::bind(&Level::DrawPauseMenu, this));
-	}
-}
+//void Level::DrawPauseButton()
+//{
+//	ImVec2 windowSize = ImGui::GetWindowSize();
+//	ImGui::SetCursorPos(ImVec2(windowSize.x * .9f, windowSize.y * .05f));
+//	GLuint texID = ((OGLTexture*)pauseButton)->GetObjectID();
+//
+//	if (ImGui::ImageButton("Test", texID, ImVec2(100, 100)))
+//	{
+//		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("PauseMenu", [this]() {DrawPauseMenu();});
+//	}
+//}
 
 void Level::DrawPauseMenu()
 {

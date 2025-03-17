@@ -23,8 +23,7 @@ out Vertex
 	vec3 worldPos;
 } OUT;
 
-void main(void)
-{
+void main(void) {
 	mat4 mvp 		  = (projMatrix * viewMatrix * modelMatrix);
 	mat3 normalMatrix = transpose ( inverse ( mat3 ( modelMatrix )));
 

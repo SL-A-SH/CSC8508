@@ -1,0 +1,11 @@
+mesh,Player,Max/Rig_Maximilian.msh,
+material,Player,Max/Rig_Maximilian.mat,
+shader,Animation,Skinning.vert,scene.frag
+anim,PlayerIdle,Max/Idle.anm,
+mesh,Guard,MaleGuard/Male_Guard.msh,
+shader,BasicShader,scene.vert,scene.frag
+texture,DefaultTexture,Default.png,
+material,Guard,MaleGuard/Male_Guard.mat,
+anim,PlayerWalk,Max/Walk2.anm,
+mesh,Cube,Cube.msh,
+end,,,

@@ -42,5 +42,16 @@ namespace NCL {
 			bool isPressed;
 			Door* linkedDoor;
 		};
+
+		class PressableDoor : public Door {
+		public:
+			PressableDoor();
+			~PressableDoor() = default;
+
+			void OnCollisionBegin(GameObject* otherObject) override;
+
+		private:
+			bool isPressed;
+		};
 	}
 }

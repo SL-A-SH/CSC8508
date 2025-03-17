@@ -13,6 +13,12 @@ namespace NCL::CSC8503 {
 	public:
 		GameObject(const std::string& name = "");
 		~GameObject();
+		
+		enum AnimationState {
+			Idle,
+			Walk,
+			Default 
+		};
 
 		void SetBoundingVolume(CollisionVolume* vol) {
 			boundingVolume = vol;
@@ -54,6 +60,10 @@ namespace NCL::CSC8503 {
 			return name;
 		}
 
+		void SetName(const std::string& newName) {
+			name = newName;
+		}
+
 		virtual void OnCollisionBegin(GameObject* otherObject) {
 			//std::cout << "OnCollisionBegin event occured!\n";
 		}
@@ -73,7 +83,8 @@ namespace NCL::CSC8503 {
 		int		GetWorldID() const {
 			return worldID;
 		}
-
+		
+		virtual void UpdateGame(float dt); 
 	protected:
 		Transform			transform;
 

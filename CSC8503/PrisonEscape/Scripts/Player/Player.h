@@ -5,26 +5,24 @@
 #include "PhysicsSystem.h"
 #include "Window.h"
 #include "Vector.h"
-
+#define M_PI 3.14159265358979323846
 namespace NCL {
 	namespace CSC8503 {
 		class Player : public GameObject {
 		public:
-			Player();
+			Player(GameWorld* world, const std::string& name);
 			~Player();
 
-			void SpawnPlayer(Vector3 position);
-			virtual void UpdateGame(float dt);
-			virtual void UpdatePlayerMovement(float dt);
-			virtual float GetPlayerSpeed() const { return 10.0f; }  // Default speed
+			void UpdateGame(float dt);
+			void UpdatePlayerMovement(float dt);
+
+			void InitializeController();
+
 
 		protected:
 			GameObject* playerObject;
 
-			void InitializeAssets();
-			GameObject* AddPlayerToWorld(const Vector3& position);
-
-			KeyboardMouseController controller;
+			KeyboardMouseController* controller;
 
 			bool useGravity;
 			bool cameraAttached = false;
@@ -32,11 +30,28 @@ namespace NCL {
 			Vector3 lastCameraPosition;
 			Vector3 lastCameraOrientation;
 
-			Mesh* playerMesh = nullptr;
-			Shader* basicShader = nullptr;
+			std::string mName;
+			GameWorld* mWorld;
+
+		private:
+			float playerSpeed = 10.0f;
 
 		public:
+			std::string GetName() { return mName; }
+
+			float GetPlayerSpeed() const { return playerSpeed; }
+			void SetPlayerSpeed(float speed) { playerSpeed = speed; }
+
 			GameObject* GetPlayerObject() const { return playerObject; }
+
+
+			RayCollision closestCollision;
+
+			Vector3 rayPos;
+			Vector3 rayDir;
+
+
+
 		};
 	}
 }

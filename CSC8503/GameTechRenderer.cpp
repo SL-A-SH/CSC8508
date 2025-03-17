@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "TextureLoader.h"
 #include "MshLoader.h"
+#include "typeindex"
 using namespace NCL;
 using namespace Rendering;
 using namespace CSC8503;
@@ -148,7 +149,7 @@ void GameTechRenderer::RenderFrame() {
 	RenderShadowMap();
 	RenderSkybox();
 	RenderCamera();
-	RenderUI(mImguiCanvasFuncToRender);
+	LoadUI();
 	glDisable(GL_CULL_FACE); //Todo - text indices are going the wrong way...
 	glDisable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
@@ -177,8 +178,8 @@ void GameTechRenderer::BuildObjectList() {
 }
 
 void GameTechRenderer::SortObjectList() {
-
 }
+
 
 void GameTechRenderer::RenderShadowMap() {
 	glBindFramebuffer(GL_FRAMEBUFFER, shadowFBO);
@@ -245,7 +246,14 @@ void GameTechRenderer::RenderSkybox() {
 	glEnable(GL_DEPTH_TEST);
 }
 
-void GameTechRenderer::RenderCamera() {
+void GameTechRenderer::RenderCamera() {	
+	glDisable(GL_BLEND);
+
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
+
 	Matrix4 viewMatrix = gameWorld.GetMainCamera().BuildViewMatrix();
 	Matrix4 projMatrix = gameWorld.GetMainCamera().BuildProjectionMatrix(hostWindow.GetScreenAspect());
 
@@ -264,17 +272,14 @@ void GameTechRenderer::RenderCamera() {
 
 	int cameraLocation = 0;
 
-	//TODO - PUT IN FUNCTION
 	glActiveTexture(GL_TEXTURE0 + 1);
 	glBindTexture(GL_TEXTURE_2D, shadowTex);
 
-	for (const auto& i : activeObjects) {
-		OGLShader* shader = (OGLShader*)(*i).GetShader();
+	for (int i = 0; i < activeObjects.size(); i++) {
+		OGLShader* shader = (OGLShader*)activeObjects[i]->GetShader();
 		UseShader(*shader);
 
-		if ((*i).GetDefaultTexture()) {
-			BindTextureToShader(*(OGLTexture*)(*i).GetDefaultTexture(), "mainTex", 0);
-		}
+		
 
 		if (activeShader != shader) {
 			projLocation = glGetUniformLocation(shader->GetProgramID(), "projMatrix");
@@ -306,24 +311,58 @@ void GameTechRenderer::RenderCamera() {
 
 			activeShader = shader;
 		}
-
-		Matrix4 modelMatrix = (*i).GetTransform()->GetMatrix();
+		
+		Matrix4 modelMatrix = activeObjects[i]->GetTransform()->GetMatrix();
+		
 		glUniformMatrix4fv(modelLocation, 1, false, (float*)&modelMatrix);
 
 		Matrix4 fullShadowMat = shadowMatrix * modelMatrix;
 		glUniformMatrix4fv(shadowLocation, 1, false, (float*)&fullShadowMat);
 
-		Vector4 colour = i->GetColour();
+		Vector4 colour = activeObjects[i]->GetColour();
 		glUniform4fv(colourLocation, 1, &colour.x);
 
-		glUniform1i(hasVColLocation, !(*i).GetMesh()->GetColourData().empty());
+		glUniform1i(hasVColLocation, !activeObjects[i]->GetMesh()->GetColourData().empty()); 
+		glUniform1i(hasTexLocation, (OGLTexture*)activeObjects[i]->GetDefaultTexture() ? 1 : 0);
 
-		glUniform1i(hasTexLocation, (OGLTexture*)(*i).GetDefaultTexture() ? 1 : 0);
+		OGLMesh* mesh = (OGLMesh*)activeObjects[i]->GetMesh();
+		if (boundMesh != mesh) {
+			BindMesh(*mesh);
+			boundMesh = mesh;
+		}
+		size_t layerCount = activeObjects[i]->GetMesh()->GetSubMeshCount();
+		
+		if (gameReady) {
+			if (activeObjects[i]->GetAnimObject()) {
+				int j = glGetUniformLocation(shader->GetProgramID(), "joints");
+				const std::vector<int>& matTextures = activeObjects[i]->GetMaterialTextures();
+				std::vector<std::vector<Matrix4>> frameMatricesVec = activeObjects[i]->GetFrameMatricesVector();
+				for (int b = 0; b < layerCount; ++b) {
+					vector<Matrix4> frameMatrices = frameMatricesVec[b];
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, matTextures[b]);
 
-		BindMesh((OGLMesh&)*(*i).GetMesh());
-		size_t layerCount = (*i).GetMesh()->GetSubMeshCount();
-		for (size_t i = 0; i < layerCount; ++i) {
-			DrawBoundMesh((uint32_t)i);
+					glUniformMatrix4fv(j, frameMatrices.size(), false, (float*)frameMatrices.data());
+					DrawBoundMesh((uint32_t)b);
+				}
+			}
+			else if (activeObjects[i]->GetMaterialTextures().size() > 1) {
+				const std::vector<int>& matTextures = activeObjects[i]->GetMaterialTextures();
+				for (size_t b = 0; b < layerCount; ++b) {
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, matTextures[b]);
+					DrawBoundMesh((uint32_t)b);
+				}
+			}
+			else {
+				if (activeObjects[i]->GetDefaultTexture()) {
+					BindTextureToShader(*(OGLTexture*)activeObjects[i]->GetDefaultTexture(), "mainTex", 0);
+				}
+				size_t layerCount = mesh->GetSubMeshCount();
+				for (size_t b = 0; b < layerCount; ++b) {
+					DrawBoundMesh((uint32_t)b);
+				}
+			}
 		}
 	}
 }
@@ -334,6 +373,35 @@ Mesh* GameTechRenderer::LoadMesh(const std::string& name) {
 	mesh->SetPrimitiveType(GeometryPrimitive::Triangles);
 	mesh->UploadToGPU();
 	return mesh;
+
+}
+
+void GameTechRenderer::LoadMeshes(std::unordered_map<std::string, Mesh*>& meshMap, const vector<std::string>& details) {
+	std::vector <OGLMesh*> meshes;
+	for (int i = 0; i < details.size(); i += 3) {
+		meshes.push_back(new OGLMesh());
+	}
+
+	std::thread loadingThread[4];
+	int splitLoad = details.size() / 12;
+
+	for (int i = 0; i < 4; i++) {
+		loadingThread[i] = std::thread([meshes, details, i, splitLoad] {
+			int endPoint = i == 3 ? details.size() / 3 : splitLoad * (i + 1);
+			for (int j = splitLoad * i; j < endPoint; j++) {
+				MshLoader::LoadMesh(details[(j * 3) + 1], *meshes[j]);
+				meshes[j]->SetPrimitiveType(GeometryPrimitive::Triangles);
+			}
+			});
+	}
+	for (int i = 0; i < 4; i++) {
+		loadingThread[i].join();
+	}
+
+	for (int i = 0; i < meshes.size(); i++) {
+		meshes[i]->UploadToGPU();
+		meshMap[details[i * 3]] = meshes[i];
+	}
 }
 
 void GameTechRenderer::NewRenderLines() {
@@ -471,13 +539,96 @@ void GameTechRenderer::NewRenderTextures() {
 }
 
 Texture* GameTechRenderer::LoadTexture(const std::string& name) {
-	return OGLTexture::TextureFromFile(name).release();
+	OGLTexture* texture = OGLTexture::TextureFromFile(name).release(); // TODO
+	if (FindTextureIndex(texture->GetObjectID()) == -1)
+	{
+		const GLuint64 ID = glGetTextureHandleARB(texture->GetObjectID());
+		glMakeTextureHandleResidentARB(ID);
+		mTextureIDList.push_back(std::pair<GLuint, GLuint64>(texture->GetObjectID(), ID));
+		mLoadedTextureList[name] = texture->GetObjectID();
+	}
+	return texture;
+}
+
+GLuint GameTechRenderer::LoadTextureGetID(const std::string& name) {
+	if (mLoadedTextureList.find(name) != mLoadedTextureList.end()) {
+		return mLoadedTextureList[name];
+	}
+	Texture* texture = LoadTexture(name);
+	return ((OGLTexture*)texture)->GetObjectID();
+}
+
+int GameTechRenderer::FindTextureIndex(GLuint texId) {
+	for (int i = 0; i < mTextureIDList.size(); i++) {
+		if (texId == mTextureIDList[i].first) {
+			return i;
+		}
+	}
+	return -1;
 }
 
 Shader* GameTechRenderer::LoadShader(const std::string& vertex, const std::string& fragment) {
 	return new OGLShader(vertex, fragment);
 }
 
+MeshAnimation* GameTechRenderer::LoadAnimation(const std::string& name) {
+	return new MeshAnimation(name);
+}
+
+MeshMaterial* GameTechRenderer::LoadMaterial(const std::string& name) {
+	return new MeshMaterial(name);
+}
+
+vector<int> GameTechRenderer::LoadMeshMaterial(Mesh& mesh, MeshMaterial& meshMaterial) {
+	std::vector<int> matTextures = std::vector<int>();
+
+	if (&mesh == nullptr) {
+		std::cerr << "Error: Mesh reference is null!" << std::endl;
+		return {};
+	}
+	std::cout << "Mesh is valid, checking submesh count..." << std::endl;
+
+
+	for (int i = 0; i < mesh.GetSubMeshCount(); ++i) {
+		std::cout << "I am inside the loop!" << std::endl;
+		const MeshMaterialEntry* matEntry = meshMaterial.GetMaterialForLayer(i);
+		if (!matEntry) {
+			std::cout << "No Material for layer " << i << std::endl;
+			continue;
+		}
+		const string* filename = nullptr;
+		matEntry->GetEntry("Diffuse", &filename);
+		GLuint texID = 0;
+
+		if (filename) {
+			string path = *filename;
+			std::cout << path << std::endl;
+			texID = LoadTextureGetID(path.c_str());
+			std::cout << texID << std::endl;
+		}
+
+		matTextures.emplace_back(texID);
+
+		filename = nullptr;
+		matEntry->GetEntry("Normal", &filename);
+		texID = 0;
+
+		if (!matEntry) {
+			std::cout << "No Material for layer " << i << std::endl;
+			continue;
+		}
+
+		if (filename) {
+			string path = *filename;
+			std::cout << path << std::endl;
+			texID = LoadTextureGetID(path.c_str());
+			std::cout << texID << std::endl;
+		}
+		matTextures.emplace_back(texID);
+	}
+	std::cout << "Loaded Mesh Material" << std::endl;
+	return matTextures;
+}
 void GameTechRenderer::SetDebugStringBufferSizes(size_t newVertCount) {
 	if (newVertCount > textCount) {
 		textCount = newVertCount;
@@ -516,8 +667,36 @@ void GameTechRenderer::SetDebugStringBufferSizes(size_t newVertCount) {
 		glBindVertexArray(0);
 	}
 }
-void GameTechRenderer::SetImguiCanvasFunc(std::function<void()> func) {
-	mImguiCanvasFuncToRender = func;
+
+
+void GameTechRenderer::AddPanelToCanvas(const std::string& key, std::function<void()> func) {
+	// Avoid adding duplicates by key
+	if (mImguiCanvasFuncToRenderList.find(key) == mImguiCanvasFuncToRenderList.end()) {
+		mImguiCanvasFuncToRenderList[key] = std::move(func);
+	}
+}
+
+
+void GameTechRenderer::DeletePanelFromCanvas(const std::string& key) {
+
+	auto it = mImguiCanvasFuncToRenderList.find(key);
+	removePanelList.push_back(key);
+	/*auto it = mImguiCanvasFuncToRenderList.find(key);
+	if (it != mImguiCanvasFuncToRenderList.end()) {
+		mImguiCanvasFuncToRenderList.erase(it);
+
+	}*/
+}
+
+void GameTechRenderer::UpdatePanelList() {
+
+	for (const auto& key : removePanelList) {
+		auto it = mImguiCanvasFuncToRenderList.find(key);
+		if (it != mImguiCanvasFuncToRenderList.end()) {
+			mImguiCanvasFuncToRenderList.erase(it);
+		}
+	}
+	removePanelList.clear();
 }
 
 
@@ -550,16 +729,15 @@ void GameTechRenderer::SetDebugLineBufferSizes(size_t newVertCount) {
 }
 
 
-void GameTechRenderer::RenderUI(std::function<void()> callback) {
+void GameTechRenderer::LoadUI() {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-
 	// Next window to be created will cover the entire screen
 	NCL::Maths::Vector2i windowSize = NCL::Window::GetWindow()->GetScreenSize();
-	int windowWidth = windowSize.x;
-	int windowHeight = windowSize.y;
+	float windowWidth = static_cast<float>(windowSize.x);
+	float windowHeight = static_cast<float>(windowSize.y);
 
 	ImVec2 size(windowWidth, windowHeight);
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
@@ -572,13 +750,17 @@ void GameTechRenderer::RenderUI(std::function<void()> callback) {
 		ImGuiWindowFlags_NoResize
 	);
 
-	if (callback != nullptr) {
-		callback();
+	for (const auto& [key, func] : mImguiCanvasFuncToRenderList) {
+		func();
 	}
+	if (USEDEBUGMODE) {
+		Debug::DrawDebugMenu();
+	}
+	UpdatePanelList();
+
 	//CLEAR
 
 	ImGui::End();
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
 }

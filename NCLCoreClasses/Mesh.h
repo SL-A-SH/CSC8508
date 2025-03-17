@@ -59,6 +59,12 @@ namespace NCL::Rendering {
 
 	class Mesh	{
 	public:		
+
+	struct SubMeshPoses {
+			int start;
+			int count;
+		};
+
 		virtual ~Mesh();
 
 		GeometryPrimitive::Type GetPrimitiveType() const {
@@ -191,6 +197,15 @@ namespace NCL::Rendering {
 
 		virtual void UploadToGPU(Rendering::RendererBase* renderer = nullptr) = 0;
 
+		void SetBindPoseIndices(const std::vector<int>& newIndices);
+		void SetBindPoseStates(std::vector<SubMeshPoses>& newState);
+
+		bool GetBindPoseState(int subMesh, SubMeshPoses& pose) const;
+
+		const int* GetBindPoseIndices() const {
+			return bindPoseIndices.data();
+		}
+
 		uint32_t GetAssetID() const {
 			return assetID;
 		}
@@ -223,6 +238,11 @@ namespace NCL::Rendering {
 		std::vector<int>			jointParents;
 		std::vector<Matrix4>		bindPose;
 		std::vector<Matrix4>		inverseBindPose;
+
+
+		std::vector<int>			bindPoseIndices;
+		std::vector<SubMeshPoses>	bindPoseStates;
+
 	};
 
 	using UniqueMesh = std::unique_ptr<Mesh>;

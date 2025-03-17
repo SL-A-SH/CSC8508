@@ -1,11 +1,21 @@
 #pragma once
-
 #include "GameWorld.h"
 #include "PhysicsSystem.h"
 #include "GameTechRenderer.h"
+#include "MeshAnimation.h"
+#include "MeshMaterial.h"
+#include "jsonParser.h"
+#include "../CSC8503/PrisonEscape/Scripts/puzzle/Button.h"
 #include "../CSC8503/PrisonEscape/Levels/Level.h"
+#include "../CSC8503/PrisonEscape/Scripts/Player/Player.h"
+#include "../CSC8503/PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
+#include "AnimationController.h"
 
 namespace NCL {
+	constexpr float PLAYER_MESH_SIZE = 3.0f;
+	constexpr float PLAYER_INVERSE_MASS = 0.5f;
+	constexpr float PATROL_ENEMY_MESH_SIZE = 3.0f;
+	constexpr float PATROL_ENEMY_INVERSE_MASS = 0.5f;
 	namespace CSC8503 {
 		class GameLevelManager {
 		public:
@@ -13,20 +23,58 @@ namespace NCL {
 			~GameLevelManager();
 			virtual void UpdateGame(float dt);
 
+			void InitAssets();
+			void InitAnimationObjects() const;
 
+			// Player Methods
+			Player* AddPlayerToWorld(const Transform& transform, const std::string& playerName);
+			void AddComponentsToPlayer(Player& playerObj, const Transform& transform);
+
+			// Enemy Methods
+
+			PatrolEnemy* AddPatrolEnemyToWorld(const Transform& transform);
+			void AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const Transform& transform);
+			void loadMap();
 
 		public:
-			Level* GetCurrentLevel() { return currentLevel; }
-			void SetCurrentLevel(Level* level) { currentLevel = level; }
-			void AddLevel(Level* newLevel) { levelStack.push(newLevel); }
+			Level* GetCurrentLevel() { return mCurrentLevel; }
+			void SetCurrentLevel(Level* level) { mCurrentLevel = level; }
+			void AddLevel(Level* newLevel) { mLevelStack.push(newLevel); }
+
+			
 		private:
-			GameWorld* world;
-			GameTechRenderer* renderer;
-			PhysicsSystem* physics;
-			Level* currentLevel;
-			std::stack<Level*> levelStack;
+			GameWorld* mWorld;
+			GameTechRenderer* mRenderer;
+			PhysicsSystem* mPhysics;
+			Level* mCurrentLevel;
+
+			// for handling multiple buttons/boxes in a level
+			int boxNumber;
+			std::vector<GameObject*> boxes;
+			std::vector<Button*> buttons;
+			GameObject* pushableBox;
+			std::stack<Level*> mLevelStack;
+			AnimationController* mAnimator;
 
 
+			vector<GameObject*> mUpdatableObjectList;
+
+			std::unordered_map<std::string, Mesh*> mMeshList;
+			std::unordered_map<std::string, Shader*> mShaderList;
+			std::unordered_map<std::string, Texture*> mTextureList;
+			std::unordered_map<std::string, MeshAnimation*> mAnimationList;
+			std::unordered_map<std::string, MeshMaterial*> mMaterialList;
+			std::unordered_map<std::string, vector<int>> mMeshMaterialsList;
+			std::map<std::string, MeshAnimation*> mPreLoadedAnimationList;
+
+			GameObject* AddWallToWorld(Vector3 wallSize, const Vector3& position, float x, float y, float z);
+			GameObject* AddBoxToWorld(const Vector3& position, Vector3 dimensions, const std::string name, float inverseMass = 10.0f);
+			//Player Members
+			Player* mPlayerToAdd;
+
+			//Enemy Members
+			PatrolEnemy* mEnemyToAdd;
+			bool isPlaying;
 		};
 	}
 }

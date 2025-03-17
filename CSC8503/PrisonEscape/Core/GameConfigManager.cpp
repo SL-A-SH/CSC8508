@@ -5,6 +5,7 @@ using namespace CSC8503;
 
 GameConfigManager::GameConfigManager()
 {
+	std::cout << "Created Manager" << std::endl;
 }
 
 GameConfigManager::~GameConfigManager()
@@ -64,30 +65,6 @@ void GameConfigManager::CreateClient()
 		networkConfig.client = new GameClient();
 		if (!networkConfig.client->netHandle) {
 			throw std::runtime_error("Failed to initialize client network handle");
-		}
-
-		// Add delay
-		std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
-		std::cout << "Attempting to connect to server at " << networkConfig.ip << ":" << NetworkBase::GetDefaultPort() << "\n";
-
-		bool connected = false;
-
-		// Try to connect multiple times
-		for (int attempts = 0; attempts < 5; attempts++) {
-			std::cout << "Connection attempt " << (attempts + 1) << "...\n";
-
-			if (networkConfig.client->Connect(127, 0, 0, 1, NetworkBase::GetDefaultPort())) {
-				connected = true;
-				std::cout << "Connected to server successfully!\n";
-				break;
-			}
-			std::cout << "Connection attempt " << (attempts + 1) << " failed, retrying...\n";
-			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-		}
-
-		if (!connected) {
-			throw std::runtime_error("Failed to connect to server after multiple attempts");
 		}
 
 		networkConfig.playerID = 0;
