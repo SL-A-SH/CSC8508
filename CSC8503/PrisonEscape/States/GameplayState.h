@@ -34,6 +34,18 @@ namespace NCL {
 			GameConfigManager* gameConfig;
 
 			void InitializeSteamMultiplayer(Level* level);
+			bool InitializeSteamNetworking();
+			void InitializeMultiplayer(Level* level);
+			void InitializeSinglePlayer(Level* level);
+
+			void SetupServer(Level* level);
+			void SetupClient(Level* level);
+			void SetupClientPlayer(Level* level);
+
+			void RegisterServerPacketHandlers();
+			void RegisterClientPacketHandlers();
+
+
 
 		public:
 			GameConfigManager* GetGameConfig() const { return gameConfig; }
