@@ -34,6 +34,7 @@ namespace NCL {
             std::vector<std::pair<std::string, uint64_t>> GetFriendsList();
             bool IsFriendOnline(uint64_t steamID);
             bool DoesFriendOwnGame(uint64_t steamID);
+            bool IsFriendInGame(uint64_t steamID);
 
             // Game server functionality
             bool CreateLobby(int maxPlayers);

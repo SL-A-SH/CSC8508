@@ -50,34 +50,36 @@ PushdownState::PushdownResult MenuState::OnUpdate(float dt, PushdownState** newS
 		{
 		case ConnectionStage::Creating:
 			if (connectionTimer >= 1.5f) {
-				connectionStage = ConnectionStage::Connecting;
-				connectionTimer = 0.0f;
+				// Using steam networking
+				if (useSteamNetworking && steamManager && steamManager->IsInitialized()) {
+					if (networkAsServer) {
+						connectionStage = ConnectionStage::Success;
+					}
+					else {
+						connectionStage = ConnectionStage::Connecting;
+					}
+					connectionTimer = 0.0f;
+				}
+				else {
+					// Using regular networking
+					connectionStage = ConnectionStage::Connecting;
+					connectionTimer = 0.0f;
 
-				gameConfig->networkConfig.isMultiplayer = true;
-				gameConfig->networkConfig.isServer = networkAsServer;
-
-				#ifdef ENABLE_STEAM
-					InitializeSteam();
-				#endif
-
-				if (!steamManager || !steamManager->IsInitialized())
-				{
+					gameConfig->networkConfig.isMultiplayer = true;
+					gameConfig->networkConfig.isServer = networkAsServer;
 					gameConfig->networkConfig.isUsingSteam = false;
+
 					gameConfig->InitNetwork();
 
 					if (networkAsServer) {
 						try {
 							gameConfig->CreateServer();
-
-							this->gameConfig = gameConfig;
-
 							connectionStage = ConnectionStage::Success;
 							connectionTimer = 0.0f;
 						}
 						catch (std::exception& e) {
 							delete gameConfig;
 							this->gameConfig = nullptr;
-
 							connectionStage = ConnectionStage::Failed;
 							connectionTimer = 0.0f;
 						}
@@ -85,15 +87,12 @@ PushdownState::PushdownResult MenuState::OnUpdate(float dt, PushdownState** newS
 					else {
 						try {
 							gameConfig->CreateClient();
-							this->gameConfig = gameConfig;
-
 							connectionStage = ConnectionStage::Connecting;
 							connectionTimer = 0.0f;
 						}
 						catch (std::exception& e) {
 							delete gameConfig;
 							this->gameConfig = nullptr;
-
 							connectionStage = ConnectionStage::Failed;
 							connectionTimer = 0.0f;
 						}
@@ -110,9 +109,21 @@ PushdownState::PushdownResult MenuState::OnUpdate(float dt, PushdownState** newS
 				if (connectionTimer >= 1.0f) {
 					connectionTimer = 0.0f;
 
-					if (gameConfig) {
+					if (useSteamNetworking && steamManager && steamManager->IsInitialized()) {
+						// For Steam clients, we're waiting on the lobby
+						if (steamManager->IsInLobby()) {
+							connectionStage = ConnectionStage::Success;
+						}
+						else {
+							connectionAttempt++;
+							if (connectionAttempt > 5) {
+								connectionStage = ConnectionStage::Failed;
+							}
+						}
+					}
+					else if (gameConfig && gameConfig->networkConfig.client) {
+						// Regular networking
 						bool connected = false;
-
 						try {
 							if (gameConfig->networkConfig.client->Connect(127, 0, 0, 1, NetworkBase::GetDefaultPort())) {
 								connected = true;
@@ -120,7 +131,6 @@ PushdownState::PushdownResult MenuState::OnUpdate(float dt, PushdownState** newS
 							}
 							else {
 								connectionAttempt++;
-
 								if (connectionAttempt > 5) {
 									connectionStage = ConnectionStage::Failed;
 								}
@@ -143,9 +153,9 @@ PushdownState::PushdownResult MenuState::OnUpdate(float dt, PushdownState** newS
 				isConnecting = false;
 
 				stateChangeAction = [this](PushdownState** newState) {
-					
-					//GameBase::GetGameBase()->GetRenderer()->SetImguiCanvasFunc(nullptr);
 					if (gameConfig) {
+						gameConfig->networkConfig.isUsingSteam = useSteamNetworking;
+
 						*newState = new GamePlayState(true, networkAsServer, gameConfig);
 						dynamic_cast<GamePlayState*>(*newState)->SetGameConfig(gameConfig);
 						gameConfig = nullptr; // Transfer ownership
@@ -166,7 +176,13 @@ PushdownState::PushdownResult MenuState::OnUpdate(float dt, PushdownState** newS
 					gameConfig = nullptr;
 				}
 
-				//GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("MultiplayerPanel", [this]() {Draw();});
+				if (useSteamNetworking) {
+					GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("SteamLobbyPanel", [this]() {DrawSteamLobbyPanel(); });
+				}
+				else {
+					GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("MultiplayerPanel", [this]() {DrawMultiplayerPanel(); });
+				}
+				GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("ConnectionPanel");
 			}
 			break;
 
@@ -293,7 +309,6 @@ void MenuState::DrawMultiplayerPanel() {
 	ImGui::SetCursorPos(ImVec2(windowSize.x * 0.32f, windowSize.y * 0.2f));
 
 	ImGui::PushFont(ImGuiManager::GetButtonFont());
-	bool useSteamNetworking = gameConfig->networkConfig.isUsingSteam;
 	bool oldValue = useSteamNetworking;
 	ImGui::Checkbox("Use Steam Networking", &useSteamNetworking);
 
@@ -341,9 +356,25 @@ void MenuState::StartServerProcess()
 	connectionTimer = 0.0f;
 	isConnecting = true;
 
+	gameConfig->networkConfig.isMultiplayer = true;
+	gameConfig->networkConfig.isServer = true;
+	gameConfig->networkConfig.isUsingSteam = useSteamNetworking;
+
+	if (useSteamNetworking && steamManager && steamManager->IsInitialized()) {
+		// Start a Steam lobby as host
+		if (steamManager->CreateLobby(8)) {
+			std::cout << "Creating Steam lobby..." << std::endl;
+			connectionStage = ConnectionStage::Success;
+		}
+		else {
+			std::cout << "Failed to create Steam lobby" << std::endl;
+			useSteamNetworking = false;
+			gameConfig->networkConfig.isUsingSteam = false;
+		}
+	}
+
 	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("ConnectionPanel", [this]() {DrawConnectionMessagePanel(); });
 	GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MultiplayerPanel");
-
 }
 
 void MenuState::StartClientProcess()
@@ -353,9 +384,19 @@ void MenuState::StartClientProcess()
 	connectionTimer = 0.0f;
 	isConnecting = true;
 
+	gameConfig->networkConfig.isMultiplayer = true;
+	gameConfig->networkConfig.isServer = false;
+	gameConfig->networkConfig.isUsingSteam = useSteamNetworking;
+
+	if (useSteamNetworking && steamManager && steamManager->IsInitialized()) {
+		// For Steam as client, we need to show available lobbies or friend lobbies
+		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("SteamLobbyPanel", [this]() {DrawSteamLobbyPanel(); });
+		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MultiplayerPanel");
+		return;
+	}
+
 	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("ConnectionPanel", [this]() {DrawConnectionMessagePanel(); });
 	GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MultiplayerPanel");
-
 }
 
 void MenuState::DrawConnectionMessagePanel()
@@ -388,7 +429,13 @@ void MenuState::DrawConnectionMessagePanel()
 			break;
 
 		case ConnectionStage::Success:
-			message = "Server created successfully!";
+			if (useSteamNetworking && steamManager && steamManager->IsInitialized()) {
+				uint64_t lobbyID = steamManager->GetCurrentLobbyID();
+				message = "Server created successfully!\n\nYour Lobby ID: " + std::to_string(lobbyID) + "\n\nShare this ID with friends to connect.";
+			}
+			else {
+				message = "Server created successfully!";
+			}
 			messageColor = ImVec4(0, 1, 0, 1); // Green
 			break;
 
@@ -480,4 +527,164 @@ void MenuState::HandleSteamInvite(uint64_t friendSteamID)
 		std::cout << "Sending game invite to friend: " << friendSteamID << std::endl;
 		steamManager->SendGameInvite(friendSteamID);
 	}
+}
+
+void MenuState::DrawSteamLobbyPanel() {
+	// Get the Steam manager instance
+	SteamManager* steamManager = SteamManager::GetInstance();
+
+	if (!steamManager || !steamManager->IsInitialized()) {
+		// Steam not available - fallback to regular networking
+		useSteamNetworking = false;
+		gameConfig->networkConfig.isUsingSteam = false;
+		StartClientProcess();
+		return;
+	}
+
+	// Create buttons for back functionality
+	std::vector<PanelButton> buttons;
+
+	// Add a back button
+	auto backCallback = [this]() {
+		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("MultiplayerPanel", [this]() { DrawMultiplayerPanel(); });
+		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("SteamLobbyPanel");
+	};
+
+	ImGuiManager::DrawPanel("Steam Lobbies", buttons, {}, backCallback, "Select a lobby to join");
+
+	// Custom drawing for the lobby list
+	ImVec2 windowSize = ImGui::GetWindowSize();
+	float startY = windowSize.y * 0.25f; // Start below the header
+
+	// Get the list of friends from Steam who might be in a lobby
+	std::vector<std::pair<std::string, uint64_t>> onlineFriends;
+
+	// Filter for friends who are online
+	std::vector<std::pair<std::string, uint64_t>> allFriends = steamManager->GetFriendsList();
+	for (const auto& friendInfo : allFriends) {
+		if (steamManager->IsFriendOnline(friendInfo.second)) {
+			onlineFriends.push_back(friendInfo);
+		}
+	}
+
+	ImGui::PushFont(ImGuiManager::GetButtonFont());
+
+	// First, draw "direct connect" option
+	{
+		ImGui::SetCursorPos(ImVec2(windowSize.x * 0.1f, startY));
+		ImGui::Text("Direct Connect To Lobby ID:");
+
+		static char lobbyIdInput[64] = "";
+		ImGui::SetCursorPos(ImVec2(windowSize.x * 0.1f, startY + 40));
+		ImGui::SetNextItemWidth(windowSize.x * 0.5f);
+		ImGui::InputText("##lobbyid", lobbyIdInput, sizeof(lobbyIdInput));
+
+		ImGui::SetCursorPos(ImVec2(windowSize.x * 0.65f, startY + 40));
+		if (ImGui::Button("Connect", ImVec2(windowSize.x * 0.25f, 30))) {
+			// Try to parse and connect to the lobby ID
+			try {
+				uint64_t lobbyId = std::stoull(lobbyIdInput);
+				JoinSteamLobby(lobbyId);
+			}
+			catch (std::exception& e) {
+				std::cout << "Invalid lobby ID: " << e.what() << std::endl;
+
+				// Show error message
+				GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("LobbyErrorPanel", [this]() {
+					ImGuiManager::DrawMessagePanel("Invalid Lobby ID",
+						"The lobby ID entered is not valid. Please check and try again.",
+						ImVec4(1, 0, 0, 1),
+						[this]() {
+							GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("LobbyErrorPanel");
+						});
+					});
+			}
+		}
+	}
+
+	// Section header for friends
+	ImGui::SetCursorPos(ImVec2(windowSize.x * 0.1f, startY + 100));
+	ImGui::TextColored(ImVec4(0, 1, 1, 1), "Friends in Lobbies:");
+
+	float itemHeight = windowSize.y * 0.08f;
+	float padding = windowSize.y * 0.02f;
+	float currentY = startY + 140;
+
+	if (onlineFriends.empty()) {
+		ImGui::SetCursorPos(ImVec2(windowSize.x * 0.2f, currentY));
+		ImGui::TextColored(ImVec4(1, 1, 0, 1), "No online friends found");
+	}
+	else {
+		// Draw each friend with a join button
+		for (const auto& friendInfo : onlineFriends) {
+			const std::string& friendName = friendInfo.first;
+			uint64_t friendID = friendInfo.second;
+
+			// Check if this friend is in a game/lobby
+			bool isInGame = steamManager->IsFriendInGame(friendID);
+
+			// Friend name
+			ImGui::SetCursorPos(ImVec2(windowSize.x * 0.1f, currentY));
+			ImGui::Text("%s", friendName.c_str());
+
+			// Status indicator 
+			ImGui::SetCursorPos(ImVec2(windowSize.x * 0.5f, currentY));
+			if (isInGame) {
+				ImGui::TextColored(ImVec4(0, 1, 0, 1), "In Game"); // Green status
+			}
+			else {
+				ImGui::TextColored(ImVec4(0, 0.7f, 1, 1), "Online"); // Blue status
+			}
+
+			// Join button - only enable if in game
+			ImGui::SetCursorPos(ImVec2(windowSize.x * 0.65f, currentY));
+			std::string buttonLabel = "Join##" + std::to_string(friendID);
+
+			if (isInGame) {
+				if (ImGui::Button(buttonLabel.c_str(), ImVec2(windowSize.x * 0.25f, itemHeight))) {
+					// Try to join this friend's game/lobby
+					JoinSteamLobby(friendID);
+				}
+			}
+			else {
+				// Disabled button
+				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5f, 0.5f, 0.5f, 0.5f));
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.5f, 0.5f, 0.5f, 0.5f));
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.5f, 0.5f, 0.5f, 0.5f));
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.3f, 0.3f, 0.3f, 1.0f));
+
+				ImGui::Button(buttonLabel.c_str(), ImVec2(windowSize.x * 0.25f, itemHeight));
+
+				ImGui::PopStyleColor(4);
+			}
+
+			currentY += itemHeight + padding;
+		}
+	}
+
+	ImGui::PopFont();
+}
+
+void MenuState::JoinSteamLobby(uint64_t lobbyID) {
+	if (!steamManager || !steamManager->IsInitialized()) {
+		return;
+	}
+
+	// Start the connection process
+	connectionStage = ConnectionStage::Creating;
+	connectionTimer = 0.0f;
+	isConnecting = true;
+
+	// Try to join the Steam lobby
+	if (steamManager->JoinLobby(lobbyID)) {
+		std::cout << "Joining Steam lobby: " << lobbyID << std::endl;
+		connectionStage = ConnectionStage::Success;
+	}
+	else {
+		std::cout << "Failed to join Steam lobby" << std::endl;
+		connectionStage = ConnectionStage::Failed;
+	}
+
+	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("ConnectionPanel", [this]() {DrawConnectionMessagePanel(); });
+	GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("SteamLobbyPanel");
 }

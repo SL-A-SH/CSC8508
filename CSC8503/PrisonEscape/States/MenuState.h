@@ -26,6 +26,7 @@ namespace NCL {
 			void DrawAudioSettingPanel();
 			void DrawVideoSettingPanel();
 			void DrawMultiplayerPanel();
+			void DrawSteamLobbyPanel();
 
 			// Connection handling methods
 			void StartServerProcess();
@@ -34,6 +35,7 @@ namespace NCL {
 
 			void InitializeSteam();
 			void HandleSteamInvite(uint64_t friendSteamID);
+			void JoinSteamLobby(uint64_t lobbyID);
 
 		private:
 			enum class ConnectionStage {
@@ -57,6 +59,7 @@ namespace NCL {
 			GameConfigManager* gameConfig;
 
 			SteamManager* steamManager;
+			bool useSteamNetworking = false;
 		};
 	}
 }

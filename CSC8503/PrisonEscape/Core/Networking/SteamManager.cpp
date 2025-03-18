@@ -265,6 +265,21 @@ bool SteamManager::DoesFriendOwnGame(uint64_t steamID)
     return false;
 }
 
+bool SteamManager::IsFriendInGame(uint64_t steamID)
+{
+    #ifdef ENABLE_STEAM
+    if (m_bInitialized) {
+        CSteamID id(steamID);
+        FriendGameInfo_t gameInfo;
+        if (SteamFriends()->GetFriendGamePlayed(id, &gameInfo)) {
+            // For development, consider any game as "our game"
+            return true;
+        }
+    }
+#endif
+    return false;
+}
+
 bool SteamManager::CreateLobby(int maxPlayers)
 {
 #ifdef ENABLE_STEAM

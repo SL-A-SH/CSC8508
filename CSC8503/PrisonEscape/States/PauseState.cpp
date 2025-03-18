@@ -157,6 +157,15 @@ void PauseState::DrawFriendsPanel()
 	ImVec2 windowSize = ImGui::GetWindowSize();
 	float startY = windowSize.y * 0.25f; // Start below the header
 
+	if (gameConfig && gameConfig->networkConfig.isUsingSteam) {
+		uint64_t lobbyID = steamManager->GetCurrentLobbyID();
+		if (lobbyID != 0) {
+			ImGui::SetCursorPos(ImVec2(windowSize.x * 0.1f, startY));
+			ImGui::TextColored(ImVec4(0, 1, 1, 1), "Your Lobby ID: %llu", lobbyID);
+			startY += 50; // Move down a bit for the rest of the content
+		}
+	}
+
 	if (onlineFriends.empty()) {
 		// No online friends found
 		ImGui::SetCursorPos(ImVec2(windowSize.x * 0.2f, startY));
