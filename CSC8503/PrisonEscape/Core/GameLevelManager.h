@@ -7,10 +7,13 @@
 #include "MeshMaterial.h"
 #include "../CSC8503/PrisonEscape/Levels/Level.h"
 #include "../CSC8503/PrisonEscape/Scripts/Player/Player.h"
+#include "../CSC8503/PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
 
 namespace NCL {
 	constexpr float PLAYER_MESH_SIZE = 3.0f;
 	constexpr float PLAYER_INVERSE_MASS = 0.5f;
+	constexpr float PATROL_ENEMY_MESH_SIZE = 3.0f;
+	constexpr float PATROL_ENEMY_INVERSE_MASS = 0.5f;
 	namespace CSC8503 {
 		class GameLevelManager {
 		public:
@@ -25,6 +28,10 @@ namespace NCL {
 			PlayerOne* AddPlayerToWorld(const Transform& transform, const std::string& playerName);
 			void AddComponentsToPlayer(Player& playerObj, const Transform& transform);
 
+			// Enemy Methods
+
+			PatrolEnemy* AddPatrolEnemyToWorld(const Transform& transform);
+			void AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const Transform& transform);
 
 		public:
 			Level* GetCurrentLevel() { return mCurrentLevel; }
@@ -48,10 +55,11 @@ namespace NCL {
 			std::unordered_map<std::string, vector<int>> mMeshMaterialsList;
 			std::map<std::string, MeshAnimation*> mPreLoadedAnimationList;
 
-
-
 			//Player Members
 			PlayerOne* mPlayerToAdd;
+
+			//Enemy Members
+			PatrolEnemy* mEnemyToAdd;
 		};
 	}
 }

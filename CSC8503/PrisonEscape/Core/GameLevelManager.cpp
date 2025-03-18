@@ -210,3 +210,34 @@ void GameLevelManager::AddComponentsToPlayer(Player& playerObject, const Transfo
 	playerObject.GetPhysicsObject()->SetInverseMass(PLAYER_INVERSE_MASS);
 	playerObject.GetPhysicsObject()->InitSphereInertia();
 }
+
+//Should add enemy to the world, needs testing
+
+PatrolEnemy* GameLevelManager::AddPatrolEnemyToWorld(const Transform& transform) {
+	mEnemyToAdd = new PatrolEnemy(mWorld);
+	AddComponentsToPatrolEnemy(*mEnemyToAdd, transform);
+
+	mWorld->AddGameObject(mEnemyToAdd);
+	mUpdatableObjectList.push_back(mEnemyToAdd);
+
+	return mEnemyToAdd;
+}
+
+//Uses player meshes and textures to test it actually works
+
+void GameLevelManager::AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const Transform& enemyTransform) {
+	SphereVolume* volume = new SphereVolume(PATROL_ENEMY_MESH_SIZE / 2);
+	enemyObj.SetBoundingVolume((CollisionVolume*)volume);
+
+	enemyObj.GetTransform()
+		.SetScale(Vector3(PATROL_ENEMY_MESH_SIZE, PATROL_ENEMY_MESH_SIZE, PATROL_ENEMY_MESH_SIZE))
+		.SetPosition(enemyTransform.GetPosition())
+		.SetOrientation(enemyTransform.GetOrientation());
+
+	enemyObj.SetRenderObject(new RenderObject(&enemyObj.GetTransform(), mMeshList["PlayerMesh"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+
+	enemyObj.SetPhysicsObject(new PhysicsObject(&enemyObj.GetTransform(), enemyObj.GetBoundingVolume()));
+
+	enemyObj.GetPhysicsObject()->SetInverseMass(PATROL_ENEMY_INVERSE_MASS);
+	enemyObj.GetPhysicsObject()->InitSphereInertia();
+}
