@@ -333,9 +333,11 @@ void GameLevelManager::AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const T
 		.SetPosition(enemyTransform.GetPosition())
 		.SetOrientation(enemyTransform.GetOrientation());
 
-	enemyObj.SetRenderObject(new RenderObject(&enemyObj.GetTransform(), mMeshList["PlayerMesh"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+	enemyObj.SetRenderObject(new RenderObject(&enemyObj.GetTransform(), mMeshList["Guard"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
 
 	enemyObj.SetPhysicsObject(new PhysicsObject(&enemyObj.GetTransform(), enemyObj.GetBoundingVolume()));
+
+	enemyObj.GetRenderObject()->SetMaterialTextures(mMeshMaterialsList["Guard"]);
 
 	enemyObj.GetPhysicsObject()->SetInverseMass(PATROL_ENEMY_INVERSE_MASS);
 	enemyObj.GetPhysicsObject()->InitSphereInertia();
