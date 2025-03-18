@@ -92,17 +92,11 @@ void GameLevelManager::UpdateGame(float dt)
 		}
 	}
 
-
-	
-	//for (Button* button : buttons) {
-	//	if (!button->IsPressed()) {
-	//		button->pressDetection(boxes);
-	//	}
-
-	//	//if (button->IsPressed()) {
-	//	//	std::cout << "BOOPED";
-	//	//}
-	//}
+	for (Button* button : buttons) {
+		if (!button->IsPressed()) {
+			button->pressDetection(boxes);
+		}
+	}
 
 
 	
@@ -397,6 +391,46 @@ GameObject* GameLevelManager::AddBoxToWorld(const Vector3& position, Vector3 dim
 	return cube;
 }
 
+// note: 
+// button1 = box activated only, 
+// button2 = player activated only, (in progress)
+// button3 = can be activated by both
+
+GameObject* GameLevelManager::AddButtonToWorld(Vector3 size, const Vector3& position, const std::string name, Mesh* mesh, Shader* shader, Texture* texture) {
+	Vector3 offset = position + Vector3(0, 2.5f, 0);
+
+	GameObject* button = new GameObject(name);
+
+	AABBVolume* volume = new AABBVolume(size * 0.5f);
+	button->SetBoundingVolume((CollisionVolume*)volume);
+	button->GetTransform()
+		.SetScale(size)
+		.SetPosition(offset);
+
+	RenderObject* renderObject = new RenderObject(&button->GetTransform(), mesh, texture, shader);
+
+	if (name == "Button1") {
+		renderObject->SetColour(Vector4(1, 0, 0, 1)); // red
+	}
+	if (name == "Button2") {
+		renderObject->SetColour(Vector4(0, 1, 0, 1)); // green
+	}
+	if (name == "Button3") {
+		renderObject->SetColour(Vector4(0, 0, 1, 1)); // blue
+	}
+
+	button->SetRenderObject(renderObject);
+
+	button->SetPhysicsObject(new PhysicsObject(&button->GetTransform(), button->GetBoundingVolume()));
+
+	button->GetPhysicsObject()->SetInverseMass(0);
+	button->GetPhysicsObject()->InitCubeInertia();
+
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(button);
+
+	return button;
+}
+
 
 // map loading from json file
 void GameLevelManager::loadMap() {
@@ -405,12 +439,28 @@ void GameLevelManager::loadMap() {
 
 	if (::jsonParser::LoadLevel("../CSC8503/PrisonEscape/Levels/levelTest.json", level, objects)) {
 		for (const auto& obj : objects) {
-			if (obj.type == "Button") {
-
+			if (obj.type == "Button1") {
 				Button* newButton = new Button();
-				//newButton->spawnButton(obj.dimensions, obj.position, obj.type, mMeshList["Cube"], mShaderList["BasicShader"], mTextureList["DefaultTexture"]);
-				// code to check if box is box activated or something
+
+				newButton->setButtonObject(AddButtonToWorld(obj.dimensions, obj.position, obj.type, mMeshList["Cube"], mShaderList["BasicShader"], mTextureList["DefaultTexture"]));
 				newButton->SetBoxActivated(true);
+				buttons.push_back(newButton);
+			}
+
+			if (obj.type == "Button2") {
+				Button* newButton = new Button();
+
+				newButton->setButtonObject(AddButtonToWorld(obj.dimensions, obj.position, obj.type, mMeshList["Cube"], mShaderList["BasicShader"], mTextureList["DefaultTexture"]));
+				newButton->SetPlayerActivated(true);
+				buttons.push_back(newButton);
+			}
+
+			if (obj.type == "Button3") {
+				Button* newButton = new Button();
+
+				newButton->setButtonObject(AddButtonToWorld(obj.dimensions, obj.position, obj.type, mMeshList["Cube"], mShaderList["BasicShader"], mTextureList["DefaultTexture"]));
+				newButton->SetBoxActivated(true);
+				newButton->SetPlayerActivated(true);
 				buttons.push_back(newButton);
 			}
 

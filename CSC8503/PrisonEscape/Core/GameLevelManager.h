@@ -77,6 +77,7 @@ namespace NCL {
 
 			GameObject* AddWallToWorld(Vector3 wallSize, const Vector3& position, float x, float y, float z);
 			GameObject* AddBoxToWorld(const Vector3& position, Vector3 dimensions, const std::string name, float inverseMass = 10.0f);
+			GameObject* AddButtonToWorld(Vector3 size, const Vector3& position, const std::string name, Mesh* mesh, Shader* shader, Texture* texture);
 
 			bool isPlaying;
 		};
