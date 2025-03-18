@@ -98,7 +98,7 @@ PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** 
 		}
 	}
 
-	if (Window::GetKeyboard()->KeyPressed(KeyCodes::P) && !gameConfig->networkConfig.isMultiplayer)
+	if (Window::GetKeyboard()->KeyPressed(KeyCodes::P) && !gameConfig->networkConfig.isMultiplayer && gameConfig->networkConfig.isUsingSteam)
 	{
 		*newState = new PauseState(gameConfig);
 		return PushdownResult::Push;
