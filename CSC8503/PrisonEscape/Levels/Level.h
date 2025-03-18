@@ -6,12 +6,12 @@
 #include "Shader.h"
 #include "imgui/imgui.h"
 #include "NetworkBase.h"
-#include "PrisonEscape/Scripts/Player/Player.h"
 
 namespace NCL {
 	namespace CSC8503 {
 		class PatrolEnemy;
 
+		class Player;
 		class Level : public PacketReceiver
 		{
 		public:

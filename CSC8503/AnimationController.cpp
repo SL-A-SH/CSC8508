@@ -70,11 +70,12 @@ void AnimationController::UpdateAllAnimations(float dt, vector<GameObject*> anim
 void AnimationController::InitPlayerAnimMap() {
 	mPlayerAnimationMap = {
 		{GameObject::AnimationState::Idle, "PlayerIdle"},
-		{GameObject::AnimationState::Walk, "PlayerWalk"}
+		{GameObject::AnimationState::Walk, "PlayerWalk"},
 	};
 }
 
 void AnimationController::SetAnimationState(GameObject* obj, GameObject::AnimationState state) {
+
 	obj->GetRenderObject()->GetAnimObject()->ResetCurrentFrame();
 
 	AnimationObject::AnimationType animationType = obj->GetRenderObject()->GetAnimObject()->GetAnimationType();
@@ -102,7 +103,7 @@ void AnimationController::UpdateCurrentFrames(float dt) {
 void AnimationController::SetObjectList(vector<GameObject*> animationObjects) {
 	std::cout << "Object List Size: " << animationObjects.size() << std::endl; // YOU
 	for (auto& obj : animationObjects) {
-		if (obj->GetName().find("player") != std::string::npos) {
+		if (obj->GetName().find("playerOne") != std::string::npos || obj->GetName().find("playerTwo") != std::string::npos) {
 			std::cout << "Found Player" << std::endl;
 			mPlayersList.emplace_back((Player*)obj);
 			AnimationObject* animObj = obj->GetRenderObject()->GetAnimObject();

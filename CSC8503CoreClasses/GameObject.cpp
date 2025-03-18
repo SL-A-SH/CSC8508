@@ -1,4 +1,6 @@
 #include "GameObject.h"
+#include "../CSC8503/AnimationController.h"
+#include "../CSC8503/PrisonEscape/Core/GameLevelManager.h"
 #include "CollisionDetection.h"
 #include "PhysicsObject.h"
 #include "RenderObject.h"
@@ -14,6 +16,7 @@ GameObject::GameObject(const std::string& objectName)	{
 	physicsObject	= nullptr;
 	renderObject	= nullptr;
 	networkObject	= nullptr;
+	state = Default;
 }
 
 GameObject::~GameObject()	{
@@ -51,4 +54,17 @@ void GameObject::UpdateBroadphaseAABB() {
 }
 
 void GameObject::UpdateGame(float dt) {
+}
+
+void GameObject::SetObjectAnimationState(AnimationState newState) {
+	if (state == newState) {
+		return;
+	}
+	state = newState;
+	if (renderObject->GetAnimObject() != nullptr) {
+		AnimationController* animController = GameLevelManager::GetGameLevelManager()->GetAnimator();
+		animController->SetAnimationState(this, newState);
+	}
+	else {
+	}
 }

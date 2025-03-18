@@ -1,7 +1,9 @@
 #include "GameBase.h"
+#include "GameTechRenderer.h"
 #include "PrisonEscape/States/GameState.h"
 #include "PrisonEscape/States/MenuState.h"
 #include "PrisonEscape/Core/ImGuiManager.h"
+#include "PrisonEscape/Core/GameConfigManager.h"
 
 using namespace NCL;
 using namespace CSC8503;

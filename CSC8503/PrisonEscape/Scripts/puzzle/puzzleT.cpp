@@ -16,7 +16,7 @@ NormalCollidCube::~NormalCollidCube() {
 
 void NormalCollidCube::OnCollisionBegin(GameObject* otherObject) {
 	RenderObject* renderObject = GetRenderObject();
-	if (renderObject && otherObject->GetName() == "player") {
+	if (renderObject && (otherObject->GetName() == "playerOne" || otherObject->GetName() == "playerTwo")) {
 		static int colorIndex = 0;
 		std::vector<Vector4> colors = {
 			Vector4(1, 0, 0, 1), // Red
@@ -74,7 +74,7 @@ ButtonTrigger::ButtonTrigger(const std::string& name) : GameObject(name) {
 
 
 void ButtonTrigger::OnCollisionBegin(GameObject* otherObject) {
-	if (!isPressed && otherObject->GetName() == "player") {
+	if (!isPressed && (otherObject->GetName() == "playerOne" || otherObject->GetName() == "playerTwo")) {
 		isPressed = true;
 		GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));  // Change color to green (activated)
 

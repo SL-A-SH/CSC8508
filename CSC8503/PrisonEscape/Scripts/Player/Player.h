@@ -1,10 +1,7 @@
 #pragma once
 
 #include "../NCLCoreClasses/KeyboardMouseController.h"
-#include "GameTechRenderer.h"
 #include "PhysicsSystem.h"
-#include "Window.h"
-#include "Vector.h"
 
 namespace NCL {
 	namespace CSC8503 {
@@ -20,8 +17,6 @@ namespace NCL {
 
 
 		protected:
-			GameObject* playerObject;
-
 			KeyboardMouseController* controller;
 
 			bool useGravity;
@@ -41,8 +36,6 @@ namespace NCL {
 
 			float GetPlayerSpeed() const { return playerSpeed; }
 			void SetPlayerSpeed(float speed) { playerSpeed = speed; }
-
-			GameObject* GetPlayerObject() const { return playerObject; }
 
 
 			RayCollision closestCollision;
