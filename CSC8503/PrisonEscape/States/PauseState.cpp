@@ -3,7 +3,7 @@
 #include "GamePlayState.h"
 #include "MenuState.h"
 #include <iostream>
-
+#include "PrisonEscape/Core/GameSettingManager.h"
 #include "PrisonEscape/Core/GameBase.h"
 #include "PrisonEscape/Core/ImGuiManager.h"
 #include "PrisonEscape/Core/GameConfigManager.h"
@@ -101,7 +101,7 @@ void PauseState::DrawSettingPanel() {
 
 void PauseState::DrawAudioSettingPanel() {
 	std::vector<PanelSlider> sliders = { {"Master Volume", &volume, 0, 100,0.36f, 0.36f} };
-
+	GameSettingManager::Instance().SetVolume(volume);
 	auto backCallback = [this]() {
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("PauseSettingPanel", [this]() {DrawSettingPanel(); });
 		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("PauseAudioSettingPanel");
@@ -112,7 +112,7 @@ void PauseState::DrawAudioSettingPanel() {
 
 void PauseState::DrawVideoSettingPanel() {
 	std::vector<PanelSlider> sliders = { {"Brightness", &brightness, 0, 100, 0.36f, 0.36f} };
-
+	GameSettingManager::Instance().SetBrightness(brightness);
 	auto backCallback = [this]() {
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("PauseSettingPanel", [this]() { DrawSettingPanel(); });
 		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("PauseGraphicSettingPanel");

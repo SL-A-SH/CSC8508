@@ -163,7 +163,7 @@ PushdownState::PushdownResult MenuState::OnUpdate(float dt, PushdownState** newS
 						dynamic_cast<GamePlayState*>(*newState)->SetGameConfig(gameConfig);
 						gameConfig = nullptr; // Transfer ownership
 					}
-				};
+					};
 
 				connectionStage = ConnectionStage::None;
 			}
@@ -210,7 +210,7 @@ void MenuState::DrawMainMenuPanel() {
 		{"Single Player", [this]() {
 			std::cout << "Single Player" << std::endl;
 			stateChangeAction = [this](PushdownState** newState) {
-				
+
 				gameConfig = new GameConfigManager();
 				gameConfig->networkConfig.isMultiplayer = false;
 
@@ -264,7 +264,7 @@ void MenuState::DrawSettingPanel() {
 
 void MenuState::DrawAudioSettingPanel() {
 	std::vector<PanelSlider> sliders = { {"Master Volume", &volume, 0, 100, 0.36f, 0.36f} };
-
+	GameSettingManager::Instance().SetVolume(volume);
 	auto backCallback = [this]() {
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("SettingPanel", [this]() {DrawSettingPanel(); });
 		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("AudioSettingPanel");
@@ -275,7 +275,7 @@ void MenuState::DrawAudioSettingPanel() {
 
 void MenuState::DrawVideoSettingPanel() {
 	std::vector<PanelSlider> sliders = { {"Brightness", &brightness, 0, 100, 0.36f, 0.36f} };
-
+	GameSettingManager::Instance().SetBrightness(brightness);
 	auto backCallback = [this]() {
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("SettingPanel", [this]() {DrawSettingPanel(); });
 		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("GraphicSettingPanel");
@@ -299,7 +299,7 @@ void MenuState::DrawMultiplayerPanel() {
 	auto backCallback = [this]() {
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("MainMenuPanel", [this]() {DrawMainMenuPanel(); });
 		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MultiplayerPanel");
-	};
+		};
 
 	ImGuiManager::DrawPanel("Multiplayer", buttons, {}, backCallback);
 
@@ -547,7 +547,7 @@ void MenuState::DrawSteamLobbyPanel() {
 	auto backCallback = [this]() {
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("MultiplayerPanel", [this]() { DrawMultiplayerPanel(); });
 		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("SteamLobbyPanel");
-	};
+		};
 
 	ImGuiManager::DrawPanel("Steam Lobbies", buttons, {}, backCallback, "Select a lobby to join");
 
