@@ -44,13 +44,6 @@ function(Create_PC_CSC8503_Files)
     )
     source_group("Prison Escape Levels" FILES ${Prison_Escape_Levels})
 
-    set(Prison_Escape_Prefabs
-        "PrisonEscape/Prefabs/PatrolEnemy/PatrollingEnemy.cpp"
-        "PrisonEscape/Prefabs/PatrolEnemy/PatrollingEnemy.h" 
-		"PrisonEscape/Prefabs/PursuitEnemy/PursuingEnemy.cpp"
-        "PrisonEscape/Prefabs/PursuitEnemy/PursuingEnemy.h"
-    )
-    source_group("Prison Escape Prefabs" FILES ${Prison_Escape_Prefabs})
 
     set(Prison_Escape_Scripts
         "PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.cpp"
