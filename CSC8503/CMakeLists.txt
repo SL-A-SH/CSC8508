@@ -105,3 +105,16 @@ set(ROOT_NAMESPACE CSC8503)
 include_directories("../NCLCoreClasses/")
 include_directories("../CSC8503CoreClasses/")
 
+
+target_link_libraries(${PROJECT_NAME} LINK_PUBLIC NCLCoreClasses)
+target_link_libraries(${PROJECT_NAME} LINK_PUBLIC CSC8503CoreClasses)
+
+if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Prospero")
+	include_directories("../PS5Core/")
+	target_link_libraries(${PROJECT_NAME} LINK_PUBLIC PS5Core)
+else()
+	include_directories("../OpenGLRendering/")
+	target_link_libraries(${PROJECT_NAME} LINK_PUBLIC OpenGLRendering)
+endif()
+
+
