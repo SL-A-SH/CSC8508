@@ -150,12 +150,15 @@ PushdownState::PushdownResult MenuState::OnUpdate(float dt, PushdownState** newS
 
 		case ConnectionStage::Success:
 			if (connectionTimer >= 2.0f) {
+				connectionTimer = 0.0f;
 				isConnecting = false;
+
+				gameConfig->networkConfig.isMultiplayer = true;
+				gameConfig->networkConfig.isServer = networkAsServer;
+				gameConfig->networkConfig.isUsingSteam = useSteamNetworking;
 
 				stateChangeAction = [this](PushdownState** newState) {
 					if (gameConfig) {
-						gameConfig->networkConfig.isUsingSteam = useSteamNetworking;
-
 						*newState = new GamePlayState(true, networkAsServer, gameConfig);
 						dynamic_cast<GamePlayState*>(*newState)->SetGameConfig(gameConfig);
 						gameConfig = nullptr; // Transfer ownership
@@ -172,8 +175,7 @@ PushdownState::PushdownResult MenuState::OnUpdate(float dt, PushdownState** newS
 				connectionStage = ConnectionStage::None;
 
 				if (gameConfig) {
-					delete gameConfig;
-					gameConfig = nullptr;
+					gameConfig->networkConfig.isMultiplayer = false;
 				}
 
 				if (useSteamNetworking) {
@@ -214,7 +216,6 @@ void MenuState::DrawMainMenuPanel() {
 
 				if (this->gameConfig) {
 					*newState = new GamePlayState(false, false, gameConfig);
-					//dynamic_cast<GamePlayState*>(*newState)->SetGameConfig(this->gameConfig);
 					this->gameConfig = nullptr; // Transfer ownership
 				}
 
@@ -242,8 +243,6 @@ void MenuState::DrawMainMenuPanel() {
 
 
 void MenuState::DrawSettingPanel() {
-
-
 	std::vector<PanelButton> buttons = {
 		{"Audio", [this]() {
 				GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("AudioSettingPanel", [this]() {DrawAudioSettingPanel(); });
