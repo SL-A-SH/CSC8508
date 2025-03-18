@@ -20,7 +20,6 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	mPhysics = new PhysicsSystem(*mWorld);
 	mAnimator = new AnimationController(*mWorld, mPreLoadedAnimationList);
 	mPhysics->UseGravity(true);
-	// Move to another place if needed
 
 	InitAssets();
 	boxNumber = 0;
@@ -28,7 +27,7 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 
 	InitAssets();
 	InitAnimationObjects();
-}	
+}
 
 GameLevelManager::~GameLevelManager()
 {
@@ -90,7 +89,7 @@ void GameLevelManager::UpdateGame(float dt)
 	}
 
 
-	
+
 	for (Button* button : buttons) {
 		if (!button->IsPressed()) {
 			button->pressDetection(boxes);
@@ -102,7 +101,7 @@ void GameLevelManager::UpdateGame(float dt)
 	}
 
 
-	
+
 	Debug::Print("LEVELS", Vector2(25, 30), Debug::WHITE);
 }
 
@@ -215,7 +214,7 @@ void GameLevelManager::InitAssets()
 					}
 					});
 			}
-	
+
 			group = assetInfo[0];
 			groupInfo.clear();
 
@@ -290,7 +289,7 @@ Player* GameLevelManager::AddPlayerToWorld(const Transform& transform, const std
 
 void GameLevelManager::AddComponentsToPlayer(Player& playerObject, const Transform& playerTransform) {
 
-	SphereVolume* volume = new SphereVolume(PLAYER_MESH_SIZE/2);
+	SphereVolume* volume = new SphereVolume(PLAYER_MESH_SIZE / 2);
 	playerObject.SetBoundingVolume((CollisionVolume*)volume);
 
 	playerObject.GetTransform()
@@ -362,13 +361,13 @@ GameObject* GameLevelManager::AddWallToWorld(Vector3 dimensions, const Vector3& 
 	wall->GetPhysicsObject()->InitCubeInertia();
 
 	GameBase::GetGameBase()->GetWorld()->AddGameObject(wall);
-	
+
 	return wall;
 }
 
 GameObject* GameLevelManager::AddBoxToWorld(const Vector3& position, Vector3 dimensions, const std::string name, float inverseMass) {
 	Vector3 offset = position + Vector3(0, 2.0f, 0);
-	
+
 	GameObject* cube = new GameObject(name);
 
 	AABBVolume* volume = new AABBVolume(dimensions * 0.5f);

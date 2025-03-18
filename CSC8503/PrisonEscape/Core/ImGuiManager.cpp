@@ -27,25 +27,22 @@ void ImGuiManager::DrawPanel(
 ) {
 	ImVec2 windowSize = ImGui::GetWindowSize();
 
-	// Draw header
+
 	DrawHeader(title);
 
-	// Draw buttons
+
 	for (const auto& button : buttons) {
 		DrawButton(button.label, button.callback, button.xPosition, button.yPosition);
 	}
 
-	// Draw sliders
 	for (const auto& slider : sliders) {
 		DrawSlider(slider.label, slider.value, slider.min, slider.max, slider.xPosition, slider.yPosition);
 	}
 
-	// Draw back button if callback provided
 	if (backCallback) {
 		DrawBackButton(backCallback);
 	}
 
-	// Draw footer
 	DrawFooter(footer);
 }
 
@@ -57,13 +54,11 @@ void ImGuiManager::DrawMessagePanel(
 ) {
 	ImVec2 windowSize = ImGui::GetWindowSize();
 
-	// Draw header
+
 	DrawHeader(title);
 
-	// Draw message in center of screen
 	ImGui::PushFont(messageFont);
 
-	// Calculate text size to center it
 	ImVec2 textSize = ImGui::CalcTextSize(message.c_str());
 	ImGui::SetCursorPos(ImVec2(
 		(windowSize.x - textSize.x) * 0.5f,
@@ -73,14 +68,14 @@ void ImGuiManager::DrawMessagePanel(
 	ImGui::TextColored(messageColor, "%s", message.c_str());
 	ImGui::PopFont();
 
-	// Draw loading spinner/animation
+
 	float time = ImGui::GetTime();
 	float radius = 25.0f;
 	ImVec2 center = ImVec2(windowSize.x * 0.5f, windowSize.y * 0.5f);
 
 	ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
-	// Draw spinning circle
+
 	const int num_segments = 12;
 	const float PI = 3.14159265358979323846f;
 	float start = time * 5.0f;
@@ -98,7 +93,7 @@ void ImGuiManager::DrawMessagePanel(
 		);
 	}
 
-	// Draw cancel button if provided
+
 	if (cancelCallback) {
 		ImGui::PushFont(buttonFont);
 		ImGui::SetCursorPos(ImVec2(windowSize.x * 0.35f, windowSize.y * 0.65f));
@@ -119,7 +114,7 @@ void ImGuiManager::DrawHeader(const std::string& title) {
 	ImVec2 windowSize = ImGui::GetWindowSize();
 	ImVec2 textSize = ImGui::CalcTextSize(title.c_str());
 
-	// Keep it at the top and center it horizontally
+
 	ImVec2 textPos = ImVec2((windowSize.x - textSize.x) * 0.47f, windowSize.y * 0.05f); // Adjust vertical position as needed
 
 	ImGui::PushFont(headerFont);
@@ -134,7 +129,6 @@ void ImGuiManager::DrawButton(const std::string& label, const std::function<void
 	ImVec2 windowSize = ImGui::GetWindowSize();
 
 	ImGui::PushFont(buttonFont);
-	// Set cursor position using the new x and y positions
 	ImGui::SetCursorPos(ImVec2(windowSize.x * xPos, windowSize.y * yPos));
 
 	if (ImGui::Button(label.c_str(), ImVec2(windowSize.x * BUTTON_WIDTH_RATIO, windowSize.y * BUTTON_HEIGHT_RATIO))) {
@@ -150,11 +144,9 @@ void ImGuiManager::DrawButton(const std::string& label, const std::function<void
 void ImGuiManager::DrawSlider(const std::string& label, int* value, int min, int max, float horizontalPos, float verticalPos) {
 	ImVec2 windowSize = ImGui::GetWindowSize();
 
-	// Position the label
+
 	ImGui::SetCursorPos(ImVec2(windowSize.x * horizontalPos, windowSize.y * verticalPos));
 	ImGui::Text("%s", label.c_str());
-
-	// Align the slider right next to the label, or adjust position if needed
 	ImGui::SameLine();
 	ImGui::SetCursorPos(ImVec2(windowSize.x * (horizontalPos + 0.15f), windowSize.y * verticalPos)); // Slight offset for slider
 	ImGui::SetNextItemWidth(windowSize.x * 0.2f);

@@ -9,8 +9,8 @@ namespace NCL {
 		struct PanelButton {
 			std::string label;
 			std::function<void()> callback;
-			float xPosition; // Horizontal position (0.0 to 1.0 as percentage of panel width)
-			float yPosition; // Vertical position (0.0 to 1.0 as percentage of panel height)
+			float xPosition;
+			float yPosition;
 		};
 
 		struct PanelSlider {
@@ -18,8 +18,8 @@ namespace NCL {
 			int* value;
 			int min;
 			int max;
-			float xPosition; // Horizontal position (0.0 to 1.0 as percentage of panel width)
-			float yPosition; // Vertical position (0.0 to 1.0 as percentage of panel height)
+			float xPosition;
+			float yPosition;
 		};
 
 

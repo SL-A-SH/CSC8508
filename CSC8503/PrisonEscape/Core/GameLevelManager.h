@@ -26,11 +26,9 @@ namespace NCL {
 			void InitAssets();
 			void InitAnimationObjects() const;
 
-			// Player Methods
 			Player* AddPlayerToWorld(const Transform& transform, const std::string& playerName);
 			void AddComponentsToPlayer(Player& playerObj, const Transform& transform);
 
-			// Enemy Methods
 
 			PatrolEnemy* AddPatrolEnemyToWorld(const Transform& transform);
 			void AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const Transform& transform);
@@ -41,7 +39,7 @@ namespace NCL {
 			void SetCurrentLevel(Level* level) { mCurrentLevel = level; }
 			void AddLevel(Level* newLevel) { mLevelStack.push(newLevel); }
 
-			
+
 		private:
 			GameWorld* mWorld;
 			GameTechRenderer* mRenderer;
