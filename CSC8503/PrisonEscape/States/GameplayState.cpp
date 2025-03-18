@@ -98,7 +98,7 @@ PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** 
 		}
 	}
 
-	if (Window::GetKeyboard()->KeyPressed(KeyCodes::P))
+	if (Window::GetKeyboard()->KeyPressed(KeyCodes::P) && !gameConfig->networkConfig.isMultiplayer)
 	{
 		*newState = new PauseState(gameConfig);
 		return PushdownResult::Push;
@@ -110,6 +110,21 @@ PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** 
 		*newState = new GameOverState(GameOverReason::OutOfLives);
 		return PushdownResult::Push;
 	}
+
+	if (Window::GetKeyboard()->KeyPressed(KeyCodes::TAB) && gameConfig->networkConfig.isMultiplayer)
+	{
+		friendsPanelVisible = !friendsPanelVisible;
+		if (friendsPanelVisible)
+		{
+			GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("FriendsPanel", [this]() { DrawFriendsPanel(); });
+		}
+		else
+		{
+			GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("FriendsPanel");
+		}
+	}
+
+
 
 	return PushdownResult::NoChange;
 }
@@ -273,4 +288,118 @@ void GamePlayState::RegisterServerPacketHandlers() {
 void GamePlayState::RegisterClientPacketHandlers() {
 	gameConfig->networkConfig.client->RegisterPacketHandler(Player_Position, manager->GetCurrentLevel());
 	gameConfig->networkConfig.client->RegisterPacketHandler(Player_ID_Assignment, manager->GetCurrentLevel());
+}
+
+void GamePlayState::DrawFriendsPanel()
+{
+	// Get the Steam manager instance
+	SteamManager* steamManager = SteamManager::GetInstance();
+
+	if (!steamManager || !steamManager->IsInitialized()) {
+		// Steam not available - show error message
+		ImGuiManager::DrawMessagePanel("Steam Error", "Steam is not initialized. Please restart the game and make sure Steam is running.", ImVec4(1, 0, 0, 1));
+		return;
+	}
+
+	// Get the list of friends from Steam
+	std::vector<std::pair<std::string, uint64_t>> allFriends = steamManager->GetFriendsList();
+
+	// Filter online friends only
+	std::vector<std::pair<std::string, uint64_t>> onlineFriends;
+	for (const auto& friendInfo : allFriends) {
+		if (steamManager->IsFriendOnline(friendInfo.second) && steamManager->DoesFriendOwnGame(friendInfo.second)) {
+			onlineFriends.push_back(friendInfo);
+		}
+	}
+
+
+	DrawFriendsListWindow(onlineFriends);
+}
+
+void GamePlayState::DrawFriendsListWindow(const std::vector<std::pair<std::string, uint64_t>>& onlineFriends)
+{
+	// Get the screen size
+	ImVec2 screenSize = ImGui::GetIO().DisplaySize;
+
+	// Set the desired window size
+	ImVec2 windowSize(600, 400); // You can adjust the size as per your needs
+
+	// Calculate the position to center the window
+	ImVec2 windowPos = ImVec2((screenSize.x - windowSize.x) * 0.5f, (screenSize.y - windowSize.y) * 0.5f);
+
+	// Set the next window position and size before calling Begin()
+	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always);
+	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
+
+	if (ImGui::Begin("Friends List", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
+
+		// Custom drawing for the friends list
+		ImVec2 windowSize = ImGui::GetWindowSize();
+		float startY = windowSize.y * 0.25f; // Start below the header
+
+		SteamManager* steamManager = SteamManager::GetInstance();
+		if (gameConfig && gameConfig->networkConfig.isUsingSteam) {
+			uint64_t lobbyID = steamManager->GetCurrentLobbyID();
+			if (lobbyID != 0) {
+				ImGui::SetCursorPos(ImVec2(windowSize.x * 0.1f, startY));
+				ImGui::TextColored(ImVec4(0, 1, 1, 1), "Your Lobby ID: %llu", lobbyID);
+				startY += 50; // Move down a bit for the rest of the content
+			}
+		}
+
+		if (onlineFriends.empty()) {
+			// No online friends found
+			ImGui::SetCursorPos(ImVec2(windowSize.x * 0.2f, startY));
+			ImGui::TextColored(ImVec4(1, 1, 0, 1), "No online friends found who own the game");
+		}
+		else {
+			// Draw each friend with an invite button
+			float itemHeight = windowSize.y * 0.08f;
+			float padding = windowSize.y * 0.02f;
+			float currentY = startY;
+
+			ImGui::PushFont(ImGuiManager::GetButtonFont());
+
+			for (const auto& friendInfo : onlineFriends) {
+				const std::string& friendName = friendInfo.first;
+				uint64_t friendID = friendInfo.second;
+
+				// Friend name
+				ImGui::SetCursorPos(ImVec2(windowSize.x * 0.1f, currentY));
+				ImGui::Text("%s", friendName.c_str());
+
+				// Status indicator (green circle for online)
+				ImGui::SetCursorPos(ImVec2(windowSize.x * 0.5f, currentY + itemHeight * 0.5f));
+				ImGui::TextColored(ImVec4(0, 1, 0, 1), "?"); // Green dot for online
+
+				// Invite button
+				ImGui::SetCursorPos(ImVec2(windowSize.x * 0.6f, currentY));
+				std::string buttonLabel = "Invite##" + std::to_string(friendID);
+
+				if (ImGui::Button(buttonLabel.c_str(), ImVec2(windowSize.x * 0.25f, itemHeight))) {
+					// Send invite to this friend
+					steamManager->SendGameInvite(friendID);
+
+					// Show confirmation message
+					GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("InviteSentPanel", [friendName, this]() {
+						ImGuiManager::DrawMessagePanel("Invite Sent",
+							"Game invite sent to " + friendName,
+							ImVec4(0, 1, 0, 1),
+							[this]() {
+								GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("InviteSentPanel");
+								GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("FriendsPanel", [this]() { DrawFriendsPanel(); });
+							});
+						});
+
+					GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("FriendsPanel");
+				}
+
+				currentY += itemHeight + padding;
+			}
+
+			ImGui::PopFont();
+		}
+
+		ImGui::End(); // End the ImGui window
+	}
 }

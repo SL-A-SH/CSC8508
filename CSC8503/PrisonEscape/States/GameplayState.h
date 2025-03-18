@@ -28,10 +28,15 @@ namespace NCL {
 			}
 
 			void DrawHUDPanel();
+			void DrawFriendsPanel();
+			void DrawFriendsListWindow(const std::vector<std::pair<std::string, uint64_t>>& onlineFriends);
+
+			bool FriendsPanelVisible() const { return friendsPanelVisible; }
 
 		private:
 			GameLevelManager* manager;
 			GameConfigManager* gameConfig;
+			bool friendsPanelVisible = false;
 
 			void InitializeSteamMultiplayer(Level* level);
 			bool InitializeSteamNetworking();
