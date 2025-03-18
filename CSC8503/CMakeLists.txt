@@ -102,3 +102,6 @@ set(ALL_FILES
 add_executable(${PROJECT_NAME}  ${ALL_FILES})
 set(ROOT_NAMESPACE CSC8503)
 
+include_directories("../NCLCoreClasses/")
+include_directories("../CSC8503CoreClasses/")
+

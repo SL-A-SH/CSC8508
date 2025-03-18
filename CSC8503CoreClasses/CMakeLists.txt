@@ -1,8 +1,44 @@
-set(PROJECT_NAME CSC8503_Core_Classes)
+set(PROJECT_NAME CSC8503CoreClasses)
 
 ################################################################################
 # Source groups
 ################################################################################
+
+set(Collision_Detection
+	"AABBVolume.h"
+	"CapsuleVolume.h"    
+	"CollisionDetection.h"
+	"CollisionVolume.h"
+	"OBBVolume.h"
+	"SphereVolume.h"
+	"CapsuleVolume.cpp"    
+	"CollisionDetection.cpp"
+)
+source_group("Collision Detection" FILES ${Collision_Detection})
+
+set(Physics
+	"Constraint.h"  
+	"OrientationConstraint.h" 
+	"PhysicsObject.h"
+	"PhysicsSystem.h"
+	"PositionConstraint.h" 
+	"Ray.h"
+	"State.h"
+	"OrientationConstraint.cpp" 
+	"PhysicsObject.cpp"
+	"PhysicsSystem.cpp"
+	"PositionConstraint.cpp" 
+)
+source_group("Physics" FILES ${Physics})
+
+set(Networking
+	"GameClient.h"   
+	"GameServer.h"
+	"GameClient.cpp"   
+	"GameServer.cpp"
+)
+source_group("Networking" FILES ${Networking})
+
 set(AI_Behaviour_Tree
     "BehaviourAction.h"
     "BehaviourNode.h"
@@ -38,79 +74,9 @@ set(AI_Pathfinding
     "NavigationMesh.h"
     "NavigationMap.h"
     "NavigationPath.h"
-    )
+)
 source_group("AI\\Pathfinding" FILES ${AI_Pathfinding})
-
-
-set(Collision_Detection
-    "AABBVolume.h"
-    "CapsuleVolume.h"  
-    "CapsuleVolume.cpp"
-    "CollisionDetection.h"
-    "CollisionDetection.cpp"
-    "CollisionVolume.h"
-    "OBBVolume.h"
-    "QuadTree.h"
-    "QuadTree.cpp"
-    "Ray.h"
-    "SphereVolume.h"
-)
-source_group("Collision Detection" FILES ${Collision_Detection})
-
-set(Physics
-    "constraint.h"  
-    "constraint.h"  
-    "PositionConstraint.cpp"
-    "PositionConstraint.h"
-    "OrientationConstraint.cpp"
-    "OrientationConstraint.h"
-    "PhysicsObject.cpp"
-    "PhysicsObject.h"
-    "PhysicsSystem.cpp"
-    "PhysicsSystem.h"
-)
-source_group("Physics" FILES ${Physics})
-
-set(Header_Files
-    "Debug.h"
-    "GameObject.h"
-    "GameWorld.h"
-    "RenderObject.h"
-    "Transform.h"
-)
-source_group("Header Files" FILES ${Header_Files})
-
-set(Source_Files
-    "Debug.cpp"
-    "GameObject.cpp"
-    "GameWorld.cpp"
-    "RenderObject.cpp"
-    "Transform.cpp"
-)
-source_group("Source Files" FILES ${Source_Files})
-
-set(enet_Files
-    #"./enet/callbacks.h"
-    "./enet/callbacks.c"
-    "./enet/list.h"
-    "./enet/list.c"
-    "./enet/protocol.h"
-    "./enet/protocol.c"
-    "./enet/win32.h"
-    "./enet/win32.c"
-
-    "./enet/enet.h"
-    "./enet/time.h"
-    "./enet/types.h"
-    "./enet/utility.h"
-
-    "./enet/compress.c"
-    "./enet/host.c"
-    "./enet/packet.c"
-    "./enet/peer.c"
-)
-source_group("eNet" FILES ${enet_Files})
-
+ 
 set(Imgui
     "./imgui/imconfig.h"
     "./imgui/imgui.cpp"
@@ -127,49 +93,108 @@ set(Imgui
     "./imgui/imgui_impl_opengl3.h"
     "./imgui/imgui_impl_win32.cpp"
     "./imgui/imgui_impl_win32.h"
-)
+ )
 source_group("Imgui" FILES ${Imgui})
 
-if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Prospero")
-    message("PS5 CSC8503_Core_Classes")
-else()
-    message("PC CSC8503_Core_Classes")
 
+set(Header_Files
+	"Debug.h"
+	"GameObject.h"
+	"GameWorld.h"
+	"RenderObject.h"
+	"Transform.h"
+)
+source_group("Header Files" FILES ${Header_Files})
+
+set(Source_Files
+	"Debug.cpp"
+	"GameObject.cpp"
+	"GameWorld.cpp"
+	"RenderObject.cpp"
+	"Transform.cpp"
+)
+source_group("Source Files" FILES ${Source_Files})
+
+if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Prospero")
+    message("PS5 CSC8503_CoreClasses")
+else()
+    message("PC CSC8503_CoreClasses")
+	set(enet_Files
+    	#"./enet/callbacks.h"
+    	"./enet/callbacks.c"
+    	"./enet/list.h"
+    	"./enet/list.c"
+    	"./enet/protocol.h"
+    	"./enet/protocol.c"
+    	"./enet/win32.h"
+    	"./enet/win32.c"
+ 
+    	"./enet/enet.h"
+    	"./enet/time.h"
+   		"./enet/types.h"
+    	"./enet/utility.h"
+ 
+    	"./enet/compress.c"
+    	"./enet/host.c"
+    	"./enet/packet.c"
+    	"./enet/peer.c"
+	)
+ 	source_group("eNet" FILES ${enet_Files})
 endif()
+
 
 set(ALL_FILES
     ${Header_Files}
     ${Source_Files}
+	${Collision_Detection}
+	${Physics}
+	${Networking}
     ${AI_Behaviour_Tree}
     ${AI_Pushdown_Automata}
     ${AI_State_Machine}
     ${AI_Pathfinding}
-    ${Collision_Detection}
-    ${Networking}
-    ${Physics}
-    ${enet_Files}   
-    ${Imgui}   
- )
+	${enet_Files}   
+    ${Imgui} 
+)
 
 set_source_files_properties(${ALL_FILES} PROPERTIES LANGUAGE CXX)
+
 
 ################################################################################
 # Target
 ################################################################################
 add_library(${PROJECT_NAME} STATIC ${ALL_FILES})
+#use_props(${PROJECT_NAME} "${CMAKE_CONFIGURATION_TYPES}" "${DEFAULT_CXX_PROPS}")
 set(ROOT_NAMESPACE CSC8503CoreClasses)
 
-################################################################################
-# Dependencies
-################################################################################
-set(ADDITIONAL_LIBRARY_DEPENDENCIES
-    "NCLCoreClasses"
-    "ws2_32.lib"
+target_precompile_headers(${PROJECT_NAME} PRIVATE    
+	<fstream>
+    <sstream>
+	<iostream>
+	<iosfwd>
+	
+    <memory>
+	<string>
+	<thread>
+    <filesystem>
+    <functional> 
+	<assert.h>  
+	<chrono>	
+  
+    <unordered_set>
+	<set>
+    <vector>
+	<unordered_map>
+    <map> 
+	<stack> 
+
+	
+    "../NCLCoreClasses/Vector.h"
+    "../NCLCoreClasses/Quaternion.h"
+    "../NCLCoreClasses/Plane.h"
+    "../NCLCoreClasses/Matrix.h"
+	"../NCLCoreClasses/Camera.h"
 )
 
 include_directories("../NCLCoreClasses/")
 include_directories("./")
-
-if(MSVC)
-    target_link_libraries(${PROJECT_NAME} PRIVATE "ws2_32.lib")
-endif()
