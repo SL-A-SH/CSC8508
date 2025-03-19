@@ -14,6 +14,8 @@ Player::Player(GameWorld* world, const std::string& name) : GameObject()
     state = Default;
 	GameObject::SetName(name);
     mName = name;
+
+    health = 3;
 }
 
 Player::~Player()

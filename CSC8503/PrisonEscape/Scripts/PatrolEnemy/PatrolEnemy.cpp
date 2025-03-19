@@ -34,7 +34,7 @@ void PatrolEnemy::SetPatrolPoints(const std::vector<Vector3>& points) {
     patrolPoints = points;
 }
 
-void PatrolEnemy::SetPlayerObject(GameObject* player) {
+void PatrolEnemy::SetPlayerObject(Player* player) {
     playerObject = player;
 }
 

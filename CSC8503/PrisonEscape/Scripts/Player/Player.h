@@ -30,6 +30,7 @@ namespace NCL {
 
 		private:
 			float playerSpeed = 10.0f;
+			int health;
 
 		public:
 			std::string GetName() { return mName; }
@@ -37,6 +38,8 @@ namespace NCL {
 			float GetPlayerSpeed() const { return playerSpeed; }
 			void SetPlayerSpeed(float speed) { playerSpeed = speed; }
 
+			int GetHealth() const { return health; }
+			void SetHealth(int h) { health = h; }
 
 			RayCollision closestCollision;
 

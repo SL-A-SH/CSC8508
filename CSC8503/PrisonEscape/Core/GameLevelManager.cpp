@@ -314,7 +314,7 @@ void GameLevelManager::AddComponentsToPlayer(Player& playerObject, const Transfo
 
 //Should add enemy to the world, needs testing
 
-PatrolEnemy* GameLevelManager::AddPatrolEnemyToWorld(const std::string& enemyName,const std::vector<Vector3>& patrolPoints, GameObject* player) {
+PatrolEnemy* GameLevelManager::AddPatrolEnemyToWorld(const std::string& enemyName,const std::vector<Vector3>& patrolPoints, Player* player) {
 	Transform transform;
 	PatrolEnemy* mEnemyToAdd = new PatrolEnemy(mWorld, enemyName);
 	AddComponentsToPatrolEnemy(*mEnemyToAdd, transform);

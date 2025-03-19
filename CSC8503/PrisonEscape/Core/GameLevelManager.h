@@ -35,7 +35,7 @@ namespace NCL {
 
 			// Enemy Methods
 
-			PatrolEnemy* AddPatrolEnemyToWorld(const std::string& enemyName,const std::vector<Vector3>& patrolPoints,GameObject* player);
+			PatrolEnemy* AddPatrolEnemyToWorld(const std::string& enemyName,const std::vector<Vector3>& patrolPoints, Player* player);
 			void AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const Transform& transform);
 
 			void loadMap();
