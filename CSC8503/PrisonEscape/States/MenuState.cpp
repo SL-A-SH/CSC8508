@@ -713,10 +713,9 @@ void MenuState::DrawInviteAcceptedPanel(uint64_t lobbyID)
 		"You've been invited to join a game. Would you like to connect?",
 		ImVec4(0, 1, 0, 1),
 		[this, lobbyID]() {
-			// Accept - join the lobby
-			JoinSteamLobby(lobbyID);
 			GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("InviteAcceptedPanel");
 			GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MultiplayerPanel");
+			JoinSteamLobby(lobbyID);
 		},
 		[this]() {
 			// Decline

@@ -364,13 +364,13 @@ void GamePlayState::DrawFriendsListWindow(const std::vector<std::pair<std::strin
 				const std::string& friendName = friendInfo.first;
 				uint64_t friendID = friendInfo.second;
 
-				// Friend name
-				ImGui::SetCursorPos(ImVec2(windowSize.x * 0.1f, currentY));
-				ImGui::Text("%s", friendName.c_str());
-
 				// Status indicator (green circle for online)
-				ImGui::SetCursorPos(ImVec2(windowSize.x * 0.5f, currentY + itemHeight * 0.5f));
-				ImGui::TextColored(ImVec4(0, 1, 0, 1), "?"); // Green dot for online
+				ImGui::SetCursorPos(ImVec2(windowSize.x * 0.1f, currentY));
+				ImGui::TextColored(ImVec4(0, 1, 0, 1), "."); // Green dot for online
+
+				// Friend name
+				ImGui::SetCursorPos(ImVec2(windowSize.x * 0.2f, currentY));
+				ImGui::Text("%s", friendName.c_str());
 
 				// Invite button
 				ImGui::SetCursorPos(ImVec2(windowSize.x * 0.6f, currentY));
