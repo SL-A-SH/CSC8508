@@ -542,6 +542,12 @@ void MenuState::HandleSteamInviteAccepted(uint64_t lobbyID) {
 		return;
 	}
 
+	// Don't draw Invite Panel f already drawn
+	if (drawInvitePanel)
+	{
+		return;
+	}
+
 	// Show notification about the invite
 	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("InviteAcceptedPanel", [this, lobbyID]() { DrawInviteAcceptedPanel(lobbyID); });
 }
@@ -720,7 +726,6 @@ void MenuState::JoinSteamLobby(uint64_t lobbyID) {
 	if (steamManager->JoinLobby(lobbyID)) {
 		std::cout << "Joining Steam lobby: " << lobbyID << std::endl;
 		connectionStage = ConnectionStage::Success;
-
 	}
 	else {
 		std::cout << "Failed to join Steam lobby" << std::endl;
@@ -733,6 +738,8 @@ void MenuState::JoinSteamLobby(uint64_t lobbyID) {
 
 void MenuState::DrawInviteAcceptedPanel(uint64_t lobbyID)
 {
+	drawInvitePanel = true;
+
 	ImGuiManager::DrawPopupPanel("Game Invitation",
 		"You've been invited to join a game. Would you like to connect?",
 		ImVec4(0, 1, 0, 1),

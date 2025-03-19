@@ -62,6 +62,7 @@ namespace NCL {
 
 			SteamManager* steamManager;
 			bool useSteamNetworking = false;
+			bool drawInvitePanel = false;
 		};
 	}
 }
