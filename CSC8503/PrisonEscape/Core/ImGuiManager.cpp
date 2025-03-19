@@ -93,7 +93,6 @@ void ImGuiManager::DrawMessagePanel(
 		);
 	}
 
-
 	if (cancelCallback) {
 		ImGui::PushFont(buttonFont);
 		ImGui::SetCursorPos(ImVec2(windowSize.x * 0.35f, windowSize.y * 0.65f));
@@ -104,6 +103,53 @@ void ImGuiManager::DrawMessagePanel(
 
 		ImGui::PopFont();
 	}
+}
+
+void ImGuiManager::DrawPopupPanel(const std::string& title, const std::string& message,
+	const ImVec4& messageColor, std::function<void()> acceptCallback,
+	std::function<void()> declineCallback,
+	const std::string& acceptText, const std::string& declineText) {
+	ImVec2 screenSize = ImGui::GetIO().DisplaySize;
+	ImVec2 windowSize(400, 200);
+	ImVec2 windowPos = ImVec2((screenSize.x - windowSize.x) * 0.5f, (screenSize.y - windowSize.y) * 0.5f);
+
+	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always);
+	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
+
+	ImGui::Begin(title.c_str(), nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings);
+
+	// Display the message
+	ImGui::PushTextWrapPos(ImGui::GetContentRegionAvail().x);
+	ImGui::TextColored(messageColor, "%s", message.c_str());
+	ImGui::PopTextWrapPos();
+
+	// Calculate button positions
+	float buttonWidth = windowSize.x * 0.3f;
+	float buttonSpacing = windowSize.x * 0.1f;
+	float buttonsY = windowSize.y * 0.7f;
+
+	if (acceptCallback && declineCallback) {
+		// Two buttons mode
+		ImGui::SetCursorPos(ImVec2((windowSize.x - 2 * buttonWidth - buttonSpacing) * 0.5f, buttonsY));
+		if (ImGui::Button(acceptText.c_str(), ImVec2(buttonWidth, 0))) {
+			if (acceptCallback) acceptCallback();
+		}
+
+		ImGui::SetCursorPos(ImVec2((windowSize.x - 2 * buttonWidth - buttonSpacing) * 0.5f + buttonWidth + buttonSpacing, buttonsY));
+		if (ImGui::Button(declineText.c_str(), ImVec2(buttonWidth, 0))) {
+			if (declineCallback) declineCallback();
+		}
+	}
+	else if (acceptCallback) {
+		// Single button mode
+		ImGui::SetCursorPos(ImVec2((windowSize.x - buttonWidth) * 0.5f, buttonsY));
+		if (ImGui::Button(acceptText.c_str(), ImVec2(buttonWidth, 0))) {
+			if (acceptCallback) acceptCallback();
+		}
+	}
+
+	ImGui::End();
 }
 
 void ImGuiManager::DrawHeader(const std::string& title) {

@@ -42,6 +42,10 @@ namespace NCL {
 			static void DrawBackButton(const std::function<void()>& callback);
 			static void DrawFooter(const std::string& text);
 			static void DrawMessagePanel(const std::string& title, const std::string& message, const ImVec4& messageColor = ImVec4(1, 1, 1, 1), std::function<void()> cancelCallback = nullptr);
+			static void DrawPopupPanel(const std::string& title, const std::string& message,
+				const ImVec4& messageColor, std::function<void()> acceptCallback = nullptr,
+				std::function<void()> declineCallback = nullptr,
+				const std::string& acceptText = "OK", const std::string& declineText = "Cancel");
 
 		private:
 			static ImFont* buttonFont;

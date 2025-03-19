@@ -22,6 +22,10 @@ MenuState::MenuState() :
 	steamManager(nullptr)
 {
 	gameConfig = new GameConfigManager();
+
+	gameConfig->steamInviteCallback = [this](uint64_t lobbyID) {
+		HandleSteamInviteAccepted(lobbyID);
+	};
 }
 
 MenuState::~MenuState()
@@ -194,6 +198,7 @@ PushdownState::PushdownResult MenuState::OnUpdate(float dt, PushdownState** newS
 	}
 
 	if (steamManager && steamManager->IsInitialized()) {
+		gameConfig->SetSteamCallback();
 		steamManager->Update();
 	}
 
@@ -210,8 +215,6 @@ void MenuState::DrawMainMenuPanel() {
 		{"Single Player", [this]() {
 			std::cout << "Single Player" << std::endl;
 			stateChangeAction = [this](PushdownState** newState) {
-
-				gameConfig = new GameConfigManager();
 				gameConfig->networkConfig.isMultiplayer = false;
 
 				if (this->gameConfig) {
@@ -526,6 +529,30 @@ void MenuState::HandleSteamInvite(uint64_t friendSteamID)
 		std::cout << "Sending game invite to friend: " << friendSteamID << std::endl;
 		steamManager->SendGameInvite(friendSteamID);
 	}
+}
+
+void MenuState::HandleSteamInviteAccepted(uint64_t lobbyID)
+{
+	if (!steamManager || !steamManager->IsInitialized()) {
+		return;
+	}
+
+	// Show notification about the invite
+	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("InviteAcceptedPanel", [this, lobbyID]() {
+		ImGuiManager::DrawPopupPanel("Game Invitation",
+			"You've been invited to join a game. Would you like to connect?",
+			ImVec4(0, 1, 0, 1),
+			[this, lobbyID]() {
+				// Accept - join the lobby
+				JoinSteamLobby(lobbyID);
+				GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("InviteAcceptedPanel");
+			},
+			[this]() {
+				// Decline
+				GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("InviteAcceptedPanel");
+			},
+			"Join Game", "Decline");
+		});
 }
 
 void MenuState::DrawSteamLobbyPanel() {

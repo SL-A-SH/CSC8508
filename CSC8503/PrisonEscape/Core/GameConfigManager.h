@@ -28,6 +28,9 @@ namespace NCL {
 			void CreateClient();
 
 			NetworkConfig networkConfig;
+
+			void SetSteamCallback();
+			std::function<void(uint64_t)> steamInviteCallback;
 		};
 	}
 }

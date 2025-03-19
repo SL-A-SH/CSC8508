@@ -244,7 +244,7 @@ void GamePlayState::SetupServer(Level* level) {
 	// Set up server callbacks for client connections
 	gameConfig->networkConfig.server->SetPlayerConnectedCallback([this, level](int playerID) {
 		SetupClientPlayer(level);
-		});
+	});
 
 	// Register packet handlers for server
 	RegisterServerPacketHandlers();

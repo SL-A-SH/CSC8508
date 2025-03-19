@@ -109,27 +109,35 @@ void SteamManager::PollSteamCallbacks()
 #endif
 }
 
-void SteamManager::CheckForGameInvites() 
+void SteamManager::CheckForGameInvites()
 {
 #ifdef ENABLE_STEAM
-    // This is a simplified approach
-    // In a real implementation, you would track join requests from the GameRichPresenceJoinRequested_t callback
-    // For this simplified version, we'll just check if we received a join request through Steam API
+    if (m_JoinGameCallback && SteamUtils()->IsOverlayEnabled()) {
+        char pchConnectString[k_cchMaxRichPresenceValueLength];
+        if (SteamFriends()->GetFriendRichPresence(SteamUser()->GetSteamID(), "connect")) {
+            std::string connectString = SteamFriends()->GetFriendRichPresence(SteamUser()->GetSteamID(), "connect");
 
-    // NOTE: This is a placeholder. In a real implementation, 
-    // you would need to store previous state and check for changes
-    static bool lastJoiningState = false;
-    bool currentJoiningState = false; // This would be determined based on Steam's state
+            // Parse the connect string to get lobby ID
+            uint64_t lobbyID = 0;
+            try {
+                // Simplified parsing - adapt to your actual format
+                if (connectString.find("lobbyid=") != std::string::npos) {
+                    size_t pos = connectString.find("lobbyid=") + 8;
+                    lobbyID = std::stoull(connectString.substr(pos));
 
-    if (currentJoiningState && !lastJoiningState) {
-        // A join request was detected
-        if (m_JoinGameCallback) {
-            uint64_t friendID = 0; // In a real implementation, this would be the actual friend ID
-            m_JoinGameCallback(friendID);
+                    // Call the join game callback with the lobby ID
+                    if (m_JoinGameCallback) {
+                        m_JoinGameCallback(lobbyID);
+                    }
+
+                    SteamFriends()->ClearRichPresence();
+                }
+            }
+            catch (...) {
+                // Handle parsing errors
+            }
         }
     }
-
-    lastJoiningState = currentJoiningState;
 #endif
 }
 
@@ -162,11 +170,15 @@ void SteamManager::CheckForOverlayState()
 #endif
 }
 
-void SteamManager::SendGameInvite(uint64_t steamID) 
+void SteamManager::SendGameInvite(uint64_t steamID)
 {
 #ifdef ENABLE_STEAM
     if (!m_bInitialized || m_CurrentLobbyID == 0) return;
 
+    // Set Rich Presence that will be used when the invite is accepted
+    SteamFriends()->SetRichPresence("connect", ("lobbyid=" + std::to_string(m_CurrentLobbyID)).c_str());
+
+    // Send the actual invite
     SteamFriends()->InviteUserToGame(CSteamID(steamID), "Join my game!");
     std::cout << "Game invite sent to friend with ID: " << steamID << std::endl;
 #endif
@@ -243,20 +255,15 @@ bool SteamManager::DoesFriendOwnGame(uint64_t steamID)
     if (m_bInitialized) {
         CSteamID id(steamID);
 
-        // Get the app ID of the current game
         uint32 appID = SteamUtils()->GetAppID();
 
-        // Check if the friend owns the game
-        // Use a different approach instead of constructing CSteamID from appID
         bool bOwnsGame = false;
 
-        // Use the proper API to check if friend owns app
         if (SteamFriends()) {
             bOwnsGame = SteamFriends()->HasFriend(id, k_EFriendFlagImmediate);
         }
 
         // For testing/development purposes, always return true
-        // In production, you'd want more accurate ownership checks
         bOwnsGame = true;
 
         return bOwnsGame;
@@ -307,7 +314,6 @@ void SteamManager::OnLobbyCreated(LobbyCreated_t* pCallback, bool bIOFailure)
     m_CurrentLobbyID = pCallback->m_ulSteamIDLobby;
     std::cout << "Lobby created successfully. ID: " << m_CurrentLobbyID << std::endl;
 
-    // Set lobby data
     CSteamID lobbyID(m_CurrentLobbyID);
     SteamMatchmaking()->SetLobbyData(lobbyID, "game", "PrisonEscape");
     SteamMatchmaking()->SetLobbyJoinable(lobbyID, true);

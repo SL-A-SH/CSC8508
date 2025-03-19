@@ -1,4 +1,5 @@
 #include "GameConfigManager.h"
+#include "PrisonEscape/Core/Networking/SteamManager.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -75,5 +76,17 @@ void GameConfigManager::CreateClient()
 		networkConfig.client = nullptr;
 		networkConfig.isMultiplayer = false;
 		std::cout << "Falling back to single player mode\n";
+	}
+}
+
+void GameConfigManager::SetSteamCallback()
+{
+	SteamManager* steamManager = SteamManager::GetInstance();
+	if (steamManager && steamManager->IsInitialized()) {
+		steamManager->SetJoinGameCallback([this](uint64_t lobbyID) {
+			if (steamInviteCallback) {
+				steamInviteCallback(lobbyID);
+			}
+		});
 	}
 }
