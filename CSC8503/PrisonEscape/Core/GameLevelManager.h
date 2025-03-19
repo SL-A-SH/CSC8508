@@ -15,7 +15,7 @@ namespace NCL {
 	constexpr float PLAYER_MESH_SIZE = 3.0f;
 	constexpr float PLAYER_INVERSE_MASS = 0.5f;
 	constexpr float PATROL_ENEMY_MESH_SIZE = 3.0f;
-	constexpr float PATROL_ENEMY_INVERSE_MASS = 0.5f;
+	constexpr float PATROL_ENEMY_INVERSE_MASS = 0.1f;
 	namespace CSC8503 {
 		class jsonParser;
 		class GameTechRenderer;
@@ -35,8 +35,9 @@ namespace NCL {
 
 			// Enemy Methods
 
-			PatrolEnemy* AddPatrolEnemyToWorld(const std::string& enemyName);
+			PatrolEnemy* AddPatrolEnemyToWorld(const std::string& enemyName,const std::vector<Vector3>& patrolPoints,GameObject* player);
 			void AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const Transform& transform);
+
 			void loadMap();
 
 		public:

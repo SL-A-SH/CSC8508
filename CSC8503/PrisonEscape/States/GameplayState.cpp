@@ -75,7 +75,8 @@ GamePlayState::GamePlayState(bool multiplayer, bool asServer, GameConfigManager*
 		Vector3 playerPosition = level->GetPlayerOne()->GetTransform().GetPosition();
 		GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(Vector3(playerPosition.x, playerPosition.y, playerPosition.z));
 
-		PatrolEnemy* patrolEnemyOne = manager->AddPatrolEnemyToWorld("enemy");
+		std::vector<Vector3> enemyOnePatrolPoints = {Vector3(10,5,10), Vector3(20, 5, 20)};
+		PatrolEnemy* patrolEnemyOne = manager->AddPatrolEnemyToWorld("enemy", enemyOnePatrolPoints, player);
 		level->AddEnemyToLevel(patrolEnemyOne);
 	}
 
