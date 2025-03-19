@@ -15,6 +15,8 @@ GamePlayState::GamePlayState(bool multiplayer, bool asServer, GameConfigManager*
 	manager = new GameLevelManager(GameBase::GetGameBase()->GetWorld(), GameBase::GetGameBase()->GetRenderer());
 	Level* level = new LevelT();
 	level->Init();
+	manager->AddLevel(level);
+	manager->SetCurrentLevel(level);
 
 	bool useSteamNetworking = InitializeSteamNetworking();
 
@@ -30,8 +32,6 @@ GamePlayState::GamePlayState(bool multiplayer, bool asServer, GameConfigManager*
 		InitializeSinglePlayer(level);
 	}
 
-	manager->AddLevel(level);
-	manager->SetCurrentLevel(level);
 }
 
 void GamePlayState::OnAwake()
@@ -98,7 +98,7 @@ PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** 
 		}
 	}
 
-	if (Window::GetKeyboard()->KeyPressed(KeyCodes::P) && !gameConfig->networkConfig.isMultiplayer && gameConfig->networkConfig.isUsingSteam)
+	if (Window::GetKeyboard()->KeyPressed(KeyCodes::P) && !gameConfig->networkConfig.isMultiplayer)
 	{
 		*newState = new PauseState(gameConfig);
 		return PushdownResult::Push;
@@ -111,7 +111,7 @@ PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** 
 		return PushdownResult::Push;
 	}
 
-	if (Window::GetKeyboard()->KeyPressed(KeyCodes::TAB) && gameConfig->networkConfig.isMultiplayer)
+	if (Window::GetKeyboard()->KeyPressed(KeyCodes::TAB) && gameConfig->networkConfig.isMultiplayer && gameConfig->networkConfig.isUsingSteam)
 	{
 		friendsPanelVisible = !friendsPanelVisible;
 		if (friendsPanelVisible)
@@ -244,7 +244,7 @@ void GamePlayState::SetupServer(Level* level) {
 	// Set up server callbacks for client connections
 	gameConfig->networkConfig.server->SetPlayerConnectedCallback([this, level](int playerID) {
 		SetupClientPlayer(level);
-	});
+		});
 
 	// Register packet handlers for server
 	RegisterServerPacketHandlers();
@@ -383,7 +383,7 @@ void GamePlayState::DrawFriendsListWindow(const std::vector<std::pair<std::strin
 					// Show confirmation message
 					GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("InviteSentPanel", [friendName, this]() {
 						ImGuiManager::DrawMessagePanel("Invite Sent", "Game invite sent to " + friendName, ImVec4(0, 1, 0, 1));
-					});
+						});
 
 					GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("InviteSentPanel");
 					GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("FriendsPanel");
