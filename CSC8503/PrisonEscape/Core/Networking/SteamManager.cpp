@@ -112,29 +112,54 @@ void SteamManager::PollSteamCallbacks()
 void SteamManager::CheckForGameInvites()
 {
 #ifdef ENABLE_STEAM
+    // This would track actual join requests coming from other players,
+    // not from the local player
     if (m_JoinGameCallback && SteamUtils()->IsOverlayEnabled()) {
-        char pchConnectString[k_cchMaxRichPresenceValueLength];
-        if (SteamFriends()->GetFriendRichPresence(SteamUser()->GetSteamID(), "connect")) {
-            std::string connectString = SteamFriends()->GetFriendRichPresence(SteamUser()->GetSteamID(), "connect");
+        // Check for game invites - this is a simplified version
+        // In a real implementation, you'd use the proper callback
 
-            // Parse the connect string to get lobby ID
-            uint64_t lobbyID = 0;
-            try {
-                // Simplified parsing - adapt to your actual format
-                if (connectString.find("lobbyid=") != std::string::npos) {
-                    size_t pos = connectString.find("lobbyid=") + 8;
-                    lobbyID = std::stoull(connectString.substr(pos));
+        // Don't process invites if we're already the host of a lobby
+        if (IsInLobby() && IsLobbyOwner()) {
+            return;
+        }
 
-                    // Call the join game callback with the lobby ID
-                    if (m_JoinGameCallback) {
-                        m_JoinGameCallback(lobbyID);
+        // Process any pending game join requests
+        if (SteamFriends()) {
+            // This is a simplification - Steam has proper invite handling APIs
+            // that would be used in a full implementation
+
+            // For the prototype, we can check if there are any rich presence
+            // join requests that have been accepted
+            for (int i = 0; i < SteamFriends()->GetFriendCount(k_EFriendFlagImmediate); i++) {
+                CSteamID friendID = SteamFriends()->GetFriendByIndex(i, k_EFriendFlagImmediate);
+
+                // Skip our own ID
+                if (friendID == SteamUser()->GetSteamID()) continue;
+
+                // Check if this friend has sent us an invite
+                const char* connectString = SteamFriends()->GetFriendRichPresence(friendID, "connect");
+                if (connectString && strlen(connectString) > 0) {
+                    std::string connect = connectString;
+
+                    if (connect.find("lobbyid=") != std::string::npos) {
+                        size_t pos = connect.find("lobbyid=") + 8;
+                        try {
+                            uint64_t lobbyID = std::stoull(connect.substr(pos));
+
+                            // Call the callback with the lobby ID
+                            if (m_JoinGameCallback) {
+                                m_JoinGameCallback(lobbyID);
+                            }
+
+                            // Clear the processed invite
+                            SteamFriends()->ClearRichPresence();
+                            break;  // Only process one invite at a time
+                        }
+                        catch (...) {
+                            // Handle parsing errors
+                        }
                     }
-
-                    SteamFriends()->ClearRichPresence();
                 }
-            }
-            catch (...) {
-                // Handle parsing errors
             }
         }
     }

@@ -167,7 +167,7 @@ PushdownState::PushdownResult MenuState::OnUpdate(float dt, PushdownState** newS
 						dynamic_cast<GamePlayState*>(*newState)->SetGameConfig(gameConfig);
 						gameConfig = nullptr; // Transfer ownership
 					}
-					};
+				};
 
 				connectionStage = ConnectionStage::None;
 			}
@@ -531,9 +531,14 @@ void MenuState::HandleSteamInvite(uint64_t friendSteamID)
 	}
 }
 
-void MenuState::HandleSteamInviteAccepted(uint64_t lobbyID)
-{
+void MenuState::HandleSteamInviteAccepted(uint64_t lobbyID) {
 	if (!steamManager || !steamManager->IsInitialized()) {
+		return;
+	}
+
+	// Don't show invite notification to the host
+	if (steamManager->IsLobbyOwner() && steamManager->GetCurrentLobbyID() == lobbyID) {
+		// This is our own lobby - don't show an invite to ourselves
 		return;
 	}
 
