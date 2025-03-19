@@ -543,21 +543,7 @@ void MenuState::HandleSteamInviteAccepted(uint64_t lobbyID) {
 	}
 
 	// Show notification about the invite
-	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("InviteAcceptedPanel", [this, lobbyID]() {
-		ImGuiManager::DrawPopupPanel("Game Invitation",
-			"You've been invited to join a game. Would you like to connect?",
-			ImVec4(0, 1, 0, 1),
-			[this, lobbyID]() {
-				// Accept - join the lobby
-				JoinSteamLobby(lobbyID);
-				GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("InviteAcceptedPanel");
-			},
-			[this]() {
-				// Decline
-				GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("InviteAcceptedPanel");
-			},
-			"Join Game", "Decline");
-		});
+	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("InviteAcceptedPanel", [this, lobbyID]() { DrawInviteAcceptedPanel(lobbyID); });
 }
 
 void MenuState::DrawSteamLobbyPanel() {
@@ -710,6 +696,7 @@ void MenuState::JoinSteamLobby(uint64_t lobbyID) {
 	if (steamManager->JoinLobby(lobbyID)) {
 		std::cout << "Joining Steam lobby: " << lobbyID << std::endl;
 		connectionStage = ConnectionStage::Success;
+
 	}
 	else {
 		std::cout << "Failed to join Steam lobby" << std::endl;
@@ -718,4 +705,22 @@ void MenuState::JoinSteamLobby(uint64_t lobbyID) {
 
 	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("ConnectionPanel", [this]() {DrawConnectionMessagePanel(); });
 	GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("SteamLobbyPanel");
+}
+
+void MenuState::DrawInviteAcceptedPanel(uint64_t lobbyID)
+{
+	ImGuiManager::DrawPopupPanel("Game Invitation",
+		"You've been invited to join a game. Would you like to connect?",
+		ImVec4(0, 1, 0, 1),
+		[this, lobbyID]() {
+			// Accept - join the lobby
+			JoinSteamLobby(lobbyID);
+			GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("InviteAcceptedPanel");
+			GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MultiplayerPanel");
+		},
+		[this]() {
+			// Decline
+			GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("InviteAcceptedPanel");
+		},
+		"Join Game", "Decline");
 }

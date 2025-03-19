@@ -382,15 +382,10 @@ void GamePlayState::DrawFriendsListWindow(const std::vector<std::pair<std::strin
 
 					// Show confirmation message
 					GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("InviteSentPanel", [friendName, this]() {
-						ImGuiManager::DrawMessagePanel("Invite Sent",
-							"Game invite sent to " + friendName,
-							ImVec4(0, 1, 0, 1),
-							[this]() {
-								GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("InviteSentPanel");
-								GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("FriendsPanel", [this]() { DrawFriendsPanel(); });
-							});
-						});
+						ImGuiManager::DrawMessagePanel("Invite Sent", "Game invite sent to " + friendName, ImVec4(0, 1, 0, 1));
+					});
 
+					GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("InviteSentPanel");
 					GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("FriendsPanel");
 				}
 

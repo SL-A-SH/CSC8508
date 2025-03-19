@@ -27,6 +27,7 @@ namespace NCL {
 			void DrawVideoSettingPanel();
 			void DrawMultiplayerPanel();
 			void DrawSteamLobbyPanel();
+			void DrawInviteAcceptedPanel(uint64_t lobbyID);
 
 			// Connection handling methods
 			void StartServerProcess();
