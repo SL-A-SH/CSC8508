@@ -28,6 +28,8 @@ function(Create_PC_CSC8503_Files)
         "PrisonEscape/Core/ImGuiManager.h"
         "PrisonEscape/Core/GameSettingManager.h"
         "PrisonEscape/Core/GameSettingManager.cpp"
+        "PrisonEscape/Core/AudioManager.cpp"
+        "PrisonEscape/Core/AudioManager.h"
 
     )
     source_group("Prison Escape Core" FILES ${Prison_Escape_Core})
@@ -264,10 +266,17 @@ function(Create_PC_CSC8503_Files)
     include_directories("../OpenGLRendering/")
     include_directories("../NCLCoreClasses/")
     include_directories("../CSC8503CoreClasses/")
-    include_directories("${CMAKE_CURRENT_SOURCE_DIR}") 
+    include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
+    include_directories("../FMODCoreAPI/includes")
+    include_directories("../FMODCoreAPI/dlls")
+
 
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC NCLCoreClasses)
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC CSC8503CoreClasses)
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC OpenGLRendering)
+    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC "../FMODCoreAPI/libs/fmod_vc")
+    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC "../FMODCoreAPI/libs/fmodL_vc")
+
+    file(GLOB DLLS "../FMODCoreAPI/dlls/*.dll")
 
 endfunction()

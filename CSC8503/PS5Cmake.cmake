@@ -144,6 +144,7 @@ function(Create_PS5_CSC8503_Files)
     include_directories("../NCLCoreClasses/")
     include_directories("../PS5Core/")
     include_directories("../CSC8503CoreClasses/")
+    include_directories("../PS5Core")
 
     target_link_libraries(${PROJECT_NAME} PRIVATE ${NCLCoreClasses})
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC PS5Core)
