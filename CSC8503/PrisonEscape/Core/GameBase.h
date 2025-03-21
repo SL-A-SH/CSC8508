@@ -2,7 +2,8 @@
 
 #include "PushdownMachine.h"
 #include "GameWorld.h"
-
+#include "GameSettingManager.h"
+#include "AudioManager.h"
 
 
 namespace NCL {
@@ -22,7 +23,8 @@ namespace NCL {
 			static GameTechRenderer* renderer;
 			static GameWorld* world;
 			static GameBase* instance;
-
+			static GameSettingManager* gameSettings;
+			static AudioManager* audioManager;
 			PushdownMachine* stateMachine;
 
 		private:
@@ -33,9 +35,12 @@ namespace NCL {
 			static GameWorld* GetWorld() { return world; }
 			static GameBase* GetGameBase();
 			static PushdownMachine* GetStateMachine() { return instance->stateMachine; }
+			static GameSettingManager* GetGameSettings() { return gameSettings; }
+			static AudioManager* GetAudioManager() { return audioManager; }
 
 			void SetGameConfig(GameConfigManager* config) { gameConfig = config; }
 			GameConfigManager* GetGameConfig() const { return gameConfig; }
+
 
 			void QuitGame();
 		};

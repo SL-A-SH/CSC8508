@@ -14,58 +14,58 @@ using namespace CSC8503;
 GameTechRenderer* GameBase::renderer = nullptr;
 GameWorld* GameBase::world = nullptr;
 GameBase* GameBase::instance = nullptr;
-GameSettingManager gameSettings;  // Create an instance of GameSettingManager
-AudioManager audio(&gameSettings); // Pass it to AudioManager
-
-
+GameSettingManager* GameBase::gameSettings = nullptr;
+AudioManager* GameBase::audioManager = nullptr;
 GameBase::GameBase()
 {
-    gameConfig = nullptr;
+	gameConfig = nullptr;
 }
 
 GameBase::~GameBase() {
-    delete stateMachine;
-    delete renderer;
-    delete world;
-    // Shutdown the audio manager when the game is destroyed
+	delete stateMachine;
+	delete renderer;
+	delete world;
+	// Shutdown the audio manager when the game is destroyed
 }
 
 void GameBase::InitialiseGame() {
-    world = new GameWorld();
+	world = new GameWorld();
 	renderer = new GameTechRenderer(*world);
 	stateMachine = nullptr;
 	stateMachine = new PushdownMachine(new MenuState());
+	gameSettings = new GameSettingManager();
+	audioManager = new AudioManager();
 	ImGuiManager::Initialize();
 
 
-    if (!audio.Initialize()) {
-        std::cerr << "Failed to initialize AudioManager!" << std::endl;
-        return;
-    }
-    if (audio.Initialize()) {
-        audio.PrintOutputDevices();  // Print out available audio output devices and the current one
-        audio.SelectOutputDevice(0); // Select the first output device
-    }
-    else {
-        std::cerr << "Failed to initialize AudioManager!" << std::endl;
-    }
+	if (!audioManager->Initialize()) {
+		std::cerr << "Failed to initialize AudioManager!" << std::endl;
+		return;
+	}
+	if (audioManager->Initialize()) {
+		audioManager->PrintOutputDevices();  // Print out available audio output devices and the current one
+		audioManager->SelectOutputDevice(0); // Select the first output device
+	}
+	else {
+		std::cerr << "Failed to initialize AudioManager!" << std::endl;
+	}
 
-    std::string soundFile = "PrisonEscape/Assets/SFX/Shotgun.wav";
-    audio.LoadSound(soundFile);
-    audio.PlaySound(soundFile);  // Play without loop for testing
+	std::string soundFile = "PrisonEscape/Assets/SFX/Shotgun.wav";
+	audioManager->LoadSound(soundFile);
+	audioManager->PlaySound(soundFile);  // Play without loop for testing
 }
 
 void GameBase::UpdateGame(float dt) {
-    renderer->Update(dt);
-    stateMachine->Update(dt);
-    renderer->Render();
-    Debug::UpdateRenderables(dt);
-    audio.Update();
+	renderer->Update(dt);
+	stateMachine->Update(dt);
+	renderer->Render();
+	Debug::UpdateRenderables(dt);
+	audioManager->Update();
 	if (Window::GetKeyboard()->KeyPressed(KeyCodes::H))
 	{
 		renderer->USEDEBUGMODE = !renderer->USEDEBUGMODE;
 	}
-    
+
 }
 
 GameBase* GameBase::GetGameBase()

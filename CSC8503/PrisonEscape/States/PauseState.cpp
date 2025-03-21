@@ -101,7 +101,7 @@ void PauseState::DrawSettingPanel() {
 
 void PauseState::DrawAudioSettingPanel() {
 	std::vector<PanelSlider> sliders = { {"Master Volume", &volume, 0, 100,0.36f, 0.36f} };
-	GameSettingManager::Instance().SetVolume(volume);
+	GameBase::GetGameSettings()->SetVolume(volume);
 	auto backCallback = [this]() {
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("PauseSettingPanel", [this]() {DrawSettingPanel(); });
 		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("PauseAudioSettingPanel");
@@ -112,7 +112,7 @@ void PauseState::DrawAudioSettingPanel() {
 
 void PauseState::DrawVideoSettingPanel() {
 	std::vector<PanelSlider> sliders = { {"Brightness", &brightness, 0, 100, 0.36f, 0.36f} };
-	GameSettingManager::Instance().SetBrightness(brightness);
+	GameBase::GetGameSettings()->SetBrightness(brightness);
 	auto backCallback = [this]() {
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("PauseSettingPanel", [this]() { DrawSettingPanel(); });
 		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("PauseGraphicSettingPanel");

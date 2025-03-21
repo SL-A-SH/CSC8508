@@ -25,7 +25,7 @@ MenuState::MenuState() :
 
 	gameConfig->steamInviteCallback = [this](uint64_t lobbyID) {
 		HandleSteamInviteAccepted(lobbyID);
-	};
+		};
 }
 
 MenuState::~MenuState()
@@ -167,7 +167,7 @@ PushdownState::PushdownResult MenuState::OnUpdate(float dt, PushdownState** newS
 						dynamic_cast<GamePlayState*>(*newState)->SetGameConfig(gameConfig);
 						gameConfig = nullptr; // Transfer ownership
 					}
-				};
+					};
 
 				connectionStage = ConnectionStage::None;
 			}
@@ -267,7 +267,7 @@ void MenuState::DrawSettingPanel() {
 
 void MenuState::DrawAudioSettingPanel() {
 	std::vector<PanelSlider> sliders = { {"Master Volume", &volume, 0, 100, 0.36f, 0.36f} };
-	GameSettingManager::Instance().SetVolume(volume);
+	GameBase::GetGameSettings()->SetVolume(volume);
 	auto backCallback = [this]() {
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("SettingPanel", [this]() {DrawSettingPanel(); });
 		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("AudioSettingPanel");
@@ -278,7 +278,7 @@ void MenuState::DrawAudioSettingPanel() {
 
 void MenuState::DrawVideoSettingPanel() {
 	std::vector<PanelSlider> sliders = { {"Brightness", &brightness, 0, 100, 0.36f, 0.36f} };
-	GameSettingManager::Instance().SetBrightness(brightness);
+	GameBase::GetGameSettings()->SetBrightness(brightness);
 	auto backCallback = [this]() {
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("SettingPanel", [this]() {DrawSettingPanel(); });
 		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("GraphicSettingPanel");

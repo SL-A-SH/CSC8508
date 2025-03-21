@@ -1,206 +1,211 @@
+#pragma once
+
 #include "AudioManager.h"
 #include <fmod_errors.h>  // For FMOD error strings
 #include <iostream>
+#include "GameBase.h"
 
+AudioManager::AudioManager()
+{
 
-AudioManager::AudioManager(GameSettingManager* settings) : system(nullptr), gameSettings(settings) {}
+}
 
 AudioManager::~AudioManager() {
-    // Release all sounds and the FMOD system when the AudioManager is destroyed
-    for (auto& soundPair : sounds) {
-        soundPair.second->release();
-    }
-    system->close();
-    system->release();
+	// Release all sounds and the FMOD system when the AudioManager is destroyed
+	for (auto& soundPair : sounds) {
+		soundPair.second->release();
+	}
+	system->close();
+	system->release();
 }
 
 bool AudioManager::Initialize() {
-    FMOD_RESULT result = FMOD::System_Create(&system);
-    if (result != FMOD_OK) {
-        std::cerr << "Failed to create FMOD system!" << std::endl;
-        return false;
-    }
+	FMOD_RESULT result = FMOD::System_Create(&system);
+	if (result != FMOD_OK) {
+		std::cerr << "Failed to create FMOD system!" << std::endl;
+		return false;
+	}
 
-    result = system->init(512, FMOD_INIT_NORMAL, nullptr);
-    if (result != FMOD_OK) {
-        std::cerr << "Failed to initialize FMOD!" << std::endl;
-        return false;
-    }
+	result = system->init(512, FMOD_INIT_NORMAL, nullptr);
+	if (result != FMOD_OK) {
+		std::cerr << "Failed to initialize FMOD!" << std::endl;
+		return false;
+	}
 
-    return true;
+	return true;
 }
 
 void AudioManager::LoadSound(const std::string& filePath) {
-    if (sounds.find(filePath) != sounds.end()) {
-        std::cerr << "Sound already loaded: " << filePath << std::endl;
-        return;
-    }
+	if (sounds.find(filePath) != sounds.end()) {
+		std::cerr << "Sound already loaded: " << filePath << std::endl;
+		return;
+	}
 
-    FMOD::Sound* sound = nullptr;
-    FMOD_RESULT result = system->createSound(filePath.c_str(), FMOD_DEFAULT, nullptr, &sound);
-    if (result != FMOD_OK) {
-        std::cerr << "Failed to load sound: " << filePath << " Error: " << FMOD_ErrorString(result) << std::endl;
-        return;
-    }
+	FMOD::Sound* sound = nullptr;
+	FMOD_RESULT result = system->createSound(filePath.c_str(), FMOD_DEFAULT, nullptr, &sound);
+	if (result != FMOD_OK) {
+		std::cerr << "Failed to load sound: " << filePath << " Error: " << FMOD_ErrorString(result) << std::endl;
+		return;
+	}
 
-    sounds[filePath] = sound;
-    std::cout << "Sound loaded: " << filePath << std::endl;
+	sounds[filePath] = sound;
+	std::cout << "Sound loaded: " << filePath << std::endl;
 }
 
 void AudioManager::PlaySound(const std::string& filePath, bool loop) {
-    // Check if the sound is loaded
-    if (sounds.find(filePath) == sounds.end()) {
-        std::cerr << "Sound not loaded: " << filePath << std::endl;
-        return;
-    }
+	// Check if the sound is loaded
+	if (sounds.find(filePath) == sounds.end()) {
+		std::cerr << "Sound not loaded: " << filePath << std::endl;
+		return;
+	}
 
-    FMOD::Sound* sound = sounds[filePath];
-    FMOD::Channel* channel = nullptr;
-    
-    std::cout << "Attempting to play sound: " << filePath << std::endl;
-    bool isMuted = false;
-    FMOD_RESULT result = system->playSound(sound, nullptr, isMuted, &channel);
-    if (result != FMOD_OK) {
-        std::cerr << "Failed to play sound: " << FMOD_ErrorString(result) << std::endl;
-        return;
-    }
-   
-    FMOD_RESULT result2 = channel->getMute(&isMuted);
+	FMOD::Sound* sound = sounds[filePath];
+	FMOD::Channel* channel = nullptr;
 
-    if (result != FMOD_OK) {
-        std::cerr << "Error checking mute status: " << FMOD_ErrorString(result) << std::endl;
-    }
-    else {
-        if (isMuted) {
-            std::cout << "The sound is muted." << std::endl;
-        }
-        else {
-            std::cout << "The sound is not muted." << std::endl;
-        }
-    }
-    // Set looping if requested
-    result = channel->setLoopCount(loop ? -1 : 0);
-    if (result != FMOD_OK) {
-        std::cerr << "Failed to set loop count: " << FMOD_ErrorString(result) << std::endl;
-        return;
-    }
+	std::cout << "Attempting to play sound: " << filePath << std::endl;
+	bool isMuted = false;
+	FMOD_RESULT result = system->playSound(sound, nullptr, isMuted, &channel);
+	if (result != FMOD_OK) {
+		std::cerr << "Failed to play sound: " << FMOD_ErrorString(result) << std::endl;
+		return;
+	}
 
-    // Set volume for debugging to make sure the sound isn't muted
-    result = channel->setVolume(1.0f);  // Full volume
-    if (result != FMOD_OK) {
-        std::cerr << "Failed to set volume: " << FMOD_ErrorString(result) << std::endl;
-    }
+	FMOD_RESULT result2 = channel->getMute(&isMuted);
 
-    // Output the status of the channel (whether it is playing or not)
-    bool isPlaying = false;
-    result = channel->isPlaying(&isPlaying);
-    if (result != FMOD_OK) {
-        std::cerr << "Error checking if sound is playing: " << FMOD_ErrorString(result) << std::endl;
-    }
-    else {
-        if (isPlaying) {
-            std::cout << "Sound is playing!" << std::endl;
-        }
-        else {
-            std::cerr << "Sound is not playing." << std::endl;
-        }
-    }
+	if (result != FMOD_OK) {
+		std::cerr << "Error checking mute status: " << FMOD_ErrorString(result) << std::endl;
+	}
+	else {
+		if (isMuted) {
+			std::cout << "The sound is muted." << std::endl;
+		}
+		else {
+			std::cout << "The sound is not muted." << std::endl;
+		}
+	}
+	// Set looping if requested
+	result = channel->setLoopCount(loop ? -1 : 0);
+	if (result != FMOD_OK) {
+		std::cerr << "Failed to set loop count: " << FMOD_ErrorString(result) << std::endl;
+		return;
+	}
 
-    channels[filePath] = channel;
-    
+	// Set volume for debugging to make sure the sound isn't muted
+	result = channel->setVolume(1.0f);  // Full volume
+	if (result != FMOD_OK) {
+		std::cerr << "Failed to set volume: " << FMOD_ErrorString(result) << std::endl;
+	}
+
+	// Output the status of the channel (whether it is playing or not)
+	bool isPlaying = false;
+	result = channel->isPlaying(&isPlaying);
+	if (result != FMOD_OK) {
+		std::cerr << "Error checking if sound is playing: " << FMOD_ErrorString(result) << std::endl;
+	}
+	else {
+		if (isPlaying) {
+			std::cout << "Sound is playing!" << std::endl;
+		}
+		else {
+			std::cerr << "Sound is not playing." << std::endl;
+		}
+	}
+
+	channels[filePath] = channel;
+
 }
 
 void AudioManager::StopSound(const std::string& filePath) {
-    // Check if the sound is playing
-    if (channels.find(filePath) == channels.end()) {
-        std::cerr << "Sound is not playing: " << filePath << std::endl;
-        return;
-    }
+	// Check if the sound is playing
+	if (channels.find(filePath) == channels.end()) {
+		std::cerr << "Sound is not playing: " << filePath << std::endl;
+		return;
+	}
 
-    FMOD::Channel* channel = channels[filePath];
-    channel->stop();
-    channels.erase(filePath);
-    std::cout << "Stopped sound: " << filePath << std::endl;
+	FMOD::Channel* channel = channels[filePath];
+	channel->stop();
+	channels.erase(filePath);
+	std::cout << "Stopped sound: " << filePath << std::endl;
 }
 
 void AudioManager::Update() {
-    // Update the FMOD system
-    FMOD_RESULT result = system->update();
-    if (result != FMOD_OK) {
-        std::cerr << "FMOD update failed: " << FMOD_ErrorString(result) << std::endl;
-    }
+	// Update the FMOD system
+	FMOD_RESULT result = system->update();
+	if (result != FMOD_OK) {
+		std::cerr << "FMOD update failed: " << FMOD_ErrorString(result) << std::endl;
+	}
 
-    /*// Check if any of the sounds are still playing
-    for (auto& channelPair : channels) {
-        FMOD::Channel* channel = channelPair.second;
-        bool isPlaying = false;
+	/*// Check if any of the sounds are still playing
+	for (auto& channelPair : channels) {
+		FMOD::Channel* channel = channelPair.second;
+		bool isPlaying = false;
 
-        // Check if the sound is playing
-        result = channel->isPlaying(&isPlaying);
-        if (result != FMOD_OK) {
-            std::cerr << "Error checking if sound is playing: " << FMOD_ErrorString(result) << std::endl;
-        }
-        else if (isPlaying) {
-            std::cout << "Sound '" << channelPair.first << "' is playing!" << std::endl;
-        }
-        else {
-            std::cout << "Sound '" << channelPair.first << "' is not playing." << std::endl;
-        }
-    }*/
-    if (gameSettings) {
-        float volume = gameSettings->GetVolume() / 100.0f; // Convert to 0.0 - 1.0 range
-        for (auto& pair : channels) {
-            FMOD::Channel* channel = pair.second;
-            if (channel) {
-                channel->setVolume(volume);
-            }
-        }
-    }
-    system->update();
+		// Check if the sound is playing
+		result = channel->isPlaying(&isPlaying);
+		if (result != FMOD_OK) {
+			std::cerr << "Error checking if sound is playing: " << FMOD_ErrorString(result) << std::endl;
+		}
+		else if (isPlaying) {
+			std::cout << "Sound '" << channelPair.first << "' is playing!" << std::endl;
+		}
+		else {
+			std::cout << "Sound '" << channelPair.first << "' is not playing." << std::endl;
+		}
+	}*/
+	if (GameBase::GetGameSettings()) {
+		float volume = GameBase::GetGameSettings()->GetVolume() / 100.0f; // Convert to 0.0 - 1.0 range
+		for (auto& pair : channels) {
+			FMOD::Channel* channel = pair.second;
+			if (channel) {
+				channel->setVolume(volume);
+			}
+		}
+	}
+	system->update();
 }
 void AudioManager::PrintOutputDevices() {
-    int numDrivers = 0;
-    FMOD_RESULT result = system->getNumDrivers(&numDrivers);
-    if (result != FMOD_OK) {
-        std::cerr << "Error getting number of drivers: " << FMOD_ErrorString(result) << std::endl;
-        return;
-    }
+	int numDrivers = 0;
+	FMOD_RESULT result = system->getNumDrivers(&numDrivers);
+	if (result != FMOD_OK) {
+		std::cerr << "Error getting number of drivers: " << FMOD_ErrorString(result) << std::endl;
+		return;
+	}
 
-    if (numDrivers == 0) {
-        std::cerr << "No audio drivers found." << std::endl;
-        return;
-    }
+	if (numDrivers == 0) {
+		std::cerr << "No audio drivers found." << std::endl;
+		return;
+	}
 
-    std::cout << "Available output devices:" << std::endl;
-    for (int i = 0; i < numDrivers; ++i) {
-        char name[256];
-        result = system->getDriverInfo(i, name, sizeof(name), nullptr, nullptr,nullptr,nullptr);
-        if (result == FMOD_OK) {
-            std::cout << "Driver " << i << ": " << name << std::endl;
-        }
-        else {
-            std::cerr << "Error getting driver info: " << FMOD_ErrorString(result) << std::endl;
-        }
-    }
+	std::cout << "Available output devices:" << std::endl;
+	for (int i = 0; i < numDrivers; ++i) {
+		char name[256];
+		result = system->getDriverInfo(i, name, sizeof(name), nullptr, nullptr, nullptr, nullptr);
+		if (result == FMOD_OK) {
+			std::cout << "Driver " << i << ": " << name << std::endl;
+		}
+		else {
+			std::cerr << "Error getting driver info: " << FMOD_ErrorString(result) << std::endl;
+		}
+	}
 
-    // Get the current driver
-    int currentDriver = 0;
-    result = system->getDriver(&currentDriver);
-    if (result == FMOD_OK) {
-        std::cout << "Currently using driver " << currentDriver << std::endl;
-    }
-    else {
-        std::cerr << "Error getting current driver: " << FMOD_ErrorString(result) << std::endl;
-    }
-    
+	// Get the current driver
+	int currentDriver = 0;
+	result = system->getDriver(&currentDriver);
+	if (result == FMOD_OK) {
+		std::cout << "Currently using driver " << currentDriver << std::endl;
+	}
+	else {
+		std::cerr << "Error getting current driver: " << FMOD_ErrorString(result) << std::endl;
+	}
+
 }
 
 void AudioManager::SelectOutputDevice(int driverIndex) {
-    FMOD_RESULT result = system->setDriver(driverIndex);
-    if (result != FMOD_OK) {
-        std::cerr << "Failed to set output device: " << FMOD_ErrorString(result) << std::endl;
-    }
-    else {
-        std::cout << "Output device set to driver " << driverIndex << std::endl;
-    }
+	FMOD_RESULT result = system->setDriver(driverIndex);
+	if (result != FMOD_OK) {
+		std::cerr << "Failed to set output device: " << FMOD_ErrorString(result) << std::endl;
+	}
+	else {
+		std::cout << "Output device set to driver " << driverIndex << std::endl;
+	}
 }

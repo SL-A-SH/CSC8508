@@ -1,6 +1,5 @@
 #pragma once
-#include "PrisonEscape/Core/GameBase.h"
-#include "PrisonEscape/Core/ImGuiManager.h"
+
 
 namespace NCL {
 	namespace CSC8503 {
