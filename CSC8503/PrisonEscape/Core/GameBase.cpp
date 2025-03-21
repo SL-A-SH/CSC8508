@@ -3,14 +3,18 @@
 #include "PrisonEscape/States/MenuState.h"
 #include "PrisonEscape/Core/ImGuiManager.h"
 #include "AudioManager.h"
+#include "GameSettingManager.h"
+
+
 using namespace NCL;
 using namespace CSC8503;
 
 GameTechRenderer* GameBase::renderer = nullptr;
 GameWorld* GameBase::world = nullptr;
 GameBase* GameBase::instance = nullptr;
+GameSettingManager gameSettings;  // Create an instance of GameSettingManager
+AudioManager audio(&gameSettings); // Pass it to AudioManager
 
-AudioManager audio;  // Create an instance of AudioManager
 
 GameBase::GameBase()
 {

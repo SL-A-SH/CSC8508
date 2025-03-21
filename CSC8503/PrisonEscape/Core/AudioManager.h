@@ -4,10 +4,11 @@
 #include <fmod.hpp>
 #include <string>
 #include <unordered_map>
+#include "GameSettingManager.h"
 
 class AudioManager {
 public:
-    AudioManager();
+    AudioManager(GameSettingManager* settings);
     ~AudioManager();
 
     // Initialize FMOD system
@@ -28,9 +29,9 @@ public:
     void PrintOutputDevices();
     void SelectOutputDevice(int driverIndex);
 private:
-    FMOD::System* system;  // FMOD system
-    std::unordered_map<std::string, FMOD::Sound*> sounds;  // Loaded sounds
-    std::unordered_map<std::string, FMOD::Channel*> channels;  // Currently playing sounds
+    FMOD::System* system;
+    std::unordered_map<std::string, FMOD::Sound*> sounds;
+    std::unordered_map<std::string, FMOD::Channel*> channels;
+    GameSettingManager* gameSettings;  // Reference to settings manager
 };
-
 #endif // AUDIOMANAGER_H

@@ -2,7 +2,8 @@
 #include <fmod_errors.h>  // For FMOD error strings
 #include <iostream>
 
-AudioManager::AudioManager() : system(nullptr) {}
+
+AudioManager::AudioManager(GameSettingManager* settings) : system(nullptr), gameSettings(settings) {}
 
 AudioManager::~AudioManager() {
     // Release all sounds and the FMOD system when the AudioManager is destroyed
@@ -129,7 +130,7 @@ void AudioManager::Update() {
         std::cerr << "FMOD update failed: " << FMOD_ErrorString(result) << std::endl;
     }
 
-    // Check if any of the sounds are still playing
+    /*// Check if any of the sounds are still playing
     for (auto& channelPair : channels) {
         FMOD::Channel* channel = channelPair.second;
         bool isPlaying = false;
@@ -144,6 +145,15 @@ void AudioManager::Update() {
         }
         else {
             std::cout << "Sound '" << channelPair.first << "' is not playing." << std::endl;
+        }
+    }*/
+    if (gameSettings) {
+        float volume = gameSettings->GetVolume() / 100.0f; // Convert to 0.0 - 1.0 range
+        for (auto& pair : channels) {
+            FMOD::Channel* channel = pair.second;
+            if (channel) {
+                channel->setVolume(volume);
+            }
         }
     }
     system->update();
