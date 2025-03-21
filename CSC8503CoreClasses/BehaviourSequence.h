@@ -6,8 +6,8 @@ public:
 	BehaviourSequence(const std::string& nodeName) : BehaviourNodeWithChildren(nodeName) {}
 	~BehaviourSequence() {}
 	BehaviourState Execute(float dt) override {
-		//std::cout << "Executing sequence " << name << "\n";
 		for (auto& i : childNodes) {
+			std::cout << "EXECUTING" << std::endl;
 			BehaviourState nodeState = i->Execute(dt);
 			switch (nodeState) {
 				case Success: continue;

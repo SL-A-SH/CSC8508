@@ -19,13 +19,14 @@ PatrolEnemy::~PatrolEnemy() {
     delete rootSequence;
 }
 
-void PatrolEnemy::Update(float dt) {
-
+void PatrolEnemy::UpdateGame(float dt) {
     std::string stateStr;
     switch (currentState) {
     case PATROL:  stateStr = "PATROL"; break;
     case CAUGHT: stateStr = "CAUGHT"; break;
     }
+
+    std::cout << "State str is: " << stateStr << std::endl;
 
     rootSequence->Execute(dt);
 }
@@ -60,8 +61,11 @@ bool PatrolEnemy::CanSeePlayer() const {
 }
 
 void PatrolEnemy::InitBehaviourTree() {
+
     BehaviourAction* patrolAction = new BehaviourAction("Patrol",
         [&](float dt, BehaviourState state) -> BehaviourState {
+
+            std::cout << "Moving: " << std::endl; 
             if (currentState != PATROL) {
                 return Failure;
             }
@@ -89,14 +93,15 @@ void PatrolEnemy::InitBehaviourTree() {
             return Ongoing;
         });
 
-    BehaviourAction* pursuitAction = new BehaviourAction("Caught",
+    BehaviourAction* catchAction = new BehaviourAction("Caught",
         [&](float dt, BehaviourState state) -> BehaviourState {
+            std::cout << "CAUGHT" << std::endl;
             if (currentState != CAUGHT) {
                 return Failure;
             }
 
             if (warningTimer > 0.0f) {
-				Debug::Print("Warning: " + std::to_string(warningTimer), Vector2(10, 10));
+                std::cout << "Warning: " << std::to_string(warningTimer);
                 warningTimer -= dt;
             }
 
@@ -109,9 +114,12 @@ void PatrolEnemy::InitBehaviourTree() {
             return Ongoing;
         });
 
+
     modeSelector = new BehaviourSelector("Mode Selector");
-    modeSelector->AddChild(pursuitAction);
     modeSelector->AddChild(patrolAction);
+    modeSelector->AddChild(catchAction);
+
+
 
     rootSequence = new BehaviourSequence("Root");
     rootSequence->AddChild(modeSelector);
