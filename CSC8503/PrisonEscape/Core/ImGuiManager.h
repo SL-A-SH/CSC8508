@@ -1,8 +1,6 @@
 #pragma once
+
 #include "imgui/imgui.h"
-#include <string>
-#include <vector>
-#include <functional>
 
 namespace NCL {
 	namespace CSC8503 {
@@ -21,7 +19,6 @@ namespace NCL {
 			float xPosition;
 			float yPosition;
 		};
-
 
 		class ImGuiManager {
 		public:
@@ -45,7 +42,8 @@ namespace NCL {
 			static void DrawPopupPanel(const std::string& title, const std::string& message,
 				const ImVec4& messageColor, std::function<void()> acceptCallback = nullptr,
 				std::function<void()> declineCallback = nullptr,
-				const std::string& acceptText = "OK", const std::string& declineText = "Cancel");
+				const std::string& acceptText = "OK", const std::string& declineText = "Cancel"
+			);
 
 		private:
 			static ImFont* buttonFont;

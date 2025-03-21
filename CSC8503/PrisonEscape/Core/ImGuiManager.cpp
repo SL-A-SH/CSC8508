@@ -1,7 +1,12 @@
-#include "ImGuiManager.h"
+#include <string>
+#include <vector>
+#include <functional>
 #include "Texture.h"
-#include "GameBase.h"
+
+#include "PrisonEscape/Core/ImGuiManager.h"
+#include "PrisonEscape/Core/GameBase.h"
 #include "PrisonEscape/States/MenuState.h"
+
 using namespace NCL;
 using namespace CSC8503;
 

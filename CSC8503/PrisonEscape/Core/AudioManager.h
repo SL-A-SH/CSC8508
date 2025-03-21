@@ -5,9 +5,6 @@
 
 namespace NCL {
 	namespace CSC8503 {
-		std::string;
-		std::unordered_map;
-
 		class AudioManager {
 		public:
 			AudioManager();
