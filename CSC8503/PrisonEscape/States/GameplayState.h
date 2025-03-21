@@ -1,7 +1,12 @@
 #pragma once
 
-#include "PhysicsSystem.h"
 #include "GameState.h"
+
+namespace NCL {
+	namespace Rendering {
+		class Texture;
+	}
+}
 
 namespace NCL {
 	namespace CSC8503 {
@@ -9,7 +14,7 @@ namespace NCL {
 		class GameConfigManager;
 		class GameLevelManager;
 		class Level;
-		class NCL::Rendering::Texture;
+
 
 		class GamePlayState : public GameState {
 		public:
@@ -43,8 +48,8 @@ namespace NCL {
 			void RegisterServerPacketHandlers();
 			void RegisterClientPacketHandlers();
 
-			Texture* heartFilledTexture = nullptr;
-			Texture* heartEmptyTexture = nullptr;
+			NCL::Rendering::Texture* heartFilledTexture = nullptr;
+			NCL::Rendering::Texture* heartEmptyTexture = nullptr;
 
 		public:
 			GameConfigManager* GetGameConfig() const { return gameConfig; }
