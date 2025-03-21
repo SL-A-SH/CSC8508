@@ -1,16 +1,10 @@
 #pragma once
 
-#include "../CSC8503/PrisonEscape/Core/GameLevelManager.h"
-#include "PushdownState.h"
-#include "GameWorld.h"
-#include "Window.h"
-#include "Debug.h"
-#include "PhysicsSystem.h"
 #include "GameState.h"
-#include "imgui/imgui.h"
 
 namespace NCL {
 	namespace CSC8503 {
+		class PushdownState;
 		class SteamManager;
 
 		class MenuState : public GameState {

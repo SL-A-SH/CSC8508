@@ -1,16 +1,17 @@
-
-
-#include "MenuState.h"
-#include "GamePlayState.h"
+#include "PushdownState.h"
 #include <iostream>
+#include "Window.h"
 #include "Debug.h"
+#include "imgui/imgui.h"
+
+#include "PrisonEscape/States/MenuState.h"
+#include "PrisonEscape/States/GameplayState.h"
 #include "PrisonEscape/Core/GameSettingManager.h"
 #include "PrisonEscape/Core/ImGuiManager.h"
 #include "PrisonEscape/Core/Networking/SteamManager.h"
 
 using namespace NCL;
 using namespace CSC8503;
-
 
 MenuState::MenuState() :
 	isConnecting(false),
@@ -25,7 +26,7 @@ MenuState::MenuState() :
 
 	gameConfig->steamInviteCallback = [this](uint64_t lobbyID) {
 		HandleSteamInviteAccepted(lobbyID);
-		};
+	};
 }
 
 MenuState::~MenuState()
