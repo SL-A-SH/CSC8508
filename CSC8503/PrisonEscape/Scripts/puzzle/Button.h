@@ -15,12 +15,14 @@ namespace NCL {
 
 			void SetPlayerActivated(bool state) { playerActivated = state; }
 			void SetBoxActivated(bool state) { boxActivated = state; }
+			void setButtonObject(GameObject* object) { buttonObject = object; }
 
 			bool IsPlayerActivated() const { return playerActivated; }
 			bool IsBoxActivated() const { return boxActivated; }
 			bool IsPressed() const { return pressed; }
 
-			void pressDetection(const std::vector<GameObject*>& boxes);
+			void pressDetection(const std::vector<GameObject*>& boxes/*, GameObject* player*/);
+
 		private:
 			bool pressed;
 			bool playerActivated;
