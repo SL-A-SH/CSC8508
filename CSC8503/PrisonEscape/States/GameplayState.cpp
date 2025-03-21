@@ -14,7 +14,6 @@
 #include "PrisonEscape/Core/Networking/SteamManager.h"
 
 using namespace NCL;
-using namespace Rendering;
 using namespace CSC8503;
 
 GamePlayState::GamePlayState(bool multiplayer, bool asServer, GameConfigManager* config)
@@ -137,6 +136,15 @@ PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** 
 
 
 	return PushdownResult::NoChange;
+}
+
+void GamePlayState::SetGameConfig(GameConfigManager* config)
+{
+	if (gameConfig != nullptr && gameConfig != config) {
+		delete gameConfig;
+	}
+	gameConfig = config;
+	GameBase::GetGameBase()->SetGameConfig(gameConfig);
 }
 
 void GamePlayState::DrawHUDPanel() {
