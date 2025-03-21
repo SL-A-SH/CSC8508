@@ -5,6 +5,9 @@
 #include <iostream>
 #include "GameBase.h"
 
+using namespace NCL;
+using namespace CSC8503;
+
 AudioManager::AudioManager()
 {
 
