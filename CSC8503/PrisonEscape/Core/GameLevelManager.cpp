@@ -8,7 +8,6 @@
 #include <fstream>
 #include <PrisonEscape/Scripts/puzzle/HidingArea.h>
 #include <iostream>
-#include "jsonParser.h"
 #include "AnimationController.h"
 
 using namespace NCL;
@@ -343,7 +342,7 @@ void GameLevelManager::AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const T
 // world gameobjects called in loadMap();
 GameObject* GameLevelManager::AddWallToWorld(Vector3 dimensions, const Vector3& position, float x, float y, float z) {
 
-	Vector3 offset = position + Vector3(0, 2.0f, 0);
+	Vector3 offset = position + Vector3(0, 3.0f, 0);
 
 	GameObject* wall = new GameObject("Wall");
 
@@ -365,6 +364,29 @@ GameObject* GameLevelManager::AddWallToWorld(Vector3 dimensions, const Vector3& 
 	GameBase::GetGameBase()->GetWorld()->AddGameObject(wall);
 	
 	return wall;
+}
+
+GameObject* GameLevelManager::AddFloorToWorld(Vector3 size, const Vector3& position) {
+	Vector3 offset = position + Vector3(0, 3.0f, 0);
+
+	GameObject* floor = new GameObject("Floor");
+
+	AABBVolume* volume = new AABBVolume(size * 0.5f);
+
+	floor->SetBoundingVolume((CollisionVolume*)volume);
+	floor->GetTransform()
+		.SetScale(size)
+		.SetPosition(offset);
+
+	floor->SetRenderObject(new RenderObject(&floor->GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+	floor->SetPhysicsObject(new PhysicsObject(&floor->GetTransform(), floor->GetBoundingVolume()));
+
+	floor->GetPhysicsObject()->SetInverseMass(0);
+	floor->GetPhysicsObject()->InitCubeInertia();
+
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(floor);
+
+	return floor;
 }
 
 GameObject* GameLevelManager::AddBoxToWorld(const Vector3& position, Vector3 dimensions, const std::string name, float inverseMass) {
@@ -431,72 +453,81 @@ GameObject* GameLevelManager::AddButtonToWorld(Vector3 size, const Vector3& posi
 	return button;
 }
 
+void GameLevelManager::CreateButton(const InGameObject& obj) {
+	Button* newButton = new Button();
+
+	newButton->setButtonObject(
+		AddButtonToWorld(obj.dimensions, obj.position, obj.type,
+			mMeshList["Cube"], mShaderList["BasicShader"],
+			mTextureList["DefaultTexture"])
+	);
+
+	if (obj.type == "Button1") {
+		newButton->SetBoxActivated(true);
+	}
+	else if (obj.type == "Button2") {
+		newButton->SetPlayerActivated(true);
+	}
+	else if (obj.type == "Button3") {
+		newButton->SetBoxActivated(true);
+		newButton->SetPlayerActivated(true);
+	}
+
+	buttons.push_back(newButton);
+}
+
+void GameLevelManager::CreateBox(const InGameObject& obj) {
+	pushableBox = AddBoxToWorld(obj.position, obj.dimensions, obj.type + std::to_string(++boxNumber));
+	boxes.push_back(pushableBox);
+}
+
+void GameLevelManager::CreateWall(const InGameObject& obj) {
+	AddWallToWorld(obj.dimensions, obj.position, obj.orientation.x, obj.orientation.y, obj.orientation.z);
+}
+
+void GameLevelManager::CreateFloor(const InGameObject& obj) {
+	AddFloorToWorld(obj.dimensions, obj.position);
+}
+
+// logging object placement for debugging
+void GameLevelManager::LogObjectPlacement(const InGameObject& obj) {
+	std::cout << "ID: " << obj.id << " | Type: " << obj.type << "\n"
+		<< "Position -> x: " << obj.position.x << " y: " << obj.position.y << " z: " << obj.position.z << "\n"
+		<< "Dimensions -> x: " << obj.dimensions.x << " y: " << obj.dimensions.y << " z: " << obj.dimensions.z << "\n"
+		<< "Orientation -> x: " << obj.orientation.x << " y: " << obj.orientation.y << " z: " << obj.orientation.z << "\n"
+		<< "Function to place " + obj.type + "\n\n";
+}
 
 // map loading from json file
 void GameLevelManager::loadMap() {
 	int level;
 	std::vector<InGameObject> objects;
 
+	// maybe alter here or add argument for level switching
 	if (::jsonParser::LoadLevel("../CSC8503/PrisonEscape/Levels/levelTest.json", level, objects)) {
 		for (const auto& obj : objects) {
-			if (obj.type == "Button1") {
-				Button* newButton = new Button();
-
-				newButton->setButtonObject(AddButtonToWorld(obj.dimensions, obj.position, obj.type, mMeshList["Cube"], mShaderList["BasicShader"], mTextureList["DefaultTexture"]));
-				newButton->SetBoxActivated(true);
-				buttons.push_back(newButton);
-			}
-
-			if (obj.type == "Button2") {
-				Button* newButton = new Button();
-
-				newButton->setButtonObject(AddButtonToWorld(obj.dimensions, obj.position, obj.type, mMeshList["Cube"], mShaderList["BasicShader"], mTextureList["DefaultTexture"]));
-				newButton->SetPlayerActivated(true);
-				buttons.push_back(newButton);
-			}
-
-			if (obj.type == "Button3") {
-				Button* newButton = new Button();
-
-				newButton->setButtonObject(AddButtonToWorld(obj.dimensions, obj.position, obj.type, mMeshList["Cube"], mShaderList["BasicShader"], mTextureList["DefaultTexture"]));
-				newButton->SetBoxActivated(true);
-				newButton->SetPlayerActivated(true);
-				buttons.push_back(newButton);
+			if (obj.type.find("Button") != std::string::npos) {
+				CreateButton(obj);
 			}
 
 			if (obj.type == "Box") {
-
-				pushableBox = AddBoxToWorld(obj.position, obj.dimensions, (obj.type + std::to_string(++boxNumber)));
-				std::cout << pushableBox->GetName() + " one box\n";
-				boxes.push_back(pushableBox);
+				CreateBox(obj);
 			}
 
 			if (obj.type == "Wall") {
-
-				AddWallToWorld(obj.dimensions, obj.position, obj.orientation.x, obj.orientation.y, obj.orientation.z);
-			}
-
-			if (obj.type == "Exit") {
-				std::cout << "ID: " << obj.id << " Type: " << obj.type << "\n";
-				std::cout << "Position -> x: " << obj.position.x << " y: " << obj.position.y << " z: " << obj.position.z << "\n";
-				std::cout << " Dimensions -> x: " << obj.dimensions.x << " y: " << obj.dimensions.y << " z: " << obj.dimensions.z << "\n";
-				std::cout << "Orientation -> x: " << obj.orientation.x << " y: " << obj.orientation.y << " z: " << obj.orientation.z << "\n";
-				std::cout << "Function to place " + obj.type + "\n\n";
+				CreateWall(obj);
 			}
 
 			if (obj.type == "Floor") {
-				std::cout << "ID: " << obj.id << " Type: " << obj.type << "\n";
-				std::cout << "Position -> x: " << obj.position.x << " y: " << obj.position.y << " z: " << obj.position.z << "\n";
-				std::cout << " Dimensions -> x: " << obj.dimensions.x << " y: " << obj.dimensions.y << " z: " << obj.dimensions.z << "\n";
-				std::cout << "Orientation -> x: " << obj.orientation.x << " y: " << obj.orientation.y << " z: " << obj.orientation.z << "\n";
-				std::cout << "Function to place " + obj.type + "\n\n";
-
+				CreateFloor(obj);
 			}
 
-
+			else {
+				LogObjectPlacement(obj);
+			}
 		}
 	}
 	else {
-		std::cerr << "Failed to load level \n";
+		std::cerr << "Can't load level \n";
 	}
 }

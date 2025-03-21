@@ -3,6 +3,7 @@
 #include "PhysicsSystem.h"
 #include "MeshAnimation.h"
 #include "MeshMaterial.h"
+#include "../CSC8503/jsonParser.h"
 #include "../CSC8503/PrisonEscape/Scripts/puzzle/Button.h"
 #include "../CSC8503/PrisonEscape/Levels/Level.h"
 #include "../CSC8503/PrisonEscape/Scripts/Player/Player.h"
@@ -64,7 +65,6 @@ namespace NCL {
 			std::stack<Level*> mLevelStack;
 			AnimationController* mAnimator;
 
-
 			vector<GameObject*> mUpdatableObjectList;
 
 			std::unordered_map<std::string, Mesh*> mMeshList;
@@ -76,8 +76,15 @@ namespace NCL {
 			std::map<std::string, MeshAnimation*> mPreLoadedAnimationList;
 
 			GameObject* AddWallToWorld(Vector3 wallSize, const Vector3& position, float x, float y, float z);
+			GameObject* AddFloorToWorld(Vector3 size, const Vector3& position);
 			GameObject* AddBoxToWorld(const Vector3& position, Vector3 dimensions, const std::string name, float inverseMass = 10.0f);
 			GameObject* AddButtonToWorld(Vector3 size, const Vector3& position, const std::string name, Mesh* mesh, Shader* shader, Texture* texture);
+
+			void LogObjectPlacement(const InGameObject& obj);
+			void CreateWall(const InGameObject& obj);
+			void CreateButton(const InGameObject& obj);
+			void CreateBox(const InGameObject& obj);
+			void CreateFloor(const InGameObject& obj);
 
 			bool isPlaying;
 		};
