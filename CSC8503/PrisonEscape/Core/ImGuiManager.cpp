@@ -185,7 +185,7 @@ void ImGuiManager::DrawButton(const std::string& label, const std::function<void
 	ImGui::SetCursorPos(ImVec2(windowSize.x * xPos, windowSize.y * yPos));
 
 
-	ImGui::PushFont(buttonFont);
+
 	ImGui::SetCursorPos(ImVec2(windowSize.x * xPos, windowSize.y * yPos));
 	if (ImGui::Button(label.c_str(), ImVec2(windowSize.x * BUTTON_WIDTH_RATIO, windowSize.y * BUTTON_HEIGHT_RATIO))) {
 		if (callback) {

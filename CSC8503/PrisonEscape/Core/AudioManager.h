@@ -1,7 +1,7 @@
 #ifndef AUDIOMANAGER_H
 #define AUDIOMANAGER_H
 
-#include <fmod.hpp>
+#include "../FMODCoreAPI/includes/fmod.hpp"
 #include <string>
 #include <unordered_map>
 #include "GameSettingManager.h"

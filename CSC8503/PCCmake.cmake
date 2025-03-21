@@ -32,7 +32,6 @@ function(Create_PC_CSC8503_Files)
         "PrisonEscape/Core/AudioManager.h"
         "PrisonEscape/Core/Networking/SteamManager.h"
         "PrisonEscape/Core/Networking/SteamManager.cpp"
-
     )
     source_group("Prison Escape Core" FILES ${Prison_Escape_Core})
 
@@ -48,12 +47,11 @@ function(Create_PC_CSC8503_Files)
     )
     source_group("Prison Escape Levels" FILES ${Prison_Escape_Levels})
 
-
     set(Prison_Escape_Scripts
         "PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.cpp"
         "PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
-		"PrisonEscape/Scripts/PursuitEnemy/PursuitEnemy.cpp"
-		"PrisonEscape/Scripts/PursuitEnemy/PursuitEnemy.h"
+        "PrisonEscape/Scripts/PursuitEnemy/PursuitEnemy.cpp"
+        "PrisonEscape/Scripts/PursuitEnemy/PursuitEnemy.h"
         "PrisonEscape/Scripts/Player/Player.cpp"
         "PrisonEscape/Scripts/Player/Player.h"
         "PrisonEscape/Scripts/puzzle/Button.cpp"
@@ -74,7 +72,6 @@ function(Create_PC_CSC8503_Files)
         "PrisonEscape/States/PauseState.h"
         "PrisonEscape/States/GameoverState.cpp"
         "PrisonEscape/States/GameoverState.h"
-
     )
     source_group("Prison Escape States" FILES ${Prison_Escape_States})
 
@@ -117,54 +114,52 @@ function(Create_PC_CSC8503_Files)
             ${SHADER_FILES}
         )
 
-    foreach (file ${SHADER_FILES})
-        get_filename_component(file_name ${file} NAME)
-        get_filename_component(file_ext ${file} EXT)
-        
-        if(file_ext STREQUAL ".h" OR file_ext STREQUAL ".cpp")
-            continue()
-        endif()
+        foreach (file ${SHADER_FILES})
+            get_filename_component(file_name ${file} NAME)
+            get_filename_component(file_ext ${file} EXT)
             
-        if( file_ext STREQUAL  ".vert" OR
-            file_ext STREQUAL  ".frag" OR
-            file_ext STREQUAL  ".comp" OR
-            file_ext STREQUAL  ".geom" OR
-            file_ext STREQUAL  ".tesc" OR
-            file_ext STREQUAL  ".tese" OR
-            file_ext STREQUAL  ".rgen" OR
-            file_ext STREQUAL  ".rint" OR
-            file_ext STREQUAL  ".rahit" OR
-            file_ext STREQUAL  ".rchit" OR
-            file_ext STREQUAL  ".rmiss" OR
-            file_ext STREQUAL  ".rcall" OR
-            file_ext STREQUAL  ".task" OR
-            file_ext STREQUAL  ".mesh"
-        )
-            message("Adding custom command to ${file}")
-            get_filename_component(file_dir ${file} ABSOLUTE)
-            set(SPIRV_OUTPUT ${file_name}.spv)
-            set(SPIRV_ABS_INPUT ${file_dir})
-            set(SPIRV_ABS_OUTPUT ${file_dir}.spv)
-            
-            add_custom_command(
-                OUTPUT ${SPIRV_ABS_OUTPUT}
+            if(file_ext STREQUAL ".h" OR file_ext STREQUAL ".cpp")
+                continue()
+            endif()
                 
-                COMMENT "Compiling GLSL shader:"
-                COMMAND ${Vulkan_GLSLANG_VALIDATOR_EXECUTABLE} -V  ${SPIRV_ABS_INPUT} -o ${SPIRV_ABS_OUTPUT}
-                DEPENDS ${file}
-                VERBATIM
+            if( file_ext STREQUAL  ".vert" OR
+                file_ext STREQUAL  ".frag" OR
+                file_ext STREQUAL  ".comp" OR
+                file_ext STREQUAL  ".geom" OR
+                file_ext STREQUAL  ".tesc" OR
+                file_ext STREQUAL  ".tese" OR
+                file_ext STREQUAL  ".rgen" OR
+                file_ext STREQUAL  ".rint" OR
+                file_ext STREQUAL  ".rahit" OR
+                file_ext STREQUAL  ".rchit" OR
+                file_ext STREQUAL  ".rmiss" OR
+                file_ext STREQUAL  ".rcall" OR
+                file_ext STREQUAL  ".task" OR
+                file_ext STREQUAL  ".mesh"
             )
-            list(APPEND SPIRV_BINARY_FILES ${SPIRV_OUTPUT})   
-        endif()
-    endforeach()
-
+                message("Adding custom command to ${file}")
+                get_filename_component(file_dir ${file} ABSOLUTE)
+                set(SPIRV_OUTPUT ${file_name}.spv)
+                set(SPIRV_ABS_INPUT ${file_dir})
+                set(SPIRV_ABS_OUTPUT ${file_dir}.spv)
+                
+                add_custom_command(
+                    OUTPUT ${SPIRV_ABS_OUTPUT}
+                    
+                    COMMENT "Compiling GLSL shader:"
+                    COMMAND ${Vulkan_GLSLANG_VALIDATOR_EXECUTABLE} -V  ${SPIRV_ABS_INPUT} -o ${SPIRV_ABS_OUTPUT}
+                    DEPENDS ${file}
+                    VERBATIM
+                )
+                list(APPEND SPIRV_BINARY_FILES ${SPIRV_OUTPUT})   
+            endif()
+        endforeach()
     endif()
 
     ################################################################################
     # Target
     ################################################################################
     add_executable(${PROJECT_NAME}  ${ALL_FILES})
-
 
     #use_props(${PROJECT_NAME} "${CMAKE_CONFIGURATION_TYPES}" "${DEFAULT_CXX_PROPS}")
     set(ROOT_NAMESPACE CSC8503)
@@ -212,25 +207,23 @@ function(Create_PC_CSC8503_Files)
     )
     
     if(USE_VULKAN)
-    target_precompile_headers(${PROJECT_NAME} PRIVATE
-        <vulkan/vulkan.hpp>
-        <SmartTypes.h>
-        <VulkanRenderer.h>
-        <VulkanShader.h>
-        <VulkanShaderBuilder.h>
-        <VulkanTexture.h>
-        <VulkanMesh.h>
-        <VulkanPipelineBuilder.h>
-        <VulkanDynamicRenderBuilder.h>
-
-        <VulkanTextureBuilder.h>
-
-        <VulkanDescriptorSetLayoutBuilder.h>
-        <VulkanRenderPassBuilder.h>
-        <VulkanCompute.h>
-        <VulkanComputePipelineBuilder.h>
-        <VulkanBufferBuilder.h>
-    )
+        target_precompile_headers(${PROJECT_NAME} PRIVATE
+            <vulkan/vulkan.hpp>
+            <SmartTypes.h>
+            <VulkanRenderer.h>
+            <VulkanShader.h>
+            <VulkanShaderBuilder.h>
+            <VulkanTexture.h>
+            <VulkanMesh.h>
+            <VulkanPipelineBuilder.h>
+            <VulkanDynamicRenderBuilder.h>
+            <VulkanTextureBuilder.h>
+            <VulkanDescriptorSetLayoutBuilder.h>
+            <VulkanRenderPassBuilder.h>
+            <VulkanCompute.h>
+            <VulkanComputePipelineBuilder.h>
+            <VulkanBufferBuilder.h>
+        )
     endif()
 
     ################################################################################
@@ -269,18 +262,16 @@ function(Create_PC_CSC8503_Files)
     include_directories("../NCLCoreClasses/")
     include_directories("../CSC8503CoreClasses/")
     include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
-    include_directories("../FMODCoreAPI/includes")
+    include_directories("../FMODCoreAPI/includes")  # Ensure this path is correct
     include_directories("../FMODCoreAPI/dlls")
-
 
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC NCLCoreClasses)
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC CSC8503CoreClasses)
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC OpenGLRendering)
-    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC "../FMODCoreAPI/libs/fmod_vc")
-    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC "../FMODCoreAPI/libs/fmodL_vc")
+    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC "../FMODCoreAPI/libs/fmod_vc")  # Ensure this path is correct
+    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC "../FMODCoreAPI/libs/fmodL_vc")  # Ensure this path is correct
 
     file(GLOB DLLS "../FMODCoreAPI/dlls/*.dll")
-
 
     option(ENABLE_STEAM "Enable Steam integration" ON)
     if(ENABLE_STEAM)
@@ -291,9 +282,9 @@ function(Create_PC_CSC8503_Files)
         include_directories("${STEAMWORKS_SDK_PATH}/public")
 
         add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_CURRENT_SOURCE_DIR}/steam_appid.txt"
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_SOURCE_DIR}/steam_appid.txt"
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>)
     
         # Directly link to the Steam library
         if(WIN32)
