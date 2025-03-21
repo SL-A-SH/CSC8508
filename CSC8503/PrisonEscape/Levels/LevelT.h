@@ -10,36 +10,37 @@
 #include "Shader.h"
 #include <PrisonEscape/Scripts/puzzle/puzzleT.h>
 
-using namespace NCL;
-using namespace CSC8503;
+namespace NCL {
+	namespace CSC8503 {
+		class LevelT : public Level
+		{
+		public:
+			LevelT();
+			~LevelT();
 
-class LevelT : public Level
-{
-public:
-	LevelT();
-	~LevelT();
+			void Init() override;
 
-	void Init() override;
 
-	
 
-	void Update(float dt) override;
-	
-private:
-	Texture* doorCloseTex = nullptr;
-	Texture* doorOpenTex = nullptr;
+			void Update(float dt) override;
 
-	void AddCubeSetToTheLevel();
-	void CreateCollidingCube(Vector3 position);
-	void UpdateCubeVisibility();
-	GameObject* AddDoorToWorld(Door* door, const Vector3& position);
+		private:
+			Texture* doorCloseTex = nullptr;
+			Texture* doorOpenTex = nullptr;
 
-	GameObject* AddPressableDoorToWorld(PressableDoor* door, const Vector3& position);
+			void AddCubeSetToTheLevel();
+			void CreateCollidingCube(Vector3 position);
+			void UpdateCubeVisibility();
+			GameObject* AddDoorToWorld(Door* door, const Vector3& position);
 
-	GameObject* AddButtonToWorld(ButtonTrigger* button, const Vector3& position, Door* linkedDoor);
+			GameObject* AddPressableDoorToWorld(PressableDoor* door, const Vector3& position);
 
-	GameObject* CreateRandomColorCube(Vector3 position);
-	/*Vector3 visibilityThreshold = Vector3(4.0f, 4.0f, 4.0f);*/
-	std::vector<GameObject*> Cubes;
-	vector<Vector4> CubeSet;
-};
+			GameObject* AddButtonToWorld(ButtonTrigger* button, const Vector3& position, Door* linkedDoor);
+
+			GameObject* CreateRandomColorCube(Vector3 position);
+			/*Vector3 visibilityThreshold = Vector3(4.0f, 4.0f, 4.0f);*/
+			std::vector<GameObject*> Cubes;
+			vector<Vector4> CubeSet;
+		};
+	}
+}

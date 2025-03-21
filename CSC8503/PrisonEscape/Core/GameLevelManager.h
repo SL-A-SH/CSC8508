@@ -10,14 +10,13 @@
 #include "../CSC8503/PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
 
 
-
-
 namespace NCL {
-	constexpr float PLAYER_MESH_SIZE = 3.0f;
-	constexpr float PLAYER_INVERSE_MASS = 0.5f;
-	constexpr float PATROL_ENEMY_MESH_SIZE = 3.0f;
-	constexpr float PATROL_ENEMY_INVERSE_MASS = 0.1f;
 	namespace CSC8503 {
+		constexpr float PLAYER_MESH_SIZE = 3.0f;
+		constexpr float PLAYER_INVERSE_MASS = 0.5f;
+		constexpr float PATROL_ENEMY_MESH_SIZE = 3.0f;
+		constexpr float PATROL_ENEMY_INVERSE_MASS = 0.1f;
+
 		class jsonParser;
 		class GameTechRenderer;
 		class AnimationController;

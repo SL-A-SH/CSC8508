@@ -1,16 +1,15 @@
 #pragma once
-#include "PushdownState.h"
-#include "GameWorld.h"
-#include "Window.h"
+
 #include "PhysicsSystem.h"
 #include "GameState.h"
 
-#include "../CSC8503/PrisonEscape/Core/GameConfigManager.h"
-#include "../CSC8503/PrisonEscape/Core/GameLevelManager.h"
-
 namespace NCL {
 	namespace CSC8503 {
+		class PushdownState;
+		class GameConfigManager;
+		class GameLevelManager;
 		class Level;
+		class NCL::Rendering::Texture;
 
 		class GamePlayState : public GameState {
 		public:
@@ -49,8 +48,6 @@ namespace NCL {
 
 			void RegisterServerPacketHandlers();
 			void RegisterClientPacketHandlers();
-
-
 
 			Texture* heartFilledTexture = nullptr;
 			Texture* heartEmptyTexture = nullptr;

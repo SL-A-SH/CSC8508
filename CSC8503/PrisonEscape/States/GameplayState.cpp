@@ -1,13 +1,20 @@
-#include "GameplayState.h"
-#include "GameoverState.h"
+#include "PushdownState.h"
+#include "GameWorld.h"
+#include "Window.h"
+
+#include "PrisonEscape/States/GameplayState.h"
+#include "PrisonEscape/States/GameoverState.h"
+#include "PrisonEscape/States/PauseState.h"
+#include "PrisonEscape/Core/GameConfigManager.h"
+#include "PrisonEscape/Core/GameLevelManager.h"
 #include "PrisonEscape/Levels/SampleLevel.h"
 #include "PrisonEscape/Levels/LevelOne.h"
 #include "PrisonEscape/Levels/LevelT.h"
-#include "PauseState.h"
 #include "PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
 #include "PrisonEscape/Core/Networking/SteamManager.h"
 
 using namespace NCL;
+using namespace Rendering;
 using namespace CSC8503;
 
 GamePlayState::GamePlayState(bool multiplayer, bool asServer, GameConfigManager* config)
@@ -32,6 +39,7 @@ GamePlayState::GamePlayState(bool multiplayer, bool asServer, GameConfigManager*
 	else {
 		InitializeSinglePlayer(level);
 	}
+
 	heartFilledTexture = GameBase::GetGameBase()->GetRenderer()->LoadTexture("heart_filled.png");
 	heartEmptyTexture = GameBase::GetGameBase()->GetRenderer()->LoadTexture("heart_empty.png");
 }

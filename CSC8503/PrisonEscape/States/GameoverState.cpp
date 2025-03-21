@@ -2,6 +2,11 @@
 #include "GamePlayState.h"
 #include "MenuState.h"
 
+#include "PrisonEscape/Core/GameConfigManager.h"
+
+using namespace NCL;
+using namespace CSC8503;
+
 void GameOverState::OnAwake() {
 	Window::GetWindow()->ShowOSPointer(true);
 	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("GameOverPanel", [this]() { DrawGameOverPanel(); });
