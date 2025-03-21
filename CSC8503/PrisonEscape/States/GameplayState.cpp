@@ -1,7 +1,10 @@
+#include "GameTechRenderer.h"
 #include "PushdownState.h"
 #include "GameWorld.h"
 #include "Window.h"
 #include "Texture.h"
+#include "GameServer.h"
+#include "GameClient.h"
 
 #include "PrisonEscape/States/GameplayState.h"
 #include "PrisonEscape/States/GameoverState.h"

@@ -1,4 +1,7 @@
-#include "GameConfigManager.h"
+#include "GameServer.h"
+#include "GameClient.h"
+
+#include "PrisonEscape/Core/GameConfigManager.h"
 #include "PrisonEscape/Core/Networking/SteamManager.h"
 
 using namespace NCL;

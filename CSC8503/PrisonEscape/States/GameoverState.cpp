@@ -1,3 +1,4 @@
+#include "GameTechRenderer.h"
 #include "GameOverState.h"
 #include "GamePlayState.h"
 #include "MenuState.h"

@@ -1,4 +1,4 @@
-#pragma once
+#include "GameTechRenderer.h"
 #include "PauseState.h"
 #include "GamePlayState.h"
 #include "MenuState.h"

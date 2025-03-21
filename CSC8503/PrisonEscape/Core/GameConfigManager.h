@@ -1,11 +1,9 @@
 #pragma once
 
-#include "GameServer.h"
-#include "GameClient.h"
-#include "GameTechRenderer.h"
-
 namespace NCL {
 	namespace CSC8503 {
+		class GameServer;
+		class GameClient;
 
 		class GameConfigManager {
 		private:

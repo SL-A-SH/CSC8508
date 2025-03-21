@@ -1,8 +1,11 @@
+#include "GameTechRenderer.h"
 #include "PushdownState.h"
 #include <iostream>
 #include "Window.h"
 #include "Debug.h"
 #include "imgui/imgui.h"
+#include "GameServer.h"
+#include "GameClient.h"
 
 #include "PrisonEscape/States/MenuState.h"
 #include "PrisonEscape/States/GameplayState.h"
