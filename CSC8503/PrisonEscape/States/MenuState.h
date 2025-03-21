@@ -5,6 +5,7 @@
 namespace NCL {
 	namespace CSC8503 {
 		class PushdownState;
+		class GameConfigManager;
 		class SteamManager;
 
 		class MenuState : public GameState {

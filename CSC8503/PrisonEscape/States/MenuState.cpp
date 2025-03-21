@@ -8,6 +8,7 @@
 #include "PrisonEscape/States/GameplayState.h"
 #include "PrisonEscape/Core/GameSettingManager.h"
 #include "PrisonEscape/Core/ImGuiManager.h"
+#include "PrisonEscape/Core/GameConfigManager.h"
 #include "PrisonEscape/Core/Networking/SteamManager.h"
 
 using namespace NCL;
