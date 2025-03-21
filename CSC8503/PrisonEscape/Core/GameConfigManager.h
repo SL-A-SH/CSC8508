@@ -15,6 +15,7 @@ namespace NCL {
 				std::string ip = "127.0.0.1";
 				GameServer* server = nullptr;
 				GameClient* client = nullptr;
+				bool isUsingSteam = false;
 				int playerID;
 			};
 
@@ -27,6 +28,9 @@ namespace NCL {
 			void CreateClient();
 
 			NetworkConfig networkConfig;
+
+			void SetSteamCallback();
+			std::function<void(uint64_t)> steamInviteCallback;
 		};
 	}
 }

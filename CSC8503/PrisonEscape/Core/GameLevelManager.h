@@ -30,11 +30,9 @@ namespace NCL {
 			void InitAssets();
 			void InitAnimationObjects() const;
 
-			// Player Methods
 			Player* AddPlayerToWorld(const Transform& transform, const std::string& playerName);
 			void AddComponentsToPlayer(Player& playerObj, const Transform& transform);
 
-			// Enemy Methods
 
 			PatrolEnemy* AddPatrolEnemyToWorld(const std::string& enemyName,const std::vector<Vector3>& patrolPoints, Player* player);
 			void AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const Transform& transform);
@@ -50,7 +48,6 @@ namespace NCL {
 			
 			static GameLevelManager* GetGameLevelManager() { return manager; }
 
-			
 		private:
 			GameWorld* mWorld;
 			static GameLevelManager* manager;

@@ -30,6 +30,8 @@ function(Create_PC_CSC8503_Files)
         "PrisonEscape/Core/GameSettingManager.cpp"
         "PrisonEscape/Core/AudioManager.cpp"
         "PrisonEscape/Core/AudioManager.h"
+        "PrisonEscape/Core/Networking/SteamManager.h"
+        "PrisonEscape/Core/Networking/SteamManager.cpp"
 
     )
     source_group("Prison Escape Core" FILES ${Prison_Escape_Core})
@@ -278,5 +280,48 @@ function(Create_PC_CSC8503_Files)
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC "../FMODCoreAPI/libs/fmodL_vc")
 
     file(GLOB DLLS "../FMODCoreAPI/dlls/*.dll")
+
+
+    option(ENABLE_STEAM "Enable Steam integration" ON)
+    if(ENABLE_STEAM)
+        add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+
+        # Steam paths
+        set(STEAMWORKS_SDK_PATH "${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/steam")
+        include_directories("${STEAMWORKS_SDK_PATH}/public")
+
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_CURRENT_SOURCE_DIR}/steam_appid.txt"
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+    
+        # Directly link to the Steam library
+        if(WIN32)
+            if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+                # 64-bit
+                target_link_libraries(${PROJECT_NAME} LINK_PUBLIC "${STEAMWORKS_SDK_PATH}/redistributable_bin/win64/steam_api64.lib")
+            else()
+                # 32-bit
+                target_link_libraries(${PROJECT_NAME} LINK_PUBLIC "${STEAMWORKS_SDK_PATH}/redistributable_bin/steam_api.lib")
+            endif()
+            add_compile_definitions(ENABLE_STEAM)
+        endif()
+
+        if(WIN32)
+            if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+                # 64-bit
+                add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "${STEAMWORKS_SDK_PATH}/redistributable_bin/win64/steam_api64.dll"
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+            else()
+                # 32-bit
+                add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "${STEAMWORKS_SDK_PATH}/redistributable_bin/steam_api.dll"
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+            endif()
+        endif()
+    endif()
 
 endfunction()

@@ -10,6 +10,8 @@
 
 namespace NCL {
 	namespace CSC8503 {
+		class Level;
+
 		class GamePlayState : public GameState {
 		public:
 			GamePlayState(bool multiplayer, bool asServer, GameConfigManager* config);
@@ -26,10 +28,29 @@ namespace NCL {
 			}
 
 			void DrawHUDPanel();
+			void DrawFriendsPanel();
+			void DrawFriendsListWindow(const std::vector<std::pair<std::string, uint64_t>>& onlineFriends);
+
+			bool FriendsPanelVisible() const { return friendsPanelVisible; }
 
 		private:
 			GameLevelManager* manager;
 			GameConfigManager* gameConfig;
+			bool friendsPanelVisible = false;
+
+			void InitializeSteamMultiplayer(Level* level);
+			bool InitializeSteamNetworking();
+			void InitializeMultiplayer(Level* level);
+			void InitializeSinglePlayer(Level* level);
+
+			void SetupServer(Level* level);
+			void SetupClient(Level* level);
+			void SetupClientPlayer(Level* level);
+
+			void RegisterServerPacketHandlers();
+			void RegisterClientPacketHandlers();
+
+
 
 			Texture* heartFilledTexture = nullptr;
 			Texture* heartEmptyTexture = nullptr;

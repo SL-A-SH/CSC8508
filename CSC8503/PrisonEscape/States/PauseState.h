@@ -12,18 +12,20 @@
 
 namespace NCL {
 	namespace CSC8503 {
+		class GameConfigManager;
+
 		enum ButtonClicked
 		{
 			None,
 			Resume,
+			Invite,
 			Settings,
 			Exit
 		};
+
 		class PauseState : public GameState {
-
-
 		public:
-			PauseState() {}
+			PauseState(GameConfigManager* gameConfig);
 			void OnAwake() override;
 
 			PushdownResult OnUpdate(float dt, PushdownState** newState) override;
@@ -33,6 +35,7 @@ namespace NCL {
 			void DrawSettingPanel();
 			void DrawAudioSettingPanel();
 			void DrawVideoSettingPanel();
+			void DrawFriendsPanel();
 			std::function<void(PushdownState**)> stateChangeAction;
 
 		private:
@@ -40,6 +43,8 @@ namespace NCL {
 			int brightness = 50;
 
 			ButtonClicked buttonClicked = ButtonClicked::None;
+
+			GameConfigManager* gameConfig;
 
 		};
 	}
