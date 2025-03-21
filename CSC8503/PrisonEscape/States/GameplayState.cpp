@@ -163,7 +163,6 @@ void GamePlayState::DrawHUDPanel() {
 		}
 
 		// Debugging: output the position of each heart
-		std::cout << "Drawing heart at: " << heartPosition.x << ", " << heartPosition.y << std::endl;
 	}
 
 	// Set next cursor position for Timer text
