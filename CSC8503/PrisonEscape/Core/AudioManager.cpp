@@ -1,9 +1,13 @@
 #pragma once
 
-#include "AudioManager.h"
 #include <fmod_errors.h>  // For FMOD error strings
 #include <iostream>
-#include "GameBase.h"
+#include <string>
+#include <unordered_map>
+
+#include "PrisonEscape/Core/AudioManager.h"
+#include "PrisonEscape/Core/GameBase.h"
+#include "PrisonEscape/Core/GameSettingManager.h"
 
 using namespace NCL;
 using namespace CSC8503;

@@ -2,12 +2,12 @@
 #define AUDIOMANAGER_H
 
 #include "../FMODCoreAPI/includes/fmod.hpp"
-#include <string>
-#include <unordered_map>
-#include "GameSettingManager.h"
 
 namespace NCL {
 	namespace CSC8503 {
+		std::string;
+		std::unordered_map;
+
 		class AudioManager {
 		public:
 			AudioManager();
