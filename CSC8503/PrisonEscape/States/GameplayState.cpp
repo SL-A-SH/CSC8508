@@ -225,21 +225,6 @@ void GamePlayState::InitializeSteamMultiplayer(Level* level)
 		});
 }
 
-void GamePlayState::DrawHUDPanel() {
-
-	ImGui::Begin("HUD Panel", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
-
-	// Display Timer
-	ImGui::Text("Time: %.2f s", 25.0f);
-
-	// Display Health Bar
-	ImGui::Text("Health:");
-	ImGui::ProgressBar(50 / 100.0f, ImVec2(200, 20));
-
-
-	ImGui::End();
-}
-
 bool GamePlayState::InitializeSteamNetworking() {
 	SteamManager* steamManager = SteamManager::GetInstance();
 	bool useSteamNetworking = false;

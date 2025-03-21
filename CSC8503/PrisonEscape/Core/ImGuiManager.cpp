@@ -180,10 +180,11 @@ void ImGuiManager::DrawButton(const std::string& label, const std::function<void
 	//nEED TO FIND A WAY TO LOAD tEXTURE HERE THIS WON'T WORL
 	/*Texture* tex = GameBase::GetGameBase()->GetRenderer()->LoadTexture("button.png");
 	GLuint texID = ((OGLTexture*)tex)->GetObjectID();*/
+	ImVec2 windowSize = ImGui::GetWindowSize();
 	ImGui::PushFont(buttonFont);
 	ImGui::SetCursorPos(ImVec2(windowSize.x * xPos, windowSize.y * yPos));
 
-	ImVec2 windowSize = ImGui::GetWindowSize();
+
 	ImGui::PushFont(buttonFont);
 	ImGui::SetCursorPos(ImVec2(windowSize.x * xPos, windowSize.y * yPos));
 	if (ImGui::Button(label.c_str(), ImVec2(windowSize.x * BUTTON_WIDTH_RATIO, windowSize.y * BUTTON_HEIGHT_RATIO))) {
