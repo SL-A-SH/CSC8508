@@ -21,7 +21,7 @@ void Button::pressDownButton() {
 }
 
 
-void Button::pressDetection(const std::vector<GameObject*>& boxes) {
+void Button::pressDetection(const std::vector<GameObject*>& boxes/*, GameObject* player*/) {
 	CollisionDetection::CollisionInfo info;
 
 	for (GameObject* box : boxes) {

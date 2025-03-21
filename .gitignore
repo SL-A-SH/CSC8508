@@ -30,7 +30,7 @@ lib/
 
 # Compiled files
 *.exe
-*.dll
+
 *.so
 *.dylib
 *.pdb

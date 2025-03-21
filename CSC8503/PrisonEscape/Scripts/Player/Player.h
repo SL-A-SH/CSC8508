@@ -2,7 +2,9 @@
 
 #include "../NCLCoreClasses/KeyboardMouseController.h"
 #include "PhysicsSystem.h"
-
+#include "Window.h"
+#include "Vector.h"
+#define M_PI 3.14159265358979323846
 namespace NCL {
 	namespace CSC8503 {
 		class Player : public GameObject {
