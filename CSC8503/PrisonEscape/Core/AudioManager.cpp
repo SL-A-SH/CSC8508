@@ -56,7 +56,7 @@ void AudioManager::PlaySound(const std::string& filePath, bool loop) {
 
     FMOD::Sound* sound = sounds[filePath];
     FMOD::Channel* channel = nullptr;
-    
+
     std::cout << "Attempting to play sound: " << filePath << std::endl;
     bool isMuted = false;
     FMOD_RESULT result = system->playSound(sound, nullptr, isMuted, &channel);
@@ -64,7 +64,7 @@ void AudioManager::PlaySound(const std::string& filePath, bool loop) {
         std::cerr << "Failed to play sound: " << FMOD_ErrorString(result) << std::endl;
         return;
     }
-   
+
     FMOD_RESULT result2 = channel->getMute(&isMuted);
 
     if (result != FMOD_OK) {
@@ -107,7 +107,7 @@ void AudioManager::PlaySound(const std::string& filePath, bool loop) {
     }
 
     channels[filePath] = channel;
-    
+
 }
 
 void AudioManager::StopSound(const std::string& filePath) {
@@ -174,7 +174,7 @@ void AudioManager::PrintOutputDevices() {
     std::cout << "Available output devices:" << std::endl;
     for (int i = 0; i < numDrivers; ++i) {
         char name[256];
-        result = system->getDriverInfo(i, name, sizeof(name), nullptr, nullptr,nullptr,nullptr);
+        result = system->getDriverInfo(i, name, sizeof(name), nullptr, nullptr, nullptr, nullptr);
         if (result == FMOD_OK) {
             std::cout << "Driver " << i << ": " << name << std::endl;
         }
@@ -192,7 +192,7 @@ void AudioManager::PrintOutputDevices() {
     else {
         std::cerr << "Error getting current driver: " << FMOD_ErrorString(result) << std::endl;
     }
-    
+
 }
 
 void AudioManager::SelectOutputDevice(int driverIndex) {

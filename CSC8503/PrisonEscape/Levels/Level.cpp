@@ -7,8 +7,11 @@
 #include "OrientationConstraint.h"
 #include "StateGameObject.h"
 #include "GameTechRenderer.h"
-
+#include "../CSC8503/PrisonEscape/Core/GameConfigManager.h"
 #include "PrisonEscape/Core/GameBase.h"
+#include "PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
+#include "PrisonEscape/Scripts/Player/Player.h"
+
 
 using namespace NCL;
 using namespace CSC8503;
@@ -29,7 +32,7 @@ void Level::Init()
 
 void Level::Update(float dt)
 {
-	
+
 }
 
 void Level::ReceivePacket(int type, GamePacket* payload, int source) {
@@ -72,7 +75,7 @@ void Level::InitializeAssets()
 
 void Level::InitializeLevel()
 {
-	AddFloorToWorld(Vector3(0, 0, 0), Vector3(200, 2, 200), Vector4(0.5, 0.5, 0.5, 1));
+	// AddFloorToWorld(Vector3(0, 0, 0), Vector3(200, 2, 200), Vector4(0.5, 0.5, 0.5, 1));
 }
 
 void Level::AddPlayerToLevel(Player* player)
@@ -86,6 +89,14 @@ void Level::AddPlayerToLevel(Player* player)
 	{
 		this->playerTwo = player;
 		this->playerTwo->GetRenderObject()->GetTransform()->SetPosition(Vector3(0, 50, 0));
+	}
+}
+
+void Level::AddEnemyToLevel(PatrolEnemy* enemy)
+{
+	if (enemy) {
+		enemies.push_back(enemy);
+		enemy->GetRenderObject()->GetTransform()->SetPosition(Vector3(50, 50, 0));
 	}
 }
 

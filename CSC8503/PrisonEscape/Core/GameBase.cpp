@@ -1,7 +1,9 @@
 #include "GameBase.h"
+#include "GameTechRenderer.h"
 #include "PrisonEscape/States/GameState.h"
 #include "PrisonEscape/States/MenuState.h"
 #include "PrisonEscape/Core/ImGuiManager.h"
+#include "PrisonEscape/Core/GameConfigManager.h"
 #include "AudioManager.h"
 #include "GameSettingManager.h"
 
@@ -18,52 +20,52 @@ AudioManager audio(&gameSettings); // Pass it to AudioManager
 
 GameBase::GameBase()
 {
-    gameConfig = nullptr;
+	gameConfig = nullptr;
 }
 
 GameBase::~GameBase() {
-    delete stateMachine;
-    delete renderer;
-    delete world;
-    // Shutdown the audio manager when the game is destroyed
+	delete stateMachine;
+	delete renderer;
+	delete world;
+	// Shutdown the audio manager when the game is destroyed
 }
 
 void GameBase::InitialiseGame() {
-    world = new GameWorld();
+	world = new GameWorld();
 	renderer = new GameTechRenderer(*world);
 	stateMachine = nullptr;
 	stateMachine = new PushdownMachine(new MenuState());
 	ImGuiManager::Initialize();
 
 
-    if (!audio.Initialize()) {
-        std::cerr << "Failed to initialize AudioManager!" << std::endl;
-        return;
-    }
-    if (audio.Initialize()) {
-        audio.PrintOutputDevices();  // Print out available audio output devices and the current one
-        audio.SelectOutputDevice(0); // Select the first output device
-    }
-    else {
-        std::cerr << "Failed to initialize AudioManager!" << std::endl;
-    }
+	if (!audio.Initialize()) {
+		std::cerr << "Failed to initialize AudioManager!" << std::endl;
+		return;
+	}
+	if (audio.Initialize()) {
+		audio.PrintOutputDevices();  // Print out available audio output devices and the current one
+		audio.SelectOutputDevice(0); // Select the first output device
+	}
+	else {
+		std::cerr << "Failed to initialize AudioManager!" << std::endl;
+	}
 
-    std::string soundFile = "PrisonEscape/Assets/SFX/Shotgun.wav";
-    audio.LoadSound(soundFile);
-    audio.PlaySound(soundFile);  // Play without loop for testing
+	std::string soundFile = "PrisonEscape/Assets/SFX/Shotgun.wav";
+	audio.LoadSound(soundFile);
+	audio.PlaySound(soundFile);  // Play without loop for testing
 }
 
 void GameBase::UpdateGame(float dt) {
-    renderer->Update(dt);
-    stateMachine->Update(dt);
-    renderer->Render();
-    Debug::UpdateRenderables(dt);
-    audio.Update();
+	renderer->Update(dt);
+	stateMachine->Update(dt);
+	renderer->Render();
+	Debug::UpdateRenderables(dt);
+	audio.Update();
 	if (Window::GetKeyboard()->KeyPressed(KeyCodes::H))
 	{
 		renderer->USEDEBUGMODE = !renderer->USEDEBUGMODE;
 	}
-    
+
 }
 
 GameBase* GameBase::GetGameBase()
