@@ -453,6 +453,40 @@ GameObject* GameLevelManager::AddButtonToWorld(Vector3 size, const Vector3& posi
 	return button;
 }
 
+GameObject* GameLevelManager::AddDoorToWorld(Door* door, const Vector3& position) {
+	Vector3 doorSize(5.0f, 3.0f, 0.5f);
+	AABBVolume* volume = new AABBVolume(doorSize);
+	door->SetBoundingVolume((CollisionVolume*)volume);
+
+	door->GetTransform().SetScale(doorSize * 2.0f).SetPosition(position);
+	door->SetRenderObject(new RenderObject(&door->GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+	door->SetPhysicsObject(new PhysicsObject(&door->GetTransform(), door->GetBoundingVolume()));
+	door->GetPhysicsObject()->SetLayer(LayerMask::Doors);
+	door->GetPhysicsObject()->SetInverseMass(0);
+	door->GetPhysicsObject()->InitCubeInertia();
+
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(door);
+	return door;
+}
+
+GameObject* GameLevelManager::AddButtonnToWorld(ButtonTrigger* button, const Vector3& position, Door* linkedDoor) {
+	Vector3 buttonSize(2.0f, 0.3f, 2.0f);
+	AABBVolume* volume = new AABBVolume(buttonSize);
+	button->SetBoundingVolume((CollisionVolume*)volume);
+
+	button->GetTransform().SetScale(buttonSize * 2.0f).SetPosition(position);
+	button->SetRenderObject(new RenderObject(&button->GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+	button->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));  // Red when inactive
+
+	button->SetPhysicsObject(new PhysicsObject(&button->GetTransform(), button->GetBoundingVolume()));
+	button->GetPhysicsObject()->SetInverseMass(0);
+	button->GetPhysicsObject()->InitCubeInertia();
+
+	button->SetLinkedDoor(linkedDoor);
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(button);
+	return button;
+}
+
 void GameLevelManager::CreateButton(const InGameObject& obj) {
 	Button* newButton = new Button();
 
@@ -489,6 +523,25 @@ void GameLevelManager::CreateFloor(const InGameObject& obj) {
 	AddFloorToWorld(obj.dimensions, obj.position);
 }
 
+void GameLevelManager::CreateDoor(const InGameObject& obj) {
+	if (obj.type == "ButtonDoor") {
+		Door* newDoor = new Door();
+		ButtonTrigger* newButton = new ButtonTrigger();
+
+		newDoor->SetTextures(mTextureList["DefaultTexture"], mTextureList["DefaultTexture"]);
+		AddDoorToWorld(newDoor, obj.position);
+		doors.push_back(newDoor);
+
+		ButtonTrigger* newButton = new ButtonTrigger();
+		// BUTTON DOOOORRR
+
+	}
+	else if (obj.type == "NormalDoor") {
+		// DOOOORRR
+	}
+
+}
+
 // logging object placement for debugging
 void GameLevelManager::LogObjectPlacement(const InGameObject& obj) {
 	std::cout << "ID: " << obj.id << " | Type: " << obj.type << "\n"
@@ -504,7 +557,7 @@ void GameLevelManager::loadMap() {
 	std::vector<InGameObject> objects;
 
 	// maybe alter here or add argument for level switching
-	if (::jsonParser::LoadLevel("../CSC8503/PrisonEscape/Levels/levelTest.json", level, objects)) {
+	if (::jsonParser::LoadLevel("../CSC8503/PrisonEscape/Levels/level1.json", level, objects)) {
 		for (const auto& obj : objects) {
 			if (obj.type.find("Button") != std::string::npos) {
 				CreateButton(obj);
@@ -514,7 +567,7 @@ void GameLevelManager::loadMap() {
 				CreateBox(obj);
 			}
 
-			if (obj.type == "Wall") {
+			if (obj.type.find("Wall") != std::string::npos) {
 				CreateWall(obj);
 			}
 

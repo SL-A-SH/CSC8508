@@ -5,6 +5,7 @@
 #include "MeshMaterial.h"
 #include "../CSC8503/jsonParser.h"
 #include "../CSC8503/PrisonEscape/Scripts/puzzle/Button.h"
+#include "../CSC8503/PrisonEscape/Scripts/puzzle/puzzleT.h"
 #include "../CSC8503/PrisonEscape/Levels/Level.h"
 #include "../CSC8503/PrisonEscape/Scripts/Player/Player.h"
 #include "../CSC8503/PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
@@ -61,6 +62,8 @@ namespace NCL {
 			int boxNumber;
 			std::vector<GameObject*> boxes;
 			std::vector<Button*> buttons;
+			std::vector<Door*> doors;
+			std::vector<ButtonTrigger*> buttonss;
 			GameObject* pushableBox;
 			std::stack<Level*> mLevelStack;
 			AnimationController* mAnimator;
@@ -79,12 +82,16 @@ namespace NCL {
 			GameObject* AddFloorToWorld(Vector3 size, const Vector3& position);
 			GameObject* AddBoxToWorld(const Vector3& position, Vector3 dimensions, const std::string name, float inverseMass = 10.0f);
 			GameObject* AddButtonToWorld(Vector3 size, const Vector3& position, const std::string name, Mesh* mesh, Shader* shader, Texture* texture);
+			GameObject* AddButtonnToWorld(ButtonTrigger* button, const Vector3& position, Door* linkedDoor);
+			GameObject* AddDoorToWorld(Door* door, const Vector3& position);
 
 			void LogObjectPlacement(const InGameObject& obj);
 			void CreateWall(const InGameObject& obj);
 			void CreateButton(const InGameObject& obj);
 			void CreateBox(const InGameObject& obj);
 			void CreateFloor(const InGameObject& obj);
+			void CreateDoor(const InGameObject& obj);
+
 
 			bool isPlaying;
 		};
