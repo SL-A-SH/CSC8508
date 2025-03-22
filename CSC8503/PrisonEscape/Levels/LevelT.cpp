@@ -29,18 +29,6 @@ void LevelT::Init()
 	Level::Init();
 	CreateCollidingCube(Vector3(10, 3, 0));
 	CreateCollidingCube(Vector3(15, 3, 0));
-
-	Door* door = new Door();
-	door->SetTextures(doorCloseTex, doorOpenTex);
-	AddDoorToWorld(door, Vector3(10, 5, 10));
-
-	// Create a button linked to the door
-	ButtonTrigger* button = new ButtonTrigger();
-	AddButtonToWorld(button, Vector3(0, 2, 10), door);
-
-	PressableDoor* pressableDoor = new PressableDoor();
-	pressableDoor->SetTextures(doorCloseTex, doorOpenTex);
-	AddPressableDoorToWorld(pressableDoor, Vector3(25, 5, 10));
 }
 
 void LevelT::AddCubeSetToTheLevel() {

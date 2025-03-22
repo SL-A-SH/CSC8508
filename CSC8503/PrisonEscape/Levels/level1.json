@@ -896,7 +896,7 @@
         },
         {
             "id": 48,
-            "type": "Button",
+            "type": "Button1",
             "position": {
                 "x": -25.5,
                 "y": 1.5,
@@ -1276,7 +1276,7 @@
         },
         {
             "id": 68,
-            "type": "ButtonDoor",
+            "type": "ButtonDoor1",
             "position": {
                 "x": 0.0,
                 "y": 5.5,
