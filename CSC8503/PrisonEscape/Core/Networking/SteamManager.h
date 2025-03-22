@@ -5,10 +5,6 @@
 #include <steam/steam_api.h>
 #endif
 
-#include "NetworkBase.h"
-#include <string>
-#include <functional>
-#include <vector>
 #include "GameWorld.h"
 
 namespace NCL {

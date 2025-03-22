@@ -1,5 +1,9 @@
-#include "SteamManager.h"
 #include <iostream>
+#include <string>
+#include <functional>
+#include <vector>
+
+#include "PrisonEscape/Core/Networking/SteamManager.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -73,8 +77,6 @@ void SteamManager::Update()
 #ifdef ENABLE_STEAM
     if (m_bInitialized) {
         SteamAPI_RunCallbacks();
-
-        // Poll for various events
         PollSteamCallbacks();
     }
 #endif
@@ -85,7 +87,6 @@ void SteamManager::PollSteamCallbacks()
 #ifdef ENABLE_STEAM
     CheckForGameInvites();
     CheckForLobbyUpdates();
-    CheckForOverlayState();
 
     uint32 packetSize;
     while (SteamNetworking()->IsP2PPacketAvailable(&packetSize)) {
@@ -115,9 +116,6 @@ void SteamManager::CheckForGameInvites()
     // This would track actual join requests coming from other players,
     // not from the local player
     if (m_JoinGameCallback && SteamUtils()->IsOverlayEnabled()) {
-        // Check for game invites - this is a simplified version
-        // In a real implementation, you'd use the proper callback
-
         // Don't process invites if we're already the host of a lobby
         if (IsInLobby() && IsLobbyOwner()) {
             return;
@@ -125,9 +123,6 @@ void SteamManager::CheckForGameInvites()
 
         // Process any pending game join requests
         if (SteamFriends()) {
-            // This is a simplification - Steam has proper invite handling APIs
-            // that would be used in a full implementation
-
             // For the prototype, we can check if there are any rich presence
             // join requests that have been accepted
             for (int i = 0; i < SteamFriends()->GetFriendCount(k_EFriendFlagImmediate); i++) {
@@ -153,7 +148,7 @@ void SteamManager::CheckForGameInvites()
 
                             // Clear the processed invite
                             SteamFriends()->ClearRichPresence();
-                            break;  // Only process one invite at a time
+                            break;
                         }
                         catch (...) {
                             // Handle parsing errors
@@ -169,8 +164,6 @@ void SteamManager::CheckForGameInvites()
 void SteamManager::CheckForLobbyUpdates() 
 {
 #ifdef ENABLE_STEAM
-    // Check if our lobby state changed
-    // Again, this is placeholder logic
     static uint64_t lastLobbyID = 0;
 
     if (m_CurrentLobbyID != lastLobbyID) {
@@ -220,7 +213,6 @@ std::string SteamManager::GetSteamUserName()
         ISteamFriends* steamFriends = SteamFriends();
         if (steamFriends) {
             const char* name = steamFriends->GetPersonaName();
-            std::cout << "Steam username: " << name << std::endl;
             return name;
         }
         else {
@@ -411,10 +403,6 @@ void SteamManager::SendPlayerPosition(const Vector3& position)
 {
 #ifdef ENABLE_STEAM
     if (!m_bInitialized || m_CurrentLobbyID == 0) return;
-
-    // This is a simplified approach - in a real game you would use
-    // Steam's networking API to send this data reliably
-
     // Example using Steam's P2P networking:
     // Serialize position data
     char buffer[sizeof(float) * 3];
