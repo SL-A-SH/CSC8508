@@ -107,6 +107,7 @@ void Debug::UpdateRenderables(float dt) {
 			break;
 		}
 	}
+	lineEntries.resize(lineEntries.size() - trim);
 	trim = 0;
 	for (int i = 0; i < collisionLogs.size(); ) {
 		collisionLogs[i].time -= dt;
@@ -122,7 +123,6 @@ void Debug::UpdateRenderables(float dt) {
 		}
 	}
 	collisionLogs.resize(collisionLogs.size() - trim);
-	lineEntries.resize(lineEntries.size() - trim);
 	stringEntries.clear();
 	texEntries.clear();
 }
