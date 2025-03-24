@@ -1,14 +1,7 @@
 #pragma once
-#include "GameWorld.h"
-#include "PhysicsSystem.h"
-#include "MeshAnimation.h"
-#include "MeshMaterial.h"
-#include "../CSC8503/jsonParser.h"
-#include "../CSC8503/PrisonEscape/Scripts/puzzle/Button.h"
-#include "../CSC8503/PrisonEscape/Levels/Level.h"
-#include "../CSC8503/PrisonEscape/Scripts/Player/Player.h"
-#include "../CSC8503/PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
 
+#include "PhysicsSystem.h"
+#include "../CSC8503/jsonParser.h"
 
 namespace NCL {
 	namespace CSC8503 {
@@ -17,9 +10,15 @@ namespace NCL {
 		constexpr float PATROL_ENEMY_MESH_SIZE = 3.0f;
 		constexpr float PATROL_ENEMY_INVERSE_MASS = 0.1f;
 
+		class GameWorld;
+		class Level;
+		class Button;
+		class Player;
+		class PatrolEnemy;
 		class jsonParser;
 		class GameTechRenderer;
 		class AnimationController;
+
 		class GameLevelManager {
 		public:
 			GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer);

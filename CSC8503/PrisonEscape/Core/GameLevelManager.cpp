@@ -1,14 +1,20 @@
+#include <string>
+#include <fstream>
+#include <iostream>
+
 #include "GameLevelManager.h"
 #include "GameTechRenderer.h"
-#include "PrisonEscape/Levels/SampleLevel.h"
+#include "GameWorld.h"
 #include "Assets.h"
 #include "RenderObject.h"
 #include "PhysicsObject.h"
-#include <string>
-#include <fstream>
-#include <PrisonEscape/Scripts/puzzle/HidingArea.h>
-#include <iostream>
 #include "AnimationController.h"
+
+#include "PrisonEscape/Scripts/puzzle/Button.h"
+#include "PrisonEscape/Levels/Level.h"
+#include "PrisonEscape/Scripts/Player/Player.h"
+#include "PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
+#include "PrisonEscape/Scripts/puzzle/HidingArea.h"
 
 using namespace NCL;
 using namespace CSC8503;
