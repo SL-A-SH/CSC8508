@@ -32,7 +32,7 @@ void Level::Init()
 
 void Level::Update(float dt)
 {
-
+	GameBase::GetGameBase()->GetWorld()->GetMainCamera().UpdateCamera(dt);
 }
 
 void Level::ReceivePacket(int type, GamePacket* payload, int source) {

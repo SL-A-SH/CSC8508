@@ -11,9 +11,6 @@
 #include "PrisonEscape/States/PauseState.h"
 #include "PrisonEscape/Core/GameConfigManager.h"
 #include "PrisonEscape/Core/GameLevelManager.h"
-#include "PrisonEscape/Levels/SampleLevel.h"
-#include "PrisonEscape/Levels/LevelOne.h"
-#include "PrisonEscape/Levels/LevelT.h"
 #include "PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
 #include "PrisonEscape/Core/Networking/SteamManager.h"
 
@@ -24,7 +21,7 @@ GamePlayState::GamePlayState(bool multiplayer, bool asServer, GameConfigManager*
 {
 	this->gameConfig = config;
 	manager = new GameLevelManager(GameBase::GetGameBase()->GetWorld(), GameBase::GetGameBase()->GetRenderer());
-	Level* level = new LevelT();
+	Level* level = new Level();
 	level->Init();
 	manager->AddLevel(level);
 	manager->SetCurrentLevel(level);

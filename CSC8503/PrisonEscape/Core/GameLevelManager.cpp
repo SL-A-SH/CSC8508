@@ -31,10 +31,9 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	manager = this;
 
 	InitAssets();
+	std::cout << "The Level to load is at: " << mLevelList["Level1"] << std::endl;
 	boxNumber = 0;
-	loadMap();
-
-	InitAssets();
+	loadMap(mLevelList["Level2"]);
 	InitAnimationObjects();
 }
 
@@ -215,6 +214,15 @@ void GameLevelManager::InitAssets()
 					});
 			}
 
+			else if (group == "level") {
+				std::cout << "Found Level: " << groupInfo[1] << std::endl;
+				for (int i = 0; i < groupInfo.size(); i += 3) {
+					mLevelList[groupInfo[i]] = groupInfo[i + 1];
+					lines++;
+				}
+			}
+			
+
 			group = assetInfo[0];
 			groupInfo.clear();
 
@@ -358,7 +366,7 @@ GameObject* GameLevelManager::AddWallToWorld(Vector3 dimensions, const Vector3& 
 		.SetScale(dimensions)
 		.SetPosition(position);
 
-	wall->SetRenderObject(new RenderObject(&wall->GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+	wall->SetRenderObject(new RenderObject(&wall->GetTransform(), mMeshList["Cube"], mTextureList["WallTexture"], mShaderList["BasicShader"]));
 	wall->SetPhysicsObject(new PhysicsObject(&wall->GetTransform(), wall->GetBoundingVolume()));
 
 	wall->GetPhysicsObject()->SetInverseMass(0);
@@ -584,13 +592,13 @@ void GameLevelManager::LogObjectPlacement(const InGameObject& obj) {
 }
 
 // map loading from json file
-void GameLevelManager::loadMap() {
+void GameLevelManager::loadMap(std::string levelToLoad) {
 	int level;
 	std::vector<InGameObject> objects;
 	std::unordered_map<std::string, Door*> doorMap; // storing doors by name
-
+	std::string levelPath = Assets::LEVELDIR + levelToLoad;
 	// alter here or add argument for level switching
-	if (::jsonParser::LoadLevel("../CSC8503/PrisonEscape/Levels/levelTest.json", level, objects)) {
+	if (::jsonParser::LoadLevel(levelPath, level, objects)) {
 
 		// create button doors first and store
 		for (const auto& obj : objects) {

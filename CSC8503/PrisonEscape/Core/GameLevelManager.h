@@ -43,7 +43,7 @@ namespace NCL {
 			PatrolEnemy* AddPatrolEnemyToWorld(const std::string& enemyName,const std::vector<Vector3>& patrolPoints, Player* player);
 			void AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const Transform& transform);
 
-			void loadMap();
+			void loadMap(std::string levelToLoad);
 
 		public:
 			Level* GetCurrentLevel() { return mCurrentLevel; }
@@ -79,6 +79,7 @@ namespace NCL {
 			std::unordered_map<std::string, MeshAnimation*> mAnimationList;
 			std::unordered_map<std::string, MeshMaterial*> mMaterialList;
 			std::unordered_map<std::string, vector<int>> mMeshMaterialsList;
+			std::unordered_map<std::string, std::string> mLevelList;
 			std::map<std::string, MeshAnimation*> mPreLoadedAnimationList;
 
 			GameObject* AddWallToWorld(Vector3 wallSize, const Vector3& position, float x, float y, float z);
