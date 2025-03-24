@@ -12,6 +12,7 @@ PatrolEnemy::PatrolEnemy(GameWorld* world, const std::string& name) : GameObject
     playerObject = nullptr;
     visible = true;
     warningTimer = 2.0f;
+	sleepTimer = 3.0f;
     InitBehaviourTree();
 }
 
@@ -23,6 +24,7 @@ void PatrolEnemy::UpdateGame(float dt) {
     std::string stateStr;
     switch (currentState) {
     case PATROL:  stateStr = "PATROL"; break;
+    case SLEEP: stateStr = "SLEEP"; break;
     case CAUGHT: stateStr = "CAUGHT"; break;
     }
 
@@ -62,7 +64,7 @@ bool PatrolEnemy::CanSeePlayer() const {
 
 void PatrolEnemy::InitBehaviourTree() {
 
-    BehaviourAction* patrolAction = new BehaviourAction("Patrol",
+    BehaviourAction* patrolAction = new BehaviourAction("PATROL",
         [&](float dt, BehaviourState state) -> BehaviourState {
 
             std::cout << "Moving: " << std::endl; 
@@ -82,6 +84,13 @@ void PatrolEnemy::InitBehaviourTree() {
             if (distance < 1.0f) {
                 currentPatrolPoint = (currentPatrolPoint + 1) % patrolPoints.size();
                 patrolCounter++;
+
+                if (patrolCounter >= patrolPoints.size()) {
+                    currentState = SLEEP;
+                    sleepTimer = MAX_SLEEP_TIME;
+                    patrolCounter = 0;
+                    return Success;
+                }
             }
 
             Vector3 force = Vector::Normalise(direction) * 100.0f;
@@ -93,9 +102,24 @@ void PatrolEnemy::InitBehaviourTree() {
             return Ongoing;
         });
 
-    BehaviourAction* catchAction = new BehaviourAction("Caught",
+    BehaviourAction* sleepAction = new BehaviourAction("SLEEP",
         [&](float dt, BehaviourState state) -> BehaviourState {
-            std::cout << "CAUGHT" << std::endl;
+			std::cout << "Sleeping:" << std::endl;
+            if (currentState != SLEEP) {
+                return Failure;
+            }
+
+            sleepTimer -= dt;
+            if (sleepTimer <= 0.0f) {
+                currentState = PATROL;
+                return Success;
+            }
+            return Ongoing;
+        });
+
+    BehaviourAction* catchAction = new BehaviourAction("CAUGHT",
+        [&](float dt, BehaviourState state) -> BehaviourState {
+            std::cout << "Catching:" << std::endl;
             if (currentState != CAUGHT) {
                 return Failure;
             }
@@ -103,11 +127,13 @@ void PatrolEnemy::InitBehaviourTree() {
             if (warningTimer > 0.0f) {
                 std::cout << "Warning: " << std::to_string(warningTimer);
                 warningTimer -= dt;
+                return Ongoing;
             }
 
             else {
                 warningTimer = 2.0f;
 				OnCatch(playerObject);
+				patrolCounter = 0;
 				currentState = PATROL;
                 return Success;
             }
@@ -118,8 +144,7 @@ void PatrolEnemy::InitBehaviourTree() {
     modeSelector = new BehaviourSelector("Mode Selector");
     modeSelector->AddChild(patrolAction);
     modeSelector->AddChild(catchAction);
-
-
+	modeSelector->AddChild(sleepAction);
 
     rootSequence = new BehaviourSequence("Root");
     rootSequence->AddChild(modeSelector);

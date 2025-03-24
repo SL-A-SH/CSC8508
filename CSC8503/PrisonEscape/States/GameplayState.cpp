@@ -276,6 +276,15 @@ void GamePlayState::InitializeSinglePlayer(Level* level) {
 	// Set the camera position for the single-player
 	Vector3 playerPosition = level->GetPlayerOne()->GetTransform().GetPosition();
 	GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(Vector3(playerPosition.x, playerPosition.y, playerPosition.z));
+
+	// Enemy Spawning
+	/*
+	Transform enemyTransform;
+	std::vector<Vector3> patrolPoints = { Vector3(0, 0, 0), Vector3(10, 0, 10), Vector3(20, 0, 10) };
+	PatrolEnemy* patrolEnemy = manager->AddPatrolEnemyToWorld("Guard1", patrolPoints, level->GetPlayerOne());
+
+	level->AddEnemyToLevel(patrolEnemy);
+	*/
 }
 
 void GamePlayState::SetupServer(Level* level) {
