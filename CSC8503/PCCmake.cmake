@@ -64,7 +64,6 @@ function(Create_PC_CSC8503_Files)
     set(Prison_Escape_States
         "PrisonEscape/States/GameplayState.cpp"
         "PrisonEscape/States/GameplayState.h"
-        "PrisonEscape/States/GameState.cpp"
         "PrisonEscape/States/GameState.h"
         "PrisonEscape/States/MenuState.cpp"
         "PrisonEscape/States/MenuState.h"
