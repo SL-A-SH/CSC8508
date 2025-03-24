@@ -14,6 +14,8 @@ Player::Player(GameWorld* world, const std::string& name) : GameObject()
     state = Default;
 	GameObject::SetName(name);
     mName = name;
+
+    health = 3;
 }
 
 Player::~Player()
@@ -73,16 +75,24 @@ void Player::UpdatePlayerMovement(float dt)
         isIdle = false;
     }
 
-    Vector3 movement(0, 0, 0);
-    if (forward != 0.0f)
-    {
-        movement += forwardVec * forward * GetPlayerSpeed();
-        isIdle = false;
+    float sprintMultiplier = 1.0f;
+    if (Window::GetKeyboard()->KeyDown(KeyCodes::SHIFT)) {
+        sprintMultiplier = 3.0f; // Adjust the multiplier as needed
     }
-    if (sidestep != 0.0f)
-    {
-        movement += rightVec * sidestep * GetPlayerSpeed();
-        isIdle = false;
+
+    Vector3 movement(0, 0, 0);
+    if (forward != 0.0f) {
+        movement += forwardVec * forward * GetPlayerSpeed() * sprintMultiplier;
+    }
+    if (sidestep != 0.0f) {
+        movement += rightVec * sidestep * GetPlayerSpeed() * sprintMultiplier;
+    }
+    if (movement.Length() > 0.0f) {
+        float angle = atan2(-movement.x, -movement.z);
+        Quaternion targetOrientation = Quaternion::EulerAnglesToQuaternion(0, angle * 180.0f / M_PI, 0);
+        Quaternion currentOrientation = GetTransform().GetOrientation();
+        Quaternion newOrientation = Quaternion::Slerp(currentOrientation, targetOrientation, dt * 2.0f); // Adjust the interpolation speed as needed
+        GetTransform().SetOrientation(newOrientation);
     }
 
     if (useGravity)

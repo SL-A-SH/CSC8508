@@ -2,7 +2,9 @@
 
 #include "../NCLCoreClasses/KeyboardMouseController.h"
 #include "PhysicsSystem.h"
-
+#include "Window.h"
+#include "Vector.h"
+#define M_PI 3.14159265358979323846
 namespace NCL {
 	namespace CSC8503 {
 		class Player : public GameObject {
@@ -30,6 +32,7 @@ namespace NCL {
 
 		private:
 			float playerSpeed = 10.0f;
+			int health;
 
 		public:
 			std::string GetName() { return mName; }
@@ -37,6 +40,8 @@ namespace NCL {
 			float GetPlayerSpeed() const { return playerSpeed; }
 			void SetPlayerSpeed(float speed) { playerSpeed = speed; }
 
+			int GetHealth() const { return health; }
+			void SetHealth(int h) { health = h; }
 
 			RayCollision closestCollision;
 

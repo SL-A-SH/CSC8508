@@ -7,6 +7,7 @@
 #include "Ray.h"
 #include "GameWorld.h"
 #include "PhysicsObject.h"
+#include "../Player/Player.h"
 
 namespace NCL {
     namespace CSC8503 {
@@ -15,16 +16,16 @@ namespace NCL {
             PatrolEnemy(GameWorld* world, const std::string& name);
             ~PatrolEnemy();
 
-            void Update(float dt);
+            void UpdateGame(float dt);
             void SetPatrolPoints(const std::vector<Vector3>& points);
-            void SetPlayerObject(GameObject* player);
+            void SetPlayerObject(Player* player);
 
-            void OnCatch(GameObject* otherObject) {
+            void OnCatch(Player* otherObject) {
                 if (otherObject == playerObject) {
                     currentState = PATROL;
                     patrolCounter = 0;
 
-                    playerObject->GetTransform().SetPosition(Vector3(0, 5, 0));
+                    playerObject->SetHealth(playerObject->GetHealth() - 1);
                 }
             }
 
@@ -38,7 +39,7 @@ namespace NCL {
             BehaviourSelector* modeSelector;
 
             GameWorld* gameWorld;
-            GameObject* playerObject;
+            Player* playerObject;
             std::vector<Vector3> patrolPoints;
 
             int currentPatrolPoint;

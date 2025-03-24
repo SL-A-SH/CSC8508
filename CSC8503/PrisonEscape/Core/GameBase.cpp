@@ -1,9 +1,14 @@
 #include "GameBase.h"
 #include "GameTechRenderer.h"
+#include "PushdownMachine.h"
+#include "GameWorld.h"
+
 #include "PrisonEscape/States/GameState.h"
 #include "PrisonEscape/States/MenuState.h"
 #include "PrisonEscape/Core/ImGuiManager.h"
 #include "PrisonEscape/Core/GameConfigManager.h"
+#include "PrisonEscape/Core/GameSettingManager.h"
+#include "PrisonEscape/Core/AudioManager.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -11,7 +16,8 @@ using namespace CSC8503;
 GameTechRenderer* GameBase::renderer = nullptr;
 GameWorld* GameBase::world = nullptr;
 GameBase* GameBase::instance = nullptr;
-
+GameSettingManager* GameBase::gameSettings = nullptr;
+AudioManager* GameBase::audioManager = nullptr;
 GameBase::GameBase()
 {
 	gameConfig = nullptr;
@@ -21,6 +27,7 @@ GameBase::~GameBase() {
 	delete stateMachine;
 	delete renderer;
 	delete world;
+	// Shutdown the audio manager when the game is destroyed
 }
 
 void GameBase::InitialiseGame() {
@@ -28,17 +35,39 @@ void GameBase::InitialiseGame() {
 	renderer = new GameTechRenderer(*world);
 	stateMachine = nullptr;
 	stateMachine = new PushdownMachine(new MenuState());
+	gameSettings = new GameSettingManager();
+	audioManager = new AudioManager();
 	ImGuiManager::Initialize();
+
+
+	if (!audioManager->Initialize()) {
+		std::cerr << "Failed to initialize AudioManager!" << std::endl;
+		return;
+	}
+	if (audioManager->Initialize()) {
+		audioManager->PrintOutputDevices();  // Print out available audio output devices and the current one
+		audioManager->SelectOutputDevice(0); // Select the first output device
+	}
+	else {
+		std::cerr << "Failed to initialize AudioManager!" << std::endl;
+	}
+
+	std::string soundFile = "PrisonEscape/Assets/SFX/Shotgun.wav";
+	audioManager->LoadSound(soundFile);
+	audioManager->PlaySound(soundFile);  // Play without loop for testing
 }
 
 void GameBase::UpdateGame(float dt) {
+	renderer->Update(dt);
 	stateMachine->Update(dt);
 	renderer->Render();
 	Debug::UpdateRenderables(dt);
+	audioManager->Update();
 	if (Window::GetKeyboard()->KeyPressed(KeyCodes::H))
 	{
 		renderer->USEDEBUGMODE = !renderer->USEDEBUGMODE;
 	}
+
 }
 
 GameBase* GameBase::GetGameBase()
@@ -54,35 +83,26 @@ GameBase* GameBase::GetGameBase()
 void GameBase::QuitGame() {
 	std::cout << "Shutting down game..." << std::endl;
 
-	// Destroy state machine
 	if (stateMachine) {
 		delete stateMachine;
 		stateMachine = nullptr;
 	}
 
-	// Destroy the renderer
 	if (renderer) {
 		delete renderer;
 		renderer = nullptr;
 	}
 
-	// Destroy the game world
 	if (world) {
 		delete world;
 		world = nullptr;
 	}
 
-	// Clean up ImGui
-	//ImGuiManager::Shutdown();
-
-	// Clean up any additional managers or resources
 	if (gameConfig) {
 		delete gameConfig;
 		gameConfig = nullptr;
 	}
 
-	// Finally, close the window
-	//Window::GetWindow()->Close();
 	std::exit(0);
 	std::cout << "Game shut down successfully." << std::endl;
 }

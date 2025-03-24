@@ -1,14 +1,7 @@
 #pragma once
-#pragma once
 
 #include "PushdownState.h"
-#include "GameWorld.h"
-#include "Window.h"
-#include "Debug.h"
-#include "PhysicsSystem.h"
-#include "../CSC8503/PrisonEscape/Core/GameBase.h"
-#include "../CSC8503/PrisonEscape/Core/GameLevelManager.h"
-#include "imgui/imgui.h"
+#include "PrisonEscape/Core/GameBase.h"
 
 namespace NCL {
 	namespace CSC8503 {
@@ -17,12 +10,5 @@ namespace NCL {
 			GameState() {}
 			virtual ~GameState() {}
 		};
-
-		class MenuState;
-		class GamePlayState;
-		class PauseState;
-		class GameOverState;
-
-
 	}
 }

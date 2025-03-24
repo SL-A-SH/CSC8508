@@ -1,16 +1,14 @@
 #pragma once
+
 #include "imgui/imgui.h"
-#include <string>
-#include <vector>
-#include <functional>
 
 namespace NCL {
 	namespace CSC8503 {
 		struct PanelButton {
 			std::string label;
 			std::function<void()> callback;
-			float xPosition; // Horizontal position (0.0 to 1.0 as percentage of panel width)
-			float yPosition; // Vertical position (0.0 to 1.0 as percentage of panel height)
+			float xPosition;
+			float yPosition;
 		};
 
 		struct PanelSlider {
@@ -18,10 +16,9 @@ namespace NCL {
 			int* value;
 			int min;
 			int max;
-			float xPosition; // Horizontal position (0.0 to 1.0 as percentage of panel width)
-			float yPosition; // Vertical position (0.0 to 1.0 as percentage of panel height)
+			float xPosition;
+			float yPosition;
 		};
-
 
 		class ImGuiManager {
 		public:
@@ -42,6 +39,11 @@ namespace NCL {
 			static void DrawBackButton(const std::function<void()>& callback);
 			static void DrawFooter(const std::string& text);
 			static void DrawMessagePanel(const std::string& title, const std::string& message, const ImVec4& messageColor = ImVec4(1, 1, 1, 1), std::function<void()> cancelCallback = nullptr);
+			static void DrawPopupPanel(const std::string& title, const std::string& message,
+				const ImVec4& messageColor, std::function<void()> acceptCallback = nullptr,
+				std::function<void()> declineCallback = nullptr,
+				const std::string& acceptText = "OK", const std::string& declineText = "Cancel"
+			);
 
 		private:
 			static ImFont* buttonFont;

@@ -1,7 +1,12 @@
-#include "ImGuiManager.h"
+#include <string>
+#include <vector>
+#include <functional>
 #include "Texture.h"
-#include "GameBase.h"
+
+#include "PrisonEscape/Core/ImGuiManager.h"
+#include "PrisonEscape/Core/GameBase.h"
 #include "PrisonEscape/States/MenuState.h"
+
 using namespace NCL;
 using namespace CSC8503;
 
@@ -30,25 +35,22 @@ void ImGuiManager::DrawPanel(
 ) {
 	ImVec2 windowSize = ImGui::GetWindowSize();
 
-	// Draw header
+
 	DrawHeader(title);
 
-	// Draw buttons
+
 	for (const auto& button : buttons) {
 		DrawButton(button.label, button.callback, button.xPosition, button.yPosition);
 	}
 
-	// Draw sliders
 	for (const auto& slider : sliders) {
 		DrawSlider(slider.label, slider.value, slider.min, slider.max, slider.xPosition, slider.yPosition);
 	}
 
-	// Draw back button if callback provided
 	if (backCallback) {
 		DrawBackButton(backCallback);
 	}
 
-	// Draw footer
 	DrawFooter(footer);
 }
 
@@ -60,13 +62,11 @@ void ImGuiManager::DrawMessagePanel(
 ) {
 	ImVec2 windowSize = ImGui::GetWindowSize();
 
-	// Draw header
+
 	DrawHeader(title);
 
-	// Draw message in center of screen
 	ImGui::PushFont(messageFont);
 
-	// Calculate text size to center it
 	ImVec2 textSize = ImGui::CalcTextSize(message.c_str());
 	ImGui::SetCursorPos(ImVec2(
 		(windowSize.x - textSize.x) * 0.5f,
@@ -76,14 +76,14 @@ void ImGuiManager::DrawMessagePanel(
 	ImGui::TextColored(messageColor, "%s", message.c_str());
 	ImGui::PopFont();
 
-	// Draw loading spinner/animation
+
 	float time = ImGui::GetTime();
 	float radius = 25.0f;
 	ImVec2 center = ImVec2(windowSize.x * 0.5f, windowSize.y * 0.5f);
 
 	ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
-	// Draw spinning circle
+
 	const int num_segments = 12;
 	const float PI = 3.14159265358979323846f;
 	float start = time * 5.0f;
@@ -101,7 +101,6 @@ void ImGuiManager::DrawMessagePanel(
 		);
 	}
 
-	// Draw cancel button if provided
 	if (cancelCallback) {
 		ImGui::PushFont(buttonFont);
 		ImGui::SetCursorPos(ImVec2(windowSize.x * 0.35f, windowSize.y * 0.65f));
@@ -114,6 +113,53 @@ void ImGuiManager::DrawMessagePanel(
 	}
 }
 
+void ImGuiManager::DrawPopupPanel(const std::string& title, const std::string& message,
+	const ImVec4& messageColor, std::function<void()> acceptCallback,
+	std::function<void()> declineCallback,
+	const std::string& acceptText, const std::string& declineText) {
+	ImVec2 screenSize = ImGui::GetIO().DisplaySize;
+	ImVec2 windowSize(400, 200);
+	ImVec2 windowPos = ImVec2((screenSize.x - windowSize.x) * 0.5f, (screenSize.y - windowSize.y) * 0.5f);
+
+	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always);
+	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
+
+	ImGui::Begin(title.c_str(), nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings);
+
+	// Display the message
+	ImGui::PushTextWrapPos(ImGui::GetContentRegionAvail().x);
+	ImGui::TextColored(messageColor, "%s", message.c_str());
+	ImGui::PopTextWrapPos();
+
+	// Calculate button positions
+	float buttonWidth = windowSize.x * 0.3f;
+	float buttonSpacing = windowSize.x * 0.1f;
+	float buttonsY = windowSize.y * 0.7f;
+
+	if (acceptCallback && declineCallback) {
+		// Two buttons mode
+		ImGui::SetCursorPos(ImVec2((windowSize.x - 2 * buttonWidth - buttonSpacing) * 0.5f, buttonsY));
+		if (ImGui::Button(acceptText.c_str(), ImVec2(buttonWidth, 0))) {
+			if (acceptCallback) acceptCallback();
+		}
+
+		ImGui::SetCursorPos(ImVec2((windowSize.x - 2 * buttonWidth - buttonSpacing) * 0.5f + buttonWidth + buttonSpacing, buttonsY));
+		if (ImGui::Button(declineText.c_str(), ImVec2(buttonWidth, 0))) {
+			if (declineCallback) declineCallback();
+		}
+	}
+	else if (acceptCallback) {
+		// Single button mode
+		ImGui::SetCursorPos(ImVec2((windowSize.x - buttonWidth) * 0.5f, buttonsY));
+		if (ImGui::Button(acceptText.c_str(), ImVec2(buttonWidth, 0))) {
+			if (acceptCallback) acceptCallback();
+		}
+	}
+
+	ImGui::End();
+}
+
 void ImGuiManager::DrawHeader(const std::string& title) {
 	if (title.empty()) {
 		return;
@@ -122,7 +168,7 @@ void ImGuiManager::DrawHeader(const std::string& title) {
 	ImVec2 windowSize = ImGui::GetWindowSize();
 	ImVec2 textSize = ImGui::CalcTextSize(title.c_str());
 
-	// Keep it at the top and center it horizontally
+
 	ImVec2 textPos = ImVec2((windowSize.x - textSize.x) * 0.47f, windowSize.y * 0.05f); // Adjust vertical position as needed
 
 	ImGui::PushFont(headerFont);
@@ -139,9 +185,12 @@ void ImGuiManager::DrawButton(const std::string& label, const std::function<void
 	//nEED TO FIND A WAY TO LOAD tEXTURE HERE THIS WON'T WORL
 	/*Texture* tex = GameBase::GetGameBase()->GetRenderer()->LoadTexture("button.png");
 	GLuint texID = ((OGLTexture*)tex)->GetObjectID();*/
-
 	ImVec2 windowSize = ImGui::GetWindowSize();
 	ImGui::PushFont(buttonFont);
+	ImGui::SetCursorPos(ImVec2(windowSize.x * xPos, windowSize.y * yPos));
+
+
+
 	ImGui::SetCursorPos(ImVec2(windowSize.x * xPos, windowSize.y * yPos));
 	if (ImGui::Button(label.c_str(), ImVec2(windowSize.x * BUTTON_WIDTH_RATIO, windowSize.y * BUTTON_HEIGHT_RATIO))) {
 		if (callback) {
@@ -155,11 +204,9 @@ void ImGuiManager::DrawButton(const std::string& label, const std::function<void
 void ImGuiManager::DrawSlider(const std::string& label, int* value, int min, int max, float horizontalPos, float verticalPos) {
 	ImVec2 windowSize = ImGui::GetWindowSize();
 
-	// Position the label
+
 	ImGui::SetCursorPos(ImVec2(windowSize.x * horizontalPos, windowSize.y * verticalPos));
 	ImGui::Text("%s", label.c_str());
-
-	// Align the slider right next to the label, or adjust position if needed
 	ImGui::SameLine();
 	ImGui::SetCursorPos(ImVec2(windowSize.x * (horizontalPos + 0.15f), windowSize.y * verticalPos)); // Slight offset for slider
 	ImGui::SetNextItemWidth(windowSize.x * 0.2f);

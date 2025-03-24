@@ -32,7 +32,7 @@ void Level::Init()
 
 void Level::Update(float dt)
 {
-	
+
 }
 
 void Level::ReceivePacket(int type, GamePacket* payload, int source) {
@@ -146,13 +146,12 @@ GameObject* Level::AddMeshToWorldPosition(const Vector3& position, Mesh* mesh, c
 		volume = new SphereVolume(volumeSize.x);
 		break;
 	case NCL::VolumeType::Mesh:
-		//maybe define later
+
 		break;
 	case NCL::VolumeType::Capsule:
 		volume = new CapsuleVolume(volumeSize.x, volumeSize.y);
 		break;
 	case NCL::VolumeType::Compound:
-		//maybe define later
 		break;
 	case NCL::VolumeType::Invalid:
 

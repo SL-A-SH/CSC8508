@@ -1,6 +1,12 @@
+#include "GameTechRenderer.h"
 #include "GameOverState.h"
 #include "GamePlayState.h"
 #include "MenuState.h"
+
+#include "PrisonEscape/Core/GameConfigManager.h"
+
+using namespace NCL;
+using namespace CSC8503;
 
 void GameOverState::OnAwake() {
 	Window::GetWindow()->ShowOSPointer(true);

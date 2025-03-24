@@ -1,8 +1,6 @@
 #pragma once
-#include "GameWorld.h"
+
 #include "PhysicsSystem.h"
-#include "MeshAnimation.h"
-#include "MeshMaterial.h"
 #include "../CSC8503/jsonParser.h"
 #include "../CSC8503/PrisonEscape/Scripts/puzzle/Button.h"
 #include "../CSC8503/PrisonEscape/Scripts/puzzle/puzzleT.h"
@@ -14,14 +12,21 @@
 
 
 namespace NCL {
-	constexpr float PLAYER_MESH_SIZE = 3.0f;
-	constexpr float PLAYER_INVERSE_MASS = 0.5f;
-	constexpr float PATROL_ENEMY_MESH_SIZE = 3.0f;
-	constexpr float PATROL_ENEMY_INVERSE_MASS = 0.5f;
 	namespace CSC8503 {
+		constexpr float PLAYER_MESH_SIZE = 3.0f;
+		constexpr float PLAYER_INVERSE_MASS = 0.5f;
+		constexpr float PATROL_ENEMY_MESH_SIZE = 3.0f;
+		constexpr float PATROL_ENEMY_INVERSE_MASS = 0.1f;
+
+		class GameWorld;
+		class Level;
+		class Button;
+		class Player;
+		class PatrolEnemy;
 		class jsonParser;
 		class GameTechRenderer;
 		class AnimationController;
+
 		class GameLevelManager {
 		public:
 			GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer);
@@ -31,14 +36,13 @@ namespace NCL {
 			void InitAssets();
 			void InitAnimationObjects() const;
 
-			// Player Methods
 			Player* AddPlayerToWorld(const Transform& transform, const std::string& playerName);
 			void AddComponentsToPlayer(Player& playerObj, const Transform& transform);
 
-			// Enemy Methods
 
-			PatrolEnemy* AddPatrolEnemyToWorld(const std::string& enemyName);
+			PatrolEnemy* AddPatrolEnemyToWorld(const std::string& enemyName,const std::vector<Vector3>& patrolPoints, Player* player);
 			void AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const Transform& transform);
+
 			void loadMap();
 
 		public:
@@ -50,7 +54,6 @@ namespace NCL {
 			
 			static GameLevelManager* GetGameLevelManager() { return manager; }
 
-			
 		private:
 			GameWorld* mWorld;
 			static GameLevelManager* manager;

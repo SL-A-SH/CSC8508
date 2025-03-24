@@ -1,14 +1,20 @@
- #include "GameLevelManager.h"
+#include <string>
+#include <fstream>
+#include <iostream>
+
+#include "GameLevelManager.h"
 #include "GameTechRenderer.h"
-#include "PrisonEscape/Levels/SampleLevel.h"
+#include "GameWorld.h"
 #include "Assets.h"
 #include "RenderObject.h"
 #include "PhysicsObject.h"
-#include <string>
-#include <fstream>
-#include <PrisonEscape/Scripts/puzzle/HidingArea.h>
-#include <iostream>
 #include "AnimationController.h"
+
+#include "PrisonEscape/Scripts/puzzle/Button.h"
+#include "PrisonEscape/Levels/Level.h"
+#include "PrisonEscape/Scripts/Player/Player.h"
+#include "PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
+#include "PrisonEscape/Scripts/puzzle/HidingArea.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -30,7 +36,7 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 
 	InitAssets();
 	InitAnimationObjects();
-}	
+}
 
 GameLevelManager::~GameLevelManager()
 {
@@ -92,6 +98,11 @@ void GameLevelManager::UpdateGame(float dt)
 	}
 
 	Debug::Print("LEVELS", Vector2(25, 30), Debug::WHITE);
+	for (Button* button : buttons) {
+		if (!button->IsPressed()) {
+			button->pressDetection(boxes);
+		}
+	}
 }
 
 
@@ -203,7 +214,7 @@ void GameLevelManager::InitAssets()
 					}
 					});
 			}
-	
+
 			group = assetInfo[0];
 			groupInfo.clear();
 
@@ -278,7 +289,7 @@ Player* GameLevelManager::AddPlayerToWorld(const Transform& transform, const std
 
 void GameLevelManager::AddComponentsToPlayer(Player& playerObject, const Transform& playerTransform) {
 
-	SphereVolume* volume = new SphereVolume(PLAYER_MESH_SIZE/2);
+	SphereVolume* volume = new SphereVolume(PLAYER_MESH_SIZE / 2);
 	playerObject.SetBoundingVolume((CollisionVolume*)volume);
 
 	playerObject.GetTransform()
@@ -299,18 +310,19 @@ void GameLevelManager::AddComponentsToPlayer(Player& playerObject, const Transfo
 
 //Should add enemy to the world, needs testing
 
-PatrolEnemy* GameLevelManager::AddPatrolEnemyToWorld(const std::string& enemyName) {
+PatrolEnemy* GameLevelManager::AddPatrolEnemyToWorld(const std::string& enemyName,const std::vector<Vector3>& patrolPoints, Player* player) {
 	Transform transform;
 	PatrolEnemy* mEnemyToAdd = new PatrolEnemy(mWorld, enemyName);
 	AddComponentsToPatrolEnemy(*mEnemyToAdd, transform);
+
+	mEnemyToAdd->SetPatrolPoints(patrolPoints);
+	mEnemyToAdd->SetPlayerObject(player);
 
 	mWorld->AddGameObject(mEnemyToAdd);
 	mUpdatableObjectList.push_back(mEnemyToAdd);
 
 	return mEnemyToAdd;
 }
-
-//Uses player meshes and textures to test it actually works
 
 void GameLevelManager::AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const Transform& enemyTransform) {
 	SphereVolume* volume = new SphereVolume(PATROL_ENEMY_MESH_SIZE / 2);
@@ -329,6 +341,7 @@ void GameLevelManager::AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const T
 
 	enemyObj.GetPhysicsObject()->SetInverseMass(PATROL_ENEMY_INVERSE_MASS);
 	enemyObj.GetPhysicsObject()->InitSphereInertia();
+
 }
 
 // world gameobjects called in loadMap();
@@ -352,7 +365,7 @@ GameObject* GameLevelManager::AddWallToWorld(Vector3 dimensions, const Vector3& 
 	wall->GetPhysicsObject()->InitCubeInertia();
 
 	GameBase::GetGameBase()->GetWorld()->AddGameObject(wall);
-	
+
 	return wall;
 }
 

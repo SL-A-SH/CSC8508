@@ -1,11 +1,9 @@
 #pragma once
 
-#include "GameServer.h"
-#include "GameClient.h"
-#include "GameTechRenderer.h"
-
 namespace NCL {
 	namespace CSC8503 {
+		class GameServer;
+		class GameClient;
 
 		class GameConfigManager {
 		private:
@@ -15,6 +13,7 @@ namespace NCL {
 				std::string ip = "127.0.0.1";
 				GameServer* server = nullptr;
 				GameClient* client = nullptr;
+				bool isUsingSteam = false;
 				int playerID;
 			};
 
@@ -27,6 +26,9 @@ namespace NCL {
 			void CreateClient();
 
 			NetworkConfig networkConfig;
+
+			void SetSteamCallback();
+			std::function<void(uint64_t)> steamInviteCallback;
 		};
 	}
 }

@@ -1,18 +1,14 @@
 #pragma once
 
-#include "../CSC8503/PrisonEscape/Core/GameLevelManager.h"
-#include "PushdownState.h"
-#include "GameWorld.h"
-#include "Window.h"
-#include "Debug.h"
-#include "PhysicsSystem.h"
 #include "GameState.h"
-#include "imgui/imgui.h"
 
 namespace NCL {
 	namespace CSC8503 {
-		class MenuState : public GameState {
+		class PushdownState;
+		class GameConfigManager;
+		class SteamManager;
 
+		class MenuState : public GameState {
 		public:
 			MenuState();
 			~MenuState();
@@ -25,11 +21,18 @@ namespace NCL {
 			void DrawAudioSettingPanel();
 			void DrawVideoSettingPanel();
 			void DrawMultiplayerPanel();
+			void DrawSteamLobbyPanel();
+			void DrawInviteAcceptedPanel(uint64_t lobbyID);
 
 			// Connection handling methods
 			void StartServerProcess();
 			void StartClientProcess();
 			void DrawConnectionMessagePanel();
+
+			void InitializeSteam();
+			void HandleSteamInvite(uint64_t friendSteamID);
+			void HandleSteamInviteAccepted(uint64_t lobbyID);
+			void JoinSteamLobby(uint64_t lobbyID);
 
 		private:
 			enum class ConnectionStage {
@@ -51,6 +54,10 @@ namespace NCL {
 			float connectionTimer;
 			int connectionAttempt;
 			GameConfigManager* gameConfig;
+
+			SteamManager* steamManager;
+			bool useSteamNetworking = false;
+			bool drawInvitePanel = false;
 		};
 	}
 }

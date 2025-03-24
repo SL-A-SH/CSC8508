@@ -10,7 +10,6 @@
 #include "GameTechRenderer.h"
 #include "PrisonEscape/Scripts/puzzle/puzzleT.h"
 #include "PrisonEscape/Scripts/Player/Player.h" 
-
 #include "PrisonEscape/Core/GameBase.h"
 #include <PrisonEscape/Scripts/puzzle/HidingArea.h>
 LevelT::LevelT()
