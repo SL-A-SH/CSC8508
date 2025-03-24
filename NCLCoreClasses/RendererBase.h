@@ -11,7 +11,11 @@ https://research.ncl.ac.uk/game/
 
 namespace NCL::Rendering {
 
-	
+	enum class VerticalSyncState {
+		VSync_ON,
+		VSync_OFF,
+		VSync_ADAPTIVE
+	};
 	
 	class RendererBase {
 	public:
