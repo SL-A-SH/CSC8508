@@ -40,11 +40,11 @@ void GameOverState::DrawGameOverPanel() {
 	std::vector<PanelButton> buttons = {
 		{"Retry", [this]() {
 			// Aqeeb fix pls :) - Ryan <3 
-			stateChangeAction = [](PushdownState** newState) { *newState = new GamePlayState(false, false, new GameConfigManager() ); };
-		}, 0.35f},
+			stateChangeAction = [](PushdownState** newState) { *newState = new GamePlayState(false, false, new GameConfigManager()); };
+		}, 0.10f,0.35f},
 		{"Continue", [this]() {
 			stateChangeAction = [](PushdownState** newState) { *newState = new MenuState(); };
-		}, 0.55f}
+		}, 0.55f,0.35f}
 	};
 
 	ImGuiManager::DrawPanel(title, buttons);
