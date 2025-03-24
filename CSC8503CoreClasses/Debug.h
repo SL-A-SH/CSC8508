@@ -39,6 +39,17 @@ namespace NCL {
 			Vector4 colourB;
 		};
 
+		struct DebugCollisionInfo {
+			std::string objectA;
+			std::string objectB;
+			Vector3 contactPoint;
+			Vector3 normal;
+			float penetrationDepth;
+			float time;
+		};
+
+
+
 		static void DrawTex(const Texture& t, const Vector2& pos, const Vector2& scale, const Vector4& colour = Vector4(1, 1, 1, 1));
 
 		static void Print(const std::string& text, const Vector2& pos, const Vector4& colour = Vector4(1, 1, 1, 1));
@@ -51,6 +62,11 @@ namespace NCL {
 		static void PrintDebugInfo(DebugLogEntry debugString);
 		static void DrawDebugMenu();
 		static float GetTime();
+		static void LogCollision(const std::string& objA, const std::string& objB,
+			const Vector3& contact, const Vector3& normal, float penetration);
+
+
+
 #pragma endregion
 		static void DrawAxisLines(const Matrix4& modelMatrix, float scaleBoost = 1.0f, float time = 0.0f);
 
@@ -84,6 +100,7 @@ namespace NCL {
 		static std::vector<DebugLogEntry> debugEntries;
 		static std::vector<DebugLineEntry>		lineEntries;
 		static std::vector<DebugTexEntry>		texEntries;
+		static std::vector<DebugCollisionInfo> collisionLogs;
 
 		static SimpleFont* debugFont;
 		static Texture* fontTexture;

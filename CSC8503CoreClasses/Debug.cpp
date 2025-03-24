@@ -8,6 +8,8 @@ std::vector<Debug::DebugStringEntry>	Debug::stringEntries;
 std::vector<Debug::DebugLogEntry>	Debug::debugEntries;
 std::vector<Debug::DebugLineEntry>		Debug::lineEntries;
 std::vector<Debug::DebugTexEntry>		Debug::texEntries;
+std::vector<Debug::DebugCollisionInfo> Debug::collisionLogs;
+
 
 SimpleFont* Debug::debugFont = nullptr;
 
@@ -105,6 +107,21 @@ void Debug::UpdateRenderables(float dt) {
 			break;
 		}
 	}
+	trim = 0;
+	for (int i = 0; i < collisionLogs.size(); ) {
+		collisionLogs[i].time -= dt;
+		if (collisionLogs[i].time < 0) {
+			trim++;
+			collisionLogs[i] = collisionLogs[collisionLogs.size() - trim];
+		}
+		else {
+			++i;
+		}
+		if (i + trim >= collisionLogs.size()) {
+			break;
+		}
+	}
+	collisionLogs.resize(collisionLogs.size() - trim);
 	lineEntries.resize(lineEntries.size() - trim);
 	stringEntries.clear();
 	texEntries.clear();
@@ -165,9 +182,16 @@ void Debug::DrawDebugMenu() {
 			ImGui::Text("Virtual memory usage: %zu MB", virtualMemoryUsage);
 		}
 
-		if (ImGui::CollapsingHeader("Physics")) {
-			// Add any additional physics-related information here
+		if (ImGui::CollapsingHeader("Collisions")) {
+			for (const auto& log : collisionLogs) {
+				ImGui::Text("%s collided with %s", log.objectA.c_str(), log.objectB.c_str());
+				ImGui::Text("Contact: (%.2f, %.2f, %.2f)", log.contactPoint.x, log.contactPoint.y, log.contactPoint.z);
+				ImGui::Text("Normal: (%.2f, %.2f, %.2f)", log.normal.x, log.normal.y, log.normal.z);
+				ImGui::Text("Penetration: %.2f", log.penetrationDepth);
+				ImGui::Separator();
+			}
 		}
+
 
 		ImGui::End(); // Close the window
 	}
@@ -203,3 +227,30 @@ float Debug::GetTime() {
 	auto duration = now.time_since_epoch();
 	return std::chrono::duration_cast<std::chrono::duration<float>>(duration).count();  // Time in seconds
 }
+
+void Debug::LogCollision(const std::string& objA, const std::string& objB,
+	const Vector3& contact, const Vector3& normal, float penetration) {
+	for (auto& log : collisionLogs) {
+		// Check if the same objects have already collided
+		if ((log.objectA == objA && log.objectB == objB) ||
+			(log.objectA == objB && log.objectB == objA)) {
+			// Update existing log instead of adding a duplicate
+			log.contactPoint = contact;
+			log.normal = normal;
+			log.penetrationDepth = penetration;
+			log.time = 5.0f;  // Reset timer for displaying log
+			return; // Exit function early
+		}
+	}
+
+	// If not found, add a new entry
+	DebugCollisionInfo log;
+	log.objectA = objA;
+	log.objectB = objB;
+	log.contactPoint = contact;
+	log.normal = normal;
+	log.penetrationDepth = penetration;
+	log.time = 5.0f; // Display log for 5 seconds
+	collisionLogs.push_back(log);
+}
+
