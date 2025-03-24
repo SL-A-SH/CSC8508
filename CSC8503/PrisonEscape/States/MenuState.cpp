@@ -578,8 +578,6 @@ void MenuState::DrawSteamLobbyPanel() {
 		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("SteamLobbyPanel");
 		};
 
-	ImGuiManager::DrawPanel("Steam Lobbies", buttons, {}, backCallback, "Select a lobby to join");
-
 	// Custom drawing for the lobby list
 	ImVec2 windowSize = ImGui::GetWindowSize();
 	float startY = windowSize.y * 0.25f; // Start below the header
@@ -662,52 +660,6 @@ void MenuState::DrawSteamLobbyPanel() {
 			}
 			else {
 				ImGui::TextColored(ImVec4(0, 0.7f, 1, 1), "Online"); // Blue status
-			}
-
-			// Join button - only enable if in game
-			ImGui::SetCursorPos(ImVec2(windowSize.x * 0.65f, currentY));
-			std::string buttonLabel = "Join##" + std::to_string(friendID);
-
-			if (isInGame) {
-				uint64_t friendLobbyID = 0;
-
-				// Get the rich presence data to extract the lobby ID
-				if (steamManager->IsInitialized()) {
-					const char* connectString = SteamFriends()->GetFriendRichPresence(CSteamID(friendID), "connect");
-					if (connectString && strlen(connectString) > 0) {
-						std::string connect = connectString;
-
-						// Try to extract the lobby ID from the rich presence
-						if (connect.find("lobbyid=") != std::string::npos) {
-							size_t pos = connect.find("lobbyid=") + 8;
-							try {
-								friendLobbyID = std::stoull(connect.substr(pos));
-							}
-							catch (...) {
-								// Handle parsing errors
-							}
-						}
-					}
-				}
-
-				if (friendLobbyID != 0) {
-					if (ImGui::Button(buttonLabel.c_str(), ImVec2(windowSize.x * 0.25f, itemHeight))) {
-						JoinSteamLobby(friendLobbyID);
-					}
-				}
-				else {
-					// We couldn't get the lobby ID - disable the button
-					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5f, 0.5f, 0.5f, 0.5f));
-					ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.5f, 0.5f, 0.5f, 0.5f));
-					ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.5f, 0.5f, 0.5f, 0.5f));
-					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.3f, 0.3f, 0.3f, 1.0f));
-
-					ImGui::Button(buttonLabel.c_str(), ImVec2(windowSize.x * 0.25f, itemHeight));
-					ImGui::SetCursorPos(ImVec2(windowSize.x * 0.65f, currentY + itemHeight + 5));
-					ImGui::TextColored(ImVec4(1, 0.5f, 0, 1), "Lobby info unavailable");
-
-					ImGui::PopStyleColor(4);
-				}
 			}
 
 			currentY += itemHeight + padding;
