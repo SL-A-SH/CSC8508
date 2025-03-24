@@ -345,7 +345,7 @@ GameObject* GameLevelManager::AddWallToWorld(Vector3 dimensions, const Vector3& 
 		.SetScale(dimensions)
 		.SetPosition(position);
 
-	wall->SetRenderObject(new RenderObject(&wall->GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+	wall->SetRenderObject(new RenderObject(&wall->GetTransform(), mMeshList["Wall"], mTextureList["WallTexture"], mShaderList["BasicShader"]));
 	wall->SetPhysicsObject(new PhysicsObject(&wall->GetTransform(), wall->GetBoundingVolume()));
 
 	wall->GetPhysicsObject()->SetInverseMass(0);
@@ -576,8 +576,8 @@ void GameLevelManager::loadMap() {
 	std::vector<InGameObject> objects;
 	std::unordered_map<std::string, Door*> doorMap; // storing doors by name
 
-	// maybe alter here or add argument for level switching
-	if (::jsonParser::LoadLevel("../CSC8503/PrisonEscape/Levels/level1.json", level, objects)) {
+	// alter here or add argument for level switching
+	if (::jsonParser::LoadLevel("../CSC8503/PrisonEscape/Levels/levelTest.json", level, objects)) {
 
 		// create button doors first and store
 		for (const auto& obj : objects) {
