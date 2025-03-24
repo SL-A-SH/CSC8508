@@ -70,7 +70,7 @@ void Level::InitializeAssets()
 	kittenMesh = GameBase::GetGameBase()->GetRenderer()->LoadMesh("kitten.msh");
 	basicTex = GameBase::GetGameBase()->GetRenderer()->LoadTexture("checkerboard.png");
 	basicShader = GameBase::GetGameBase()->GetRenderer()->LoadShader("scene.vert", "scene.frag");
-	pauseButton = GameBase::GetGameBase()->GetRenderer()->LoadTexture("pausebutton.png");
+	//pauseButton = GameBase::GetGameBase()->GetRenderer()->LoadTexture("pausebutton.png");
 }
 
 void Level::InitializeLevel()

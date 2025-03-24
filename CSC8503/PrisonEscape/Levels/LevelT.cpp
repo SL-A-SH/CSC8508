@@ -16,7 +16,7 @@
 LevelT::LevelT()
 {
 	doorCloseTex = GameBase::GetGameBase()->GetRenderer()->LoadTexture("Default.png");
-	doorOpenTex = GameBase::GetGameBase()->GetRenderer()->LoadTexture("checkerboard.png");
+	doorOpenTex = GameBase::GetGameBase()->GetRenderer()->LoadTexture("Default.png");
 }
 
 LevelT::~LevelT()
