@@ -3,8 +3,9 @@
 using namespace NCL;
 using namespace CSC8503;
 
-PursuitEnemy::PursuitEnemy(GameWorld* world) : GameObject("PursuitEnemy") {
+PursuitEnemy::PursuitEnemy(GameWorld* world, const std::string& name) : GameObject() {
     gameWorld = world;
+    GameObject::SetName(name);
     currentPatrolPoint = 0;
     patrolCounter = 0;
     pursuitTimer = 0.0f;
@@ -18,7 +19,7 @@ PursuitEnemy::~PursuitEnemy() {
     delete rootSequence;
 }
 
-void PursuitEnemy::Update(float dt) {
+void PursuitEnemy::UpdateGame(float dt) {
 
     std::string stateStr;
     switch (currentState) {
@@ -33,7 +34,7 @@ void PursuitEnemy::SetPatrolPoints(const std::vector<Vector3>& points) {
     patrolPoints = points;
 }
 
-void PursuitEnemy::SetPlayerObject(GameObject* player) {
+void PursuitEnemy::SetPlayerObject(Player* player) {
     playerObject = player;
 }
 

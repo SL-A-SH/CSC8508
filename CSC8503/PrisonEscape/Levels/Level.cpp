@@ -11,6 +11,8 @@
 #include "PrisonEscape/Core/GameBase.h"
 #include "PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
 #include "PrisonEscape/Scripts/Player/Player.h"
+#include "PrisonEscape/Scripts/PursuitEnemy/PursuitEnemy.h"
+
 
 
 using namespace NCL;
@@ -96,13 +98,22 @@ void Level::AddPlayerToLevel(Player* player, const Vector3& position)
 	}
 }
 
-void Level::AddEnemyToLevel(PatrolEnemy* enemy)
+void Level::AddPatrolEnemyToLevel(PatrolEnemy* patrolEnemy)
 {
-	if (enemy) {
-		enemies.push_back(enemy);
-		enemy->GetRenderObject()->GetTransform()->SetPosition(Vector3(50, 5, 50));
+	if (patrolEnemy) {
+		patrolEnemies.push_back(patrolEnemy);
+		patrolEnemy->GetRenderObject()->GetTransform()->SetPosition(Vector3(50, 5, 50));
 	}
 }
+
+void NCL::CSC8503::Level::AddPursuitEnemyToLevel(PursuitEnemy* pursuitEnemy)
+{
+	if (pursuitEnemy) {
+		pursuitEnemies.push_back(pursuitEnemy);
+		pursuitEnemy->GetRenderObject()->GetTransform()->SetPosition(Vector3(40, 5, 40));
+	}
+}
+
 
 void Level::SetCameraAttributes()
 {

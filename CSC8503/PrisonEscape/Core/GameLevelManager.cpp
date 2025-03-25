@@ -15,6 +15,8 @@
 #include "PrisonEscape/Scripts/Player/Player.h"
 #include "PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
 #include "PrisonEscape/Scripts/puzzle/HidingArea.h"
+#include "PrisonEscape/Scripts/PursuitEnemy/PursuitEnemy.h"
+
 
 using namespace NCL;
 using namespace CSC8503;
@@ -333,6 +335,40 @@ PatrolEnemy* GameLevelManager::AddPatrolEnemyToWorld(const std::string& enemyNam
 }
 
 void GameLevelManager::AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const Transform& enemyTransform) {
+	SphereVolume* volume = new SphereVolume(PATROL_ENEMY_MESH_SIZE / 2);
+	enemyObj.SetBoundingVolume((CollisionVolume*)volume);
+
+	enemyObj.GetTransform()
+		.SetScale(Vector3(PATROL_ENEMY_MESH_SIZE, PATROL_ENEMY_MESH_SIZE, PATROL_ENEMY_MESH_SIZE))
+		.SetPosition(enemyTransform.GetPosition())
+		.SetOrientation(enemyTransform.GetOrientation());
+
+	enemyObj.SetRenderObject(new RenderObject(&enemyObj.GetTransform(), mMeshList["Guard"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+
+	enemyObj.SetPhysicsObject(new PhysicsObject(&enemyObj.GetTransform(), enemyObj.GetBoundingVolume()));
+
+	enemyObj.GetRenderObject()->SetMaterialTextures(mMeshMaterialsList["Guard"]);
+
+	enemyObj.GetPhysicsObject()->SetInverseMass(PATROL_ENEMY_INVERSE_MASS);
+	enemyObj.GetPhysicsObject()->InitSphereInertia();
+
+}
+
+PursuitEnemy* GameLevelManager::AddPursuitEnemyToWorld(const std::string& enemyName, const std::vector<Vector3>& pursuitPatrolPoints, Player* player) {
+	Transform transform;
+	PursuitEnemy* mEnemyToAdd = new PursuitEnemy(mWorld, enemyName);
+	AddComponentsToPursuitEnemy(*mEnemyToAdd, transform);
+
+	mEnemyToAdd->SetPatrolPoints(pursuitPatrolPoints);
+	mEnemyToAdd->SetPlayerObject(player);
+
+	mWorld->AddGameObject(mEnemyToAdd);
+	mUpdatableObjectList.push_back(mEnemyToAdd);
+
+	return mEnemyToAdd;
+}
+
+void GameLevelManager::AddComponentsToPursuitEnemy(PursuitEnemy& enemyObj, const Transform& enemyTransform) {
 	SphereVolume* volume = new SphereVolume(PATROL_ENEMY_MESH_SIZE / 2);
 	enemyObj.SetBoundingVolume((CollisionVolume*)volume);
 

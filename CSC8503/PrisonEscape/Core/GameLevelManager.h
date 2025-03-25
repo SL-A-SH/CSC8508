@@ -23,6 +23,7 @@ namespace NCL {
 		class Button;
 		class Player;
 		class PatrolEnemy;
+		class PursuitEnemy;
 		class jsonParser;
 		class GameTechRenderer;
 		class AnimationController;
@@ -42,9 +43,11 @@ namespace NCL {
 			Vector3 GetP1Position() { return P1Position; }
 			Vector3 GetP2Position() { return P2Position; }
 
-			PatrolEnemy* AddPatrolEnemyToWorld(const std::string& enemyName,const std::vector<Vector3>& patrolPoints, Player* player);
+			PatrolEnemy* AddPatrolEnemyToWorld(const std::string& patrolEnemyName,const std::vector<Vector3>& patrolPoints, Player* player);
 			void AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const Transform& transform);
 
+			PursuitEnemy* AddPursuitEnemyToWorld(const std::string& pursuitEnemyName, const std::vector<Vector3>& patrolPoints, Player* player);
+			void AddComponentsToPursuitEnemy(PursuitEnemy& enemyObj, const Transform& transform);
 			void loadMap(std::string levelToLoad);
 
 		public:
