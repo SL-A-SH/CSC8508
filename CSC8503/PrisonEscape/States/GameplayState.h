@@ -18,7 +18,7 @@ namespace NCL {
 
 		class GamePlayState : public GameState {
 		public:
-			GamePlayState(bool multiplayer, bool asServer, GameConfigManager* config, string LevelString);
+			GamePlayState(bool multiplayer, bool asServer, GameConfigManager* config, string LevelString = "Level1");
 			~GamePlayState();
 
 			void OnAwake() override;
