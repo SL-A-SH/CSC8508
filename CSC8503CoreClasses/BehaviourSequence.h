@@ -7,7 +7,6 @@ public:
 	~BehaviourSequence() {}
 	BehaviourState Execute(float dt) override {
 		for (auto& i : childNodes) {
-			std::cout << "EXECUTING" << std::endl;
 			BehaviourState nodeState = i->Execute(dt);
 			switch (nodeState) {
 				case Success: continue;

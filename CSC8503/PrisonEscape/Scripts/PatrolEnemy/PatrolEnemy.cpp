@@ -27,9 +27,6 @@ void PatrolEnemy::UpdateGame(float dt) {
     case SLEEP: stateStr = "SLEEP"; break;
     case CAUGHT: stateStr = "CAUGHT"; break;
     }
-
-    std::cout << "State str is: " << stateStr << std::endl;
-
     rootSequence->Execute(dt);
 }
 
@@ -67,7 +64,6 @@ void PatrolEnemy::InitBehaviourTree() {
     BehaviourAction* patrolAction = new BehaviourAction("PATROL",
         [&](float dt, BehaviourState state) -> BehaviourState {
 
-            std::cout << "Moving: " << std::endl; 
             if (currentState != PATROL) {
                 return Failure;
             }
@@ -104,7 +100,6 @@ void PatrolEnemy::InitBehaviourTree() {
 
     BehaviourAction* sleepAction = new BehaviourAction("SLEEP",
         [&](float dt, BehaviourState state) -> BehaviourState {
-			std::cout << "Sleeping:" << std::endl;
             if (currentState != SLEEP) {
                 return Failure;
             }
@@ -119,7 +114,6 @@ void PatrolEnemy::InitBehaviourTree() {
 
     BehaviourAction* catchAction = new BehaviourAction("CAUGHT",
         [&](float dt, BehaviourState state) -> BehaviourState {
-            std::cout << "Catching:" << std::endl;
             if (currentState != CAUGHT) {
                 return Failure;
             }
