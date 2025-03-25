@@ -597,7 +597,7 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 	std::vector<InGameObject> objects;
 	std::unordered_map<std::string, Door*> doorMap; // storing doors by name
 	std::string levelPath = Assets::LEVELDIR + levelToLoad;
-	// alter here or add argument for level switching
+
 	if (::jsonParser::LoadLevel(levelPath, level, objects)) {
 
 		// create button doors first and store
@@ -634,6 +634,10 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 
 			else if (obj.type == "Floor") {
 				CreateFloor(obj);
+			}
+
+			else if (obj.type.find("Player") != std::string::npos) {
+				P1Position = obj.position;
 			}
 
 			else {

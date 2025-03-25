@@ -208,15 +208,15 @@ void GamePlayState::InitializeSteamMultiplayer(Level* level)
 	// Determine which player this client controls based on Steam role
 	if (isHost)
 	{
-		level->AddPlayerToLevel(playerOne);
-		level->AddPlayerToLevel(playerTwo);
+		level->AddPlayerToLevel(playerOne, manager->GetP1Position());
+		level->AddPlayerToLevel(playerTwo, manager->GetP2Position());
 		// Position playerTwo off-screen initially until connected
 		playerTwo->GetTransform().SetPosition(Vector3(10, -100, 10));
 	}
 	else
 	{
-		level->AddPlayerToLevel(playerTwo);
-		level->AddPlayerToLevel(playerOne);
+		level->AddPlayerToLevel(playerTwo, manager->GetP2Position());
+		level->AddPlayerToLevel(playerOne, manager->GetP2Position());
 		// Position playerOne off-screen initially
 		playerOne->GetTransform().SetPosition(Vector3(10, -100, 10));
 	}
@@ -268,7 +268,7 @@ void GamePlayState::InitializeSinglePlayer(Level* level) {
 	Transform playerTransform;
 	Player* player = manager->AddPlayerToWorld(playerTransform, "playerOne");
 	player->InitializeController();
-	level->AddPlayerToLevel(player);
+	level->AddPlayerToLevel(player, manager->GetP1Position());
 
 	// Set the camera position for the single-player
 	Vector3 playerPosition = level->GetPlayerOne()->GetTransform().GetPosition();
@@ -282,7 +282,7 @@ void GamePlayState::SetupServer(Level* level) {
 	Transform playerOneTransform;
 	Player* playerOne = manager->AddPlayerToWorld(playerOneTransform, "playerOne");
 	playerOne->InitializeController();
-	level->AddPlayerToLevel(playerOne);
+	level->AddPlayerToLevel(playerOne, manager->GetP1Position());
 
 	// Set the camera position for the server player
 	Vector3 playerPosition = level->GetPlayerOne()->GetTransform().GetPosition();
@@ -309,8 +309,8 @@ void GamePlayState::SetupClient(Level* level) {
 	Player* playerTwo = manager->AddPlayerToWorld(playerTwoTransform, "playerTwo");
 	playerTwo->InitializeController();
 
-	level->AddPlayerToLevel(playerOne);
-	level->AddPlayerToLevel(playerTwo);
+	level->AddPlayerToLevel(playerOne, manager->GetP1Position());
+	level->AddPlayerToLevel(playerTwo, manager->GetP2Position());
 
 	// Set the initial camera position for the client player
 	Vector3 playerPosition = level->GetPlayerTwo()->GetTransform().GetPosition();
@@ -324,7 +324,7 @@ void GamePlayState::SetupClientPlayer(Level* level) {
 	Transform playerTwoTransform;
 	Player* playerTwo = this->manager->AddPlayerToWorld(playerTwoTransform, "playerTwo");
 	playerTwo->InitializeController();
-	level->AddPlayerToLevel(playerTwo);
+	level->AddPlayerToLevel(playerTwo, manager->GetP2Position());
 }
 
 void GamePlayState::RegisterServerPacketHandlers() {

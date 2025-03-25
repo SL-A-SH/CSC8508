@@ -39,6 +39,8 @@ namespace NCL {
 			Player* AddPlayerToWorld(const Transform& transform, const std::string& playerName);
 			void AddComponentsToPlayer(Player& playerObj, const Transform& transform);
 
+			Vector3 GetP1Position() { return P1Position; }
+			Vector3 GetP2Position() { return P2Position; }
 
 			PatrolEnemy* AddPatrolEnemyToWorld(const std::string& enemyName,const std::vector<Vector3>& patrolPoints, Player* player);
 			void AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const Transform& transform);
@@ -60,6 +62,8 @@ namespace NCL {
 			GameTechRenderer* mRenderer;
 			PhysicsSystem* mPhysics;
 			Level* mCurrentLevel;
+			Vector3 P1Position;
+			Vector3 P2Position;
 
 			// for handling multiple buttons/boxes in a level
 			int boxNumber;
