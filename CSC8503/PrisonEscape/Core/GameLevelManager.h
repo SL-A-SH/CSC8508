@@ -32,7 +32,7 @@ namespace NCL {
 			void AddComponentsToPlayer(Player& playerObj, const Transform& transform);
 
 
-			PatrolEnemy* AddPatrolEnemyToWorld(const std::string& enemyName,const std::vector<Vector3>& patrolPoints, Player* player);
+			PatrolEnemy* AddPatrolEnemyToWorld(const std::string& enemyName, const std::vector<Vector3>& patrolPoints, Player* player);
 			void AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const Transform& transform);
 
 			void loadMap();
@@ -43,8 +43,10 @@ namespace NCL {
 			void AddLevel(Level* newLevel) { mLevelStack.push(newLevel); }
 
 			AnimationController* GetAnimator() { return mAnimator; }
-			
+
 			static GameLevelManager* GetGameLevelManager() { return manager; }
+
+			void SetLevelToLoad(string levelName) { mLevelToLoad = levelName; }
 
 		private:
 			GameWorld* mWorld;
@@ -52,6 +54,8 @@ namespace NCL {
 			GameTechRenderer* mRenderer;
 			PhysicsSystem* mPhysics;
 			Level* mCurrentLevel;
+
+			string mLevelToLoad = "Level1";
 
 			// for handling multiple buttons/boxes in a level
 			int boxNumber;

@@ -19,6 +19,14 @@ namespace NCL {
 			float xPosition;
 			float yPosition;
 		};
+		struct PanelCheckbox {
+			std::string label;
+			bool* checked;  // Store a pointer instead of a direct bool
+			float xPosition;
+			float yPosition;
+		};
+
+
 
 		class ImGuiManager {
 		public:
@@ -30,14 +38,16 @@ namespace NCL {
 				const std::string& title = "",
 				const std::vector<PanelButton>& buttons = {},
 				const std::vector<PanelSlider>& sliders = {},
-				std::function<void()> backCallback = nullptr, const std::string& footer = ""
-			);
+
+				std::function<void()> backCallback = nullptr, const std::string& footer = "", const std::vector<PanelCheckbox>& checkboxes = {});
 
 			static void DrawHeader(const std::string& title);
 			static void DrawButton(const std::string& label, const std::function<void()>& callback, float verticalPos, float horizontalPos);
 			static void DrawSlider(const std::string& label, int* value, int min, int max, float verticalPos, float horizontalPos);
 			static void DrawBackButton(const std::function<void()>& callback);
 			static void DrawFooter(const std::string& text);
+			static void DrawCheckbox(const std::string& label, bool* checked, float x, float y);
+
 			static void DrawMessagePanel(const std::string& title, const std::string& message, const ImVec4& messageColor = ImVec4(1, 1, 1, 1), std::function<void()> cancelCallback = nullptr);
 			static void DrawPopupPanel(const std::string& title, const std::string& message,
 				const ImVec4& messageColor, std::function<void()> acceptCallback = nullptr,

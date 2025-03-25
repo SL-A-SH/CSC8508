@@ -17,6 +17,7 @@ namespace NCL {
 			void OnAwake() override;
 
 			void DrawMainMenuPanel();
+			void DrawLevelSelectPanel();
 			void DrawSettingPanel();
 			void DrawAudioSettingPanel();
 			void DrawVideoSettingPanel();
@@ -46,6 +47,8 @@ namespace NCL {
 			std::function<void(PushdownState**)> stateChangeAction = nullptr;
 			int volume = 50;
 			int brightness = 50;
+			bool fullscreen = false;
+			bool vSync = false;
 
 			// Network connection state
 			bool isConnecting = false;
