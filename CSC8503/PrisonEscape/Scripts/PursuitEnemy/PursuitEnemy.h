@@ -17,7 +17,7 @@ namespace NCL {
             PursuitEnemy(GameWorld* world, const std::string& name);
             ~PursuitEnemy();
 
-            void Update(float dt);
+            void UpdateGame(float dt);
             void SetPatrolPoints(const std::vector<Vector3>& points);
             void SetPlayerObject(Player* player);
 

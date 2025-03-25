@@ -19,7 +19,7 @@ PursuitEnemy::~PursuitEnemy() {
     delete rootSequence;
 }
 
-void PursuitEnemy::Update(float dt) {
+void PursuitEnemy::UpdateGame(float dt) {
 
     std::string stateStr;
     switch (currentState) {
