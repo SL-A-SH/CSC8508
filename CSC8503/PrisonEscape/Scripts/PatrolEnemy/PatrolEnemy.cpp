@@ -27,9 +27,6 @@ void PatrolEnemy::UpdateGame(float dt) {
     case SLEEP: stateStr = "SLEEP"; break;
     case CAUGHT: stateStr = "CAUGHT"; break;
     }
-
-    std::cout << "State str is: " << stateStr << std::endl;
-
     rootSequence->Execute(dt);
 }
 
