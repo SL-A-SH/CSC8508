@@ -134,7 +134,8 @@ PushdownState::PushdownResult MenuState::OnUpdate(float dt, PushdownState** newS
 						// Regular networking
 						bool connected = false;
 						try {
-							if (gameConfig->networkConfig.client->Connect(127, 0, 0, 1, NetworkBase::GetDefaultPort())) {
+							uint8_t a, b, c, d;
+							if (ParseIPAddress(gameConfig->networkConfig.ip, a, b, c, d) && gameConfig->networkConfig.client->Connect(a, b, c, d, NetworkBase::GetDefaultPort())) {
 								connected = true;
 								connectionStage = ConnectionStage::Success;
 							}
@@ -357,6 +358,64 @@ void MenuState::DrawMultiplayerPanel() {
 	ImGui::PopFont();
 }
 
+void MenuState::DrawJoinPanel()
+{
+	std::vector<PanelButton> buttons = {
+		{"Connect", [this]() {
+			// Parse the IP address
+			uint8_t a, b, c, d;
+			if (ParseIPAddress(ipAddressInput, a, b, c, d)) {
+				// Store the IP for later use
+				gameConfig->networkConfig.ip = ipAddressInput;
+
+				// Start the connection process
+				connectionStage = ConnectionStage::Creating;
+				connectionAttempt = 1;
+				connectionTimer = 0.0f;
+				isConnecting = true;
+
+				GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("ConnectionPanel", [this]() {
+					DrawConnectionMessagePanel();
+				});
+				GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("JoinPanel");
+			}
+			else {
+				// Show error message for invalid IP
+				GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("IPErrorPanel", [this]() {
+					ImGuiManager::DrawMessagePanel("Invalid IP Address",
+						"Please enter a valid IP address in the format: xxx.xxx.xxx.xxx",
+						ImVec4(1, 0, 0, 1),
+						[this]() {
+							GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("IPErrorPanel");
+						});
+				});
+			}
+		}, 0.32f, 0.50f}
+	};
+
+	auto backCallback = [this]() {
+		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("MultiplayerPanel", [this]() { DrawMultiplayerPanel(); });
+		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("JoinPanel");
+	};
+
+	ImGuiManager::DrawPanel("Join Server", buttons, {}, backCallback);
+
+	// Add custom IP input field
+	ImVec2 windowSize = ImGui::GetWindowSize();
+	float startY = windowSize.y * 0.30f;
+
+	ImGui::PushFont(ImGuiManager::GetButtonFont());
+
+	ImGui::SetCursorPos(ImVec2(windowSize.x * 0.1f, startY));
+	ImGui::Text("Server IP Address:");
+
+	ImGui::SetCursorPos(ImVec2(windowSize.x * 0.1f, startY + 40));
+	ImGui::SetNextItemWidth(windowSize.x * 0.8f);
+	ImGui::InputText("##ipaddress", ipAddressInput, sizeof(ipAddressInput));
+
+	ImGui::PopFont();
+}
+
 void MenuState::StartServerProcess()
 {
 	connectionStage = ConnectionStage::Creating;
@@ -386,15 +445,6 @@ void MenuState::StartServerProcess()
 
 void MenuState::StartClientProcess()
 {
-	connectionStage = ConnectionStage::Creating;
-	connectionAttempt = 1;
-	connectionTimer = 0.0f;
-	isConnecting = true;
-
-	gameConfig->networkConfig.isMultiplayer = true;
-	gameConfig->networkConfig.isServer = false;
-	gameConfig->networkConfig.isUsingSteam = useSteamNetworking;
-
 	if (useSteamNetworking && steamManager && steamManager->IsInitialized()) {
 		// For Steam as client, we need to show available lobbies or friend lobbies
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("SteamLobbyPanel", [this]() {DrawSteamLobbyPanel(); });
@@ -402,7 +452,7 @@ void MenuState::StartClientProcess()
 		return;
 	}
 
-	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("ConnectionPanel", [this]() {DrawConnectionMessagePanel(); });
+	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("JoinPanel", [this]() { DrawJoinPanel(); });
 	GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MultiplayerPanel");
 }
 
@@ -576,7 +626,7 @@ void MenuState::DrawSteamLobbyPanel() {
 	auto backCallback = [this]() {
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("MultiplayerPanel", [this]() { DrawMultiplayerPanel(); });
 		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("SteamLobbyPanel");
-		};
+	};
 
 	// Custom drawing for the lobby list
 	ImVec2 windowSize = ImGui::GetWindowSize();
@@ -691,6 +741,30 @@ void MenuState::JoinSteamLobby(uint64_t lobbyID) {
 
 	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("ConnectionPanel", [this]() {DrawConnectionMessagePanel(); });
 	GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("SteamLobbyPanel");
+}
+
+bool MenuState::ParseIPAddress(const std::string& ipString, uint8_t& a, uint8_t& b, uint8_t& c, uint8_t& d)
+{
+	std::stringstream ss(ipString);
+	int tempA, tempB, tempC, tempD;
+	char dot;
+
+	if (ss >> tempA >> dot >> tempB >> dot >> tempC >> dot >> tempD) {
+		// Check valid ranges for IP components (0-255)
+		if (tempA >= 0 && tempA <= 255 &&
+			tempB >= 0 && tempB <= 255 &&
+			tempC >= 0 && tempC <= 255 &&
+			tempD >= 0 && tempD <= 255) {
+
+			a = static_cast<uint8_t>(tempA);
+			b = static_cast<uint8_t>(tempB);
+			c = static_cast<uint8_t>(tempC);
+			d = static_cast<uint8_t>(tempD);
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void MenuState::DrawInviteAcceptedPanel(uint64_t lobbyID)
