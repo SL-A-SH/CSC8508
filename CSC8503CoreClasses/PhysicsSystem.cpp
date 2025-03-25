@@ -137,8 +137,8 @@ void PhysicsSystem::Update(float dt) {
 			realDT = idealDT;
 		}
 		if (temp != realHZ) {
-			
-	//		std::cout << "Raising iteration count due to short physics time...(now " << realHZ << ")\n";
+
+			//		std::cout << "Raising iteration count due to short physics time...(now " << realHZ << ")\n";
 		}
 	}
 }
@@ -330,6 +330,8 @@ void PhysicsSystem::NarrowPhase() {
 			collisionInfo.framesLeft = numCollisionFrames;
 			ImpulseResolveCollision(*collisionInfo.a, *collisionInfo.b, collisionInfo.point);
 			allCollisions.insert(collisionInfo);
+			Debug::LogCollision(collisionInfo.a->GetName(), collisionInfo.b->GetName(), collisionInfo.point.localA, collisionInfo.point.normal, collisionInfo.point.penetration);
+
 		}
 	}
 

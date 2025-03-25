@@ -7,6 +7,7 @@
 #include "Ray.h"
 #include "GameWorld.h"
 #include "PhysicsObject.h"
+#include "RenderObject.h"
 #include "../Player/Player.h"
 
 namespace NCL {
@@ -22,10 +23,8 @@ namespace NCL {
 
             void OnCatch(Player* otherObject) {
                 if (otherObject == playerObject) {
-                    currentState = PATROL;
-                    patrolCounter = 0;
-
                     playerObject->SetHealth(playerObject->GetHealth() - 1);
+                    playerObject->GetRenderObject()->GetTransform()->SetPosition(playerObject->GetSpawn());
                 }
             }
 
@@ -45,11 +44,14 @@ namespace NCL {
             int currentPatrolPoint;
             int patrolCounter;
             float warningTimer;
+            float sleepTimer;
 
             const float VISION_RANGE = 15.0f;
+			const float MAX_SLEEP_TIME = 3.0f;
 
             enum AIState {
                 PATROL,
+                SLEEP,
                 CAUGHT
             };
             AIState currentState;

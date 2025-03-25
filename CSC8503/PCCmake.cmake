@@ -267,6 +267,16 @@ function(Create_PC_CSC8503_Files)
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC "../FMODCoreAPI/libs/fmodL_vc")  # Ensure this path is correct
 
     file(GLOB DLLS "../FMODCoreAPI/dlls/*.dll")
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    "../FMODCoreAPI/dlls/fmod.dll"
+    "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+    )
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        "../FMODCoreAPI/dlls/fmodL.dll"
+        "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+    )
 
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy

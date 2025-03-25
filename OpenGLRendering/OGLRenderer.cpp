@@ -289,11 +289,6 @@ void OGLRenderer::InitWithWin32(Window& w) {
 
 	wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC)wglGetProcAddress("wglSwapIntervalEXT");
 }
-
-void OGLRenderer::DestroyWithWin32() {
-	wglDeleteContext(renderContext);
-}
-
 bool OGLRenderer::SetVerticalSync(VerticalSyncState s) {
 	if (!wglSwapIntervalEXT) {
 		return false;
@@ -301,13 +296,19 @@ bool OGLRenderer::SetVerticalSync(VerticalSyncState s) {
 	GLuint state;
 
 	switch (s) {
-		case VerticalSyncState::VSync_OFF:		state =  0; break;
-		case VerticalSyncState::VSync_ON:		state =  1; break;
-		case VerticalSyncState::VSync_ADAPTIVE:	state = -1; break;
+	case VerticalSyncState::VSync_OFF:		state = 0; break;
+	case VerticalSyncState::VSync_ON:		state = 1; break;
+	case VerticalSyncState::VSync_ADAPTIVE:	state = -1; break;
 	}
 
 	return wglSwapIntervalEXT(state);
 }
+void OGLRenderer::DestroyWithWin32() {
+	wglDeleteContext(renderContext);
+}
+
+
+
 #endif
 
 #ifdef OPENGL_DEBUGGING
