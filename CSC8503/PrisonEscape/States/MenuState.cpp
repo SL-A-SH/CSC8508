@@ -222,15 +222,7 @@ void MenuState::DrawMainMenuPanel() {
 			std::cout << "Single Player" << std::endl;
 			GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("LevelSelectPanel", [this]() {DrawLevelSelectPanel(); });
 			GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MainMenuPanel");
-			//stateChangeAction = [this](PushdownState** newState) {
-			//	gameConfig->networkConfig.isMultiplayer = false;
 
-			//	if (this->gameConfig) {
-			//		*newState = new GamePlayState(false, false, gameConfig);
-			//		this->gameConfig = nullptr; // Transfer ownership
-			//	}
-
-			//};
 		}, 0.32, 0.25f},
 		{"Multiplayer", [this]() {
 			GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MainMenuPanel");
@@ -257,10 +249,29 @@ void MenuState::DrawLevelSelectPanel()
 {
 	std::vector<PanelButton> buttons = {
 		{"Level One", [this]() {
-				GameLevelManager::GetGameLevelManager()->SetLevelToLoad("Level1");
+
+				stateChangeAction = [this](PushdownState** newState) {
+				gameConfig->networkConfig.isMultiplayer = false;
+
+				if (this->gameConfig) {
+					*newState = new GamePlayState(false, false, gameConfig, "Level1");
+					this->gameConfig = nullptr; // Transfer ownership
+				}
+
+			};
+
 		}, 0.10f, .35f},
 		{"Level Two", [this]() {
-					GameLevelManager::GetGameLevelManager()->SetLevelToLoad("Level2");
+
+				stateChangeAction = [this](PushdownState** newState) {
+				gameConfig->networkConfig.isMultiplayer = false;
+
+				if (this->gameConfig) {
+					*newState = new GamePlayState(false, false, gameConfig, "Level2");
+					this->gameConfig = nullptr; // Transfer ownership
+				}
+
+			};
 		},0.55f, .35f}
 	};
 

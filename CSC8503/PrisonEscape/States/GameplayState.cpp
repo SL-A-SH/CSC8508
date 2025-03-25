@@ -20,10 +20,10 @@
 using namespace NCL;
 using namespace CSC8503;
 
-GamePlayState::GamePlayState(bool multiplayer, bool asServer, GameConfigManager* config)
+GamePlayState::GamePlayState(bool multiplayer, bool asServer, GameConfigManager* config, string levelString)
 {
 	this->gameConfig = config;
-	manager = new GameLevelManager(GameBase::GetGameBase()->GetWorld(), GameBase::GetGameBase()->GetRenderer());
+	manager = new GameLevelManager(GameBase::GetGameBase()->GetWorld(), GameBase::GetGameBase()->GetRenderer(), levelString);
 	Level* level = new LevelT();
 	level->Init();
 	manager->AddLevel(level);
@@ -252,7 +252,7 @@ void GamePlayState::InitializeSteamMultiplayer(Level* level)
 			// Client updates playerOne
 			playerOne->GetTransform().SetPosition(pos);
 		}
-	});
+		});
 
 	// Register with Steam for enemy position updates
 	steamManager->SetEnemyPositionUpdateCallback([this, level](int enemyID, const Vector3& pos) {
@@ -263,7 +263,7 @@ void GamePlayState::InitializeSteamMultiplayer(Level* level)
 				enemy->GetTransform().SetPosition(pos);
 			}
 		}
-	});
+		});
 }
 
 bool GamePlayState::InitializeSteamNetworking() {
@@ -321,7 +321,7 @@ void GamePlayState::SetupServer(Level* level) {
 	// Set up server callbacks for client connections
 	gameConfig->networkConfig.server->SetPlayerConnectedCallback([this, level](int playerID) {
 		SetupClientPlayer(level);
-	});
+		});
 
 	// Register packet handlers for server
 	RegisterServerPacketHandlers();

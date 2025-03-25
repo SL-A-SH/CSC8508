@@ -21,7 +21,7 @@ namespace NCL {
 
 		class GameLevelManager {
 		public:
-			GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer);
+			GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer, string LevelToLoad);
 			~GameLevelManager();
 			virtual void UpdateGame(float dt);
 

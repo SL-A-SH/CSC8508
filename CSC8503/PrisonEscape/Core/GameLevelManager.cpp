@@ -21,7 +21,7 @@ using namespace CSC8503;
 
 GameLevelManager* GameLevelManager::manager = nullptr;
 
-GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer)
+GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer, string levelToLoad)
 {
 	mWorld = existingWorld;
 	mRenderer = existingRenderer;
