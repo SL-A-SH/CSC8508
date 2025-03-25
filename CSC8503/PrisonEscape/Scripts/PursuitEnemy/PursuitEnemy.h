@@ -7,17 +7,19 @@
 #include "Ray.h"
 #include "GameWorld.h"
 #include "PhysicsObject.h"
+#include "../Player/Player.h"
+#include "RenderObject.h"
 
 namespace NCL {
     namespace CSC8503 {
         class PursuitEnemy : public GameObject {
         public:
-            PursuitEnemy(GameWorld* world);
+            PursuitEnemy(GameWorld* world, const std::string& name);
             ~PursuitEnemy();
 
             void Update(float dt);
             void SetPatrolPoints(const std::vector<Vector3>& points);
-            void SetPlayerObject(GameObject* player);
+            void SetPlayerObject(Player* player);
 
             void OnCollisionBegin(GameObject* otherObject) override {
                 if (otherObject == playerObject) {
@@ -25,7 +27,8 @@ namespace NCL {
                     pursuitTimer = 0.0f;
                     patrolCounter = 0;
 
-                    playerObject->GetTransform().SetPosition(Vector3(0, 5, 0));
+                    playerObject->SetHealth(playerObject->GetHealth() - 1);
+                    playerObject->GetRenderObject()->GetTransform()->SetPosition(playerObject->GetSpawn());
                 }
             }
 
@@ -39,7 +42,7 @@ namespace NCL {
             BehaviourSelector* modeSelector;
 
             GameWorld* gameWorld;
-            GameObject* playerObject;
+            Player* playerObject;
             std::vector<Vector3> patrolPoints;
 
             int currentPatrolPoint;
@@ -53,7 +56,6 @@ namespace NCL {
 
             enum AIState {
                 PATROL,
-                CAUGHT,
                 PURSUIT
             };
             AIState currentState;

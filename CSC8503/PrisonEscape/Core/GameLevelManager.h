@@ -15,6 +15,7 @@ namespace NCL {
 		class Button;
 		class Player;
 		class PatrolEnemy;
+		class PursuitEnemy;
 		class jsonParser;
 		class GameTechRenderer;
 		class AnimationController;
@@ -32,8 +33,11 @@ namespace NCL {
 			void AddComponentsToPlayer(Player& playerObj, const Transform& transform);
 
 
-			PatrolEnemy* AddPatrolEnemyToWorld(const std::string& enemyName,const std::vector<Vector3>& patrolPoints, Player* player);
+			PatrolEnemy* AddPatrolEnemyToWorld(const std::string& patrolEnemyName,const std::vector<Vector3>& patrolPoints, Player* player);
 			void AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const Transform& transform);
+
+			PursuitEnemy* AddPursuitEnemyToWorld(const std::string& pursuitEnemyName, const std::vector<Vector3>& patrolPoints, Player* player);
+			void AddComponentsToPursuitEnemy(PursuitEnemy& enemyObj, const Transform& transform);
 
 			void loadMap();
 
