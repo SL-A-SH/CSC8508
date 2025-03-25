@@ -16,6 +16,7 @@ enum BasicNetworkMessages {
 	Player_Disconnected,
 	Player_ID_Assignment,
 	Player_Position,
+	Enemy_Position,
 	Shutdown
 };
 
@@ -57,6 +58,22 @@ struct PlayerPositionPacket : public GamePacket {
 		type = Player_Position;
 		size = sizeof(PlayerPositionPacket) - sizeof(GamePacket);
 		playerID = id;
+		posX = x;
+		posY = y;
+		posZ = z;
+	}
+};
+
+struct EnemyPositionPacket : public GamePacket {
+	int enemyID;
+	float posX;
+	float posY;
+	float posZ;
+
+	EnemyPositionPacket(int id, float x, float y, float z) {
+		type = Enemy_Position;
+		size = sizeof(EnemyPositionPacket) - sizeof(GamePacket);
+		enemyID = id;
 		posX = x;
 		posY = y;
 		posZ = z;

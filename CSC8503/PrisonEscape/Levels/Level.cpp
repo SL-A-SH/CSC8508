@@ -7,7 +7,9 @@
 #include "OrientationConstraint.h"
 #include "StateGameObject.h"
 #include "GameTechRenderer.h"
-#include "../CSC8503/PrisonEscape/Core/GameConfigManager.h"
+#include "imgui/imgui.h"
+
+#include "PrisonEscape/Core/GameConfigManager.h"
 #include "PrisonEscape/Core/GameBase.h"
 #include "PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
 #include "PrisonEscape/Scripts/Player/Player.h"
@@ -60,6 +62,17 @@ void Level::ReceivePacket(int type, GamePacket* payload, int source) {
 		GameConfigManager* config = GameBase::GetGameBase()->GetGameConfig();
 		if (config) {
 			config->networkConfig.playerID = idPacket->playerID;
+		}
+	}
+	else if (type == Enemy_Position) {
+		EnemyPositionPacket* posPacket = (EnemyPositionPacket*)payload;
+
+		int enemyIndex = posPacket->enemyID;
+		if (enemyIndex >= 0 && enemyIndex < enemies.size()) {
+			// Update the enemy position from the packet
+			enemies[enemyIndex]->GetTransform().SetPosition(
+				Vector3(posPacket->posX, posPacket->posY, posPacket->posZ)
+			);
 		}
 	}
 }

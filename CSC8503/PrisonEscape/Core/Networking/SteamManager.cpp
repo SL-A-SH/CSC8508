@@ -90,19 +90,40 @@ void SteamManager::PollSteamCallbacks()
 
     uint32 packetSize;
     while (SteamNetworking()->IsP2PPacketAvailable(&packetSize)) {
-        if (packetSize == sizeof(float) * 3) { // Position update packet
-            char buffer[sizeof(float) * 3];
+        if (packetSize > 0) { // Position update packet
+            char buffer[256];
             CSteamID senderID;
-            if (SteamNetworking()->ReadP2PPacket(buffer, sizeof(buffer), &packetSize, &senderID)) {
-                // Extract position
-                Vector3 position;
-                memcpy(&position.x, buffer, sizeof(float));
-                memcpy(&position.y, buffer + sizeof(float), sizeof(float));
-                memcpy(&position.z, buffer + sizeof(float) * 2, sizeof(float));
 
-                // Call the position update callback
-                if (m_PositionUpdateCallback) {
-                    m_PositionUpdateCallback(senderID.ConvertToUint64(), position);
+            if (SteamNetworking()->ReadP2PPacket(buffer, sizeof(buffer), &packetSize, &senderID)) {
+                uint8_t messageType = buffer[0];
+
+                if (messageType == 0 && packetSize == 13) { // Player position
+                    // Extract position
+                    Vector3 position;
+                    memcpy(&position.x, buffer, sizeof(float));
+                    memcpy(&position.y, buffer + sizeof(float), sizeof(float));
+                    memcpy(&position.z, buffer + sizeof(float) * 2, sizeof(float));
+
+                    // Call the position update callback
+                    if (m_PositionUpdateCallback) {
+                        m_PositionUpdateCallback(senderID.ConvertToUint64(), position);
+                    }
+                }
+                else if (messageType == 1 && packetSize == 17) { // Enemy position
+                    // Extract enemy ID
+                    int enemyID;
+                    memcpy(&enemyID, buffer + 1, sizeof(int));
+
+                    // Extract position
+                    Vector3 position;
+                    memcpy(&position.x, buffer + 5, sizeof(float));
+                    memcpy(&position.y, buffer + 9, sizeof(float));
+                    memcpy(&position.z, buffer + 13, sizeof(float));
+
+                    // Call the enemy position update callback
+                    if (m_EnemyPositionUpdateCallback) {
+                        m_EnemyPositionUpdateCallback(enemyID, position);
+                    }
                 }
             }
         }
@@ -403,7 +424,7 @@ void SteamManager::SendPlayerPosition(const Vector3& position)
 {
 #ifdef ENABLE_STEAM
     if (!m_bInitialized || m_CurrentLobbyID == 0) return;
-    // Example using Steam's P2P networking:
+
     // Serialize position data
     char buffer[sizeof(float) * 3];
     memcpy(buffer, &position.x, sizeof(float));
@@ -439,4 +460,43 @@ void SteamManager::SendPlayerPosition(const Vector3& position)
 void SteamManager::SetPlayerUpdateCallback(std::function<void(uint64_t, const Vector3&)> callback)
 {
     m_PositionUpdateCallback = callback;
+}
+
+void SteamManager::SendEnemyPosition(int enemyID, const Vector3& position)
+{
+#ifdef ENABLE_STEAM
+    if (!m_bInitialized || m_CurrentLobbyID == 0) return;
+
+    // Create a buffer to store enemy position data
+    // Format: [1-byte message type][4-byte enemy ID][12-bytes for position (3 floats)]
+    char buffer[17]; // 1 + 4 + 12 bytes
+
+    // Message type 1 = enemy position (0 = player position from your existing code)
+    buffer[0] = 1;
+
+    // Store enemy ID
+    memcpy(buffer + 1, &enemyID, sizeof(int));
+
+    // Store position data
+    memcpy(buffer + 5, &position.x, sizeof(float));
+    memcpy(buffer + 9, &position.y, sizeof(float));
+    memcpy(buffer + 13, &position.z, sizeof(float));
+
+    // Get the other player's Steam ID
+    if (IsLobbyOwner()) {
+        // Server sends to all clients
+        int memberCount = SteamMatchmaking()->GetNumLobbyMembers(CSteamID(m_CurrentLobbyID));
+        for (int i = 0; i < memberCount; i++) {
+            CSteamID memberId = SteamMatchmaking()->GetLobbyMemberByIndex(CSteamID(m_CurrentLobbyID), i);
+            if (memberId != SteamUser()->GetSteamID()) {
+                SteamNetworking()->SendP2PPacket(memberId, buffer, sizeof(buffer), k_EP2PSendReliable);
+            }
+        }
+    }
+#endif
+}
+
+void SteamManager::SetEnemyPositionUpdateCallback(std::function<void(int, const Vector3&)> callback)
+{
+    m_EnemyPositionUpdateCallback = callback;
 }

@@ -4,7 +4,6 @@
 #include "Mesh.h"
 #include "Texture.h"
 #include "Shader.h"
-#include "imgui/imgui.h"
 #include "NetworkBase.h"
 
 namespace NCL {
@@ -48,6 +47,7 @@ namespace NCL {
 		public:
 			Player* GetPlayerOne() const { return playerOne; }
 			Player* GetPlayerTwo() const { return playerTwo; }
+			const std::vector<PatrolEnemy*>& GetEnemies() const { return enemies; }
 
 #pragma region UI
 

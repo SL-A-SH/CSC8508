@@ -11,6 +11,11 @@ namespace NCL {
     namespace CSC8503 {
 
         class SteamManager {
+        struct EnemyPositionData {
+            int enemyID;
+            float x, y, z;
+        };
+
         public:
             static SteamManager* GetInstance();
             ~SteamManager();
@@ -45,6 +50,9 @@ namespace NCL {
             void SendPlayerPosition(const Vector3& position);
             void SetPlayerUpdateCallback(std::function<void(uint64_t, const Vector3&)> callback);
 
+            void SendEnemyPosition(int enemyID, const Vector3& position);
+            void SetEnemyPositionUpdateCallback(std::function<void(int, const Vector3&)> callback);
+
         private:
             SteamManager();
             static SteamManager* s_Instance;
@@ -52,6 +60,7 @@ namespace NCL {
             bool m_bInitialized;
             std::function<void(uint64_t)> m_JoinGameCallback;
             std::function<void(uint64_t, const Vector3&)> m_PositionUpdateCallback;
+            std::function<void(int, const Vector3&)> m_EnemyPositionUpdateCallback;
             uint64_t m_CurrentLobbyID;
 
             // Helper methods for polling-based callbacks

@@ -48,6 +48,11 @@ namespace NCL {
 			void RegisterServerPacketHandlers();
 			void RegisterClientPacketHandlers();
 
+			void SpawnEnemy(Level* level);
+			void SpawnEnemyForClient(Level* level);
+			void SendEnemyPositions();
+			void SendEnemyPositionsSteam();
+
 			NCL::Rendering::Texture* heartFilledTexture = nullptr;
 			NCL::Rendering::Texture* heartEmptyTexture = nullptr;
 

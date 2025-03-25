@@ -77,6 +77,10 @@ PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** 
 					Vector3 pos = playerToSync->GetTransform().GetPosition();
 					steamManager->SendPlayerPosition(pos);
 				}
+
+				if (steamManager->IsLobbyOwner()) {
+					SendEnemyPositionsSteam();
+				}
 			}
 			steamManager->Update();
 		}
@@ -92,6 +96,8 @@ PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** 
 					PlayerPositionPacket posPacket(1, pos.x, pos.y, pos.z);
 					gameConfig->networkConfig.server->SendGlobalPacket(posPacket);
 				}
+
+				SendEnemyPositions();
 
 				gameConfig->networkConfig.server->UpdateServer();
 			}
@@ -215,6 +221,8 @@ void GamePlayState::InitializeSteamMultiplayer(Level* level)
 		level->AddPlayerToLevel(playerTwo);
 		// Position playerTwo off-screen initially until connected
 		playerTwo->GetTransform().SetPosition(Vector3(10, -100, 10));
+
+		SpawnEnemy(level);
 	}
 	else
 	{
@@ -222,6 +230,8 @@ void GamePlayState::InitializeSteamMultiplayer(Level* level)
 		level->AddPlayerToLevel(playerOne);
 		// Position playerOne off-screen initially
 		playerOne->GetTransform().SetPosition(Vector3(10, -100, 10));
+
+		SpawnEnemyForClient(level);
 	}
 
 	// Set up camera for the active player
@@ -242,7 +252,18 @@ void GamePlayState::InitializeSteamMultiplayer(Level* level)
 			// Client updates playerOne
 			playerOne->GetTransform().SetPosition(pos);
 		}
-		});
+	});
+
+	// Register with Steam for enemy position updates
+	steamManager->SetEnemyPositionUpdateCallback([this, level](int enemyID, const Vector3& pos) {
+		// Update the enemy position on the client
+		if (level && enemyID >= 0 && enemyID < level->GetEnemies().size()) {
+			PatrolEnemy* enemy = level->GetEnemies()[enemyID];
+			if (enemy) {
+				enemy->GetTransform().SetPosition(pos);
+			}
+		}
+	});
 }
 
 bool GamePlayState::InitializeSteamNetworking() {
@@ -278,13 +299,7 @@ void GamePlayState::InitializeSinglePlayer(Level* level) {
 	GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(Vector3(playerPosition.x, playerPosition.y, playerPosition.z));
 
 	// Enemy Spawning
-	
-	Transform enemyTransform;
-	std::vector<Vector3> patrolPoints = { Vector3(50, 5, 51), Vector3(51, 5, 51), Vector3(51, 5, 50), Vector3(50, 5, 50)};
-	PatrolEnemy* patrolEnemy = manager->AddPatrolEnemyToWorld("Guard1", patrolPoints, level->GetPlayerOne());
-
-	level->AddEnemyToLevel(patrolEnemy);
-	
+	SpawnEnemy(level);
 }
 
 void GamePlayState::SetupServer(Level* level) {
@@ -300,10 +315,13 @@ void GamePlayState::SetupServer(Level* level) {
 	Vector3 playerPosition = level->GetPlayerOne()->GetTransform().GetPosition();
 	GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(Vector3(playerPosition.x, playerPosition.y, playerPosition.z));
 
+	// Enemy Spawning
+	SpawnEnemy(level);
+
 	// Set up server callbacks for client connections
 	gameConfig->networkConfig.server->SetPlayerConnectedCallback([this, level](int playerID) {
 		SetupClientPlayer(level);
-		});
+	});
 
 	// Register packet handlers for server
 	RegisterServerPacketHandlers();
@@ -328,6 +346,9 @@ void GamePlayState::SetupClient(Level* level) {
 	Vector3 playerPosition = level->GetPlayerTwo()->GetTransform().GetPosition();
 	GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(Vector3(playerPosition.x, playerPosition.y, playerPosition.z));
 
+	// The positions will be synced from the server
+	SpawnEnemyForClient(level);
+
 	// Register packet handlers for the client
 	RegisterClientPacketHandlers();
 }
@@ -347,6 +368,74 @@ void GamePlayState::RegisterServerPacketHandlers() {
 void GamePlayState::RegisterClientPacketHandlers() {
 	gameConfig->networkConfig.client->RegisterPacketHandler(Player_Position, manager->GetCurrentLevel());
 	gameConfig->networkConfig.client->RegisterPacketHandler(Player_ID_Assignment, manager->GetCurrentLevel());
+}
+
+void GamePlayState::SpawnEnemy(Level* level)
+{
+	std::vector<Vector3> patrolPoints = { Vector3(50, 5, 51), Vector3(51, 5, 51), Vector3(51, 5, 50), Vector3(50, 5, 50) };
+	PatrolEnemy* patrolEnemy = manager->AddPatrolEnemyToWorld("Guard1", patrolPoints, level->GetPlayerOne());
+	level->AddEnemyToLevel(patrolEnemy);
+}
+
+void GamePlayState::SpawnEnemyForClient(Level* level)
+{
+	// Create the same patrol points that the server uses
+	std::vector<Vector3> patrolPoints = { Vector3(50, 5, 51), Vector3(51, 5, 51), Vector3(51, 5, 50), Vector3(50, 5, 50) };
+
+	PatrolEnemy* patrolEnemy = manager->AddPatrolEnemyToWorld("Guard1", patrolPoints, level->GetPlayerOne());
+	patrolEnemy->SetClientControlled(true);
+	level->AddEnemyToLevel(patrolEnemy);
+}
+
+void GamePlayState::SendEnemyPositions()
+{
+	if (!gameConfig->networkConfig.isMultiplayer || !gameConfig->networkConfig.isServer) {
+		return; // Only the server should send enemy positions
+	}
+
+	Level* level = manager->GetCurrentLevel();
+	if (level) {
+		// Send positions for all enemies
+		for (int i = 0; i < level->GetEnemies().size(); i++) {
+			PatrolEnemy* enemy = level->GetEnemies()[i];
+			if (enemy) {
+				Vector3 pos = enemy->GetTransform().GetPosition();
+
+				if (gameConfig->networkConfig.isUsingSteam) {
+					// Implement Steam-specific enemy position sync if needed
+				}
+				else if (gameConfig->networkConfig.server) {
+					// Regular networking
+					EnemyPositionPacket posPacket(i, pos.x, pos.y, pos.z);
+					gameConfig->networkConfig.server->SendGlobalPacket(posPacket);
+				}
+			}
+		}
+	}
+}
+
+void GamePlayState::SendEnemyPositionsSteam()
+{
+	if (!gameConfig->networkConfig.isMultiplayer || !gameConfig->networkConfig.isUsingSteam) {
+		return;
+	}
+
+	SteamManager* steamManager = SteamManager::GetInstance();
+	if (!steamManager || !steamManager->IsInitialized() || !steamManager->IsLobbyOwner()) {
+		return; // Only the host should send enemy positions
+	}
+
+	Level* level = manager->GetCurrentLevel();
+	if (level) {
+		// Send positions for all enemies
+		for (int i = 0; i < level->GetEnemies().size(); i++) {
+			PatrolEnemy* enemy = level->GetEnemies()[i];
+			if (enemy) {
+				Vector3 pos = enemy->GetTransform().GetPosition();
+				steamManager->SendEnemyPosition(i, pos);
+			}
+		}
+	}
 }
 
 void GamePlayState::DrawFriendsPanel()
