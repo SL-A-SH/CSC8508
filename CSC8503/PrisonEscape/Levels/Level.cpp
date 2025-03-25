@@ -96,7 +96,7 @@ void Level::AddEnemyToLevel(PatrolEnemy* enemy)
 {
 	if (enemy) {
 		enemies.push_back(enemy);
-		enemy->GetRenderObject()->GetTransform()->SetPosition(Vector3(50, 50, 0));
+		enemy->GetRenderObject()->GetTransform()->SetPosition(Vector3(50, 5, 50));
 	}
 }
 

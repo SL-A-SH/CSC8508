@@ -1,7 +1,7 @@
 #pragma once
 #include "BehaviourNodeWithChildren.h"
 
-class BehaviourSelector: public BehaviourNodeWithChildren {
+class BehaviourSelector : public BehaviourNodeWithChildren {
 public:
 	BehaviourSelector(const std::string& nodeName) : BehaviourNodeWithChildren(nodeName) {}
 	~BehaviourSelector() {}
@@ -10,13 +10,13 @@ public:
 		for (auto& i : childNodes) {
 			BehaviourState nodeState = i->Execute(dt);
 			switch (nodeState) {
-				case Failure:	;
-				case Success:
-				case Ongoing:
-				{
-					currentState = nodeState;
-					return currentState;
-				}
+			case Failure:	continue; // Continue to next child if this one fails
+			case Success:   // Fall through
+			case Ongoing:   // Fall through
+			{
+				currentState = nodeState;
+				return currentState;
+			}
 			}
 		}
 		return Failure;
