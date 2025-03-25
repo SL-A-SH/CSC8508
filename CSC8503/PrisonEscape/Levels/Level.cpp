@@ -32,7 +32,7 @@ void Level::Init()
 
 void Level::Update(float dt)
 {
-
+	GameBase::GetGameBase()->GetWorld()->GetMainCamera().UpdateCamera(dt);
 }
 
 void Level::ReceivePacket(int type, GamePacket* payload, int source) {
@@ -75,15 +75,16 @@ void Level::InitializeAssets()
 
 void Level::InitializeLevel()
 {
-	// AddFloorToWorld(Vector3(0, 0, 0), Vector3(200, 2, 200), Vector4(0.5, 0.5, 0.5, 1));
+
 }
 
-void Level::AddPlayerToLevel(Player* player)
+void Level::AddPlayerToLevel(Player* player, const Vector3& position)
 {
 	if (player->GetName() == "playerOne")
 	{
 		this->playerOne = player;
-		playerOneSpawn = Vector3(0, 50, 0);
+
+		playerOneSpawn = position;
 		playerOne->SetSpawn(playerOneSpawn);
 		this->playerOne->GetRenderObject()->GetTransform()->SetPosition(playerOneSpawn);
 
@@ -91,7 +92,7 @@ void Level::AddPlayerToLevel(Player* player)
 	else if (player->GetName() == "playerTwo")
 	{
 		this->playerTwo = player;
-		this->playerTwo->GetRenderObject()->GetTransform()->SetPosition(Vector3(0, 50, 0));
+		this->playerTwo->GetRenderObject()->GetTransform()->SetPosition(position);
 	}
 }
 
