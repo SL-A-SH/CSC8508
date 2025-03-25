@@ -7,6 +7,7 @@
 #include "Ray.h"
 #include "GameWorld.h"
 #include "PhysicsObject.h"
+#include "RenderObject.h"
 #include "../Player/Player.h"
 
 namespace NCL {
@@ -23,6 +24,7 @@ namespace NCL {
             void OnCatch(Player* otherObject) {
                 if (otherObject == playerObject) {
                     playerObject->SetHealth(playerObject->GetHealth() - 1);
+                    playerObject->GetRenderObject()->GetTransform()->SetPosition(playerObject->GetSpawn());
                 }
             }
 

@@ -280,7 +280,7 @@ void GamePlayState::InitializeSinglePlayer(Level* level) {
 	// Enemy Spawning
 	
 	Transform enemyTransform;
-	std::vector<Vector3> patrolPoints = { Vector3(0, 0, 0), Vector3(10, 0, 10), Vector3(20, 0, 10) };
+	std::vector<Vector3> patrolPoints = { Vector3(50, 5, 51), Vector3(51, 5, 51), Vector3(51, 5, 50), Vector3(50, 5, 50)};
 	PatrolEnemy* patrolEnemy = manager->AddPatrolEnemyToWorld("Guard1", patrolPoints, level->GetPlayerOne());
 
 	level->AddEnemyToLevel(patrolEnemy);

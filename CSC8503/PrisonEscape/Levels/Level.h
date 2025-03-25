@@ -35,6 +35,7 @@ namespace NCL {
 			Player* playerOne = nullptr;
 			Player* playerTwo = nullptr;
 			std::vector<PatrolEnemy*> enemies;
+			Vector3 playerOneSpawn;
 
 		private:
 			void InitializeAssets();

@@ -83,7 +83,10 @@ void Level::AddPlayerToLevel(Player* player)
 	if (player->GetName() == "playerOne")
 	{
 		this->playerOne = player;
-		this->playerOne->GetRenderObject()->GetTransform()->SetPosition(Vector3(0, 50, 0));
+		playerOneSpawn = Vector3(0, 50, 0);
+		playerOne->SetSpawn(playerOneSpawn);
+		this->playerOne->GetRenderObject()->GetTransform()->SetPosition(playerOneSpawn);
+
 	}
 	else if (player->GetName() == "playerTwo")
 	{
