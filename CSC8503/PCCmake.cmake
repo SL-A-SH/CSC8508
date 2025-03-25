@@ -38,10 +38,6 @@ function(Create_PC_CSC8503_Files)
     set(Prison_Escape_Levels
         "PrisonEscape/Levels/Level.cpp"
         "PrisonEscape/Levels/Level.h"
-        "PrisonEscape/Levels/LevelOne.cpp"
-        "PrisonEscape/Levels/LevelOne.h"
-        "PrisonEscape/Levels/LevelT.cpp"
-        "PrisonEscape/Levels/LevelT.h"
         "PrisonEscape/Levels/SampleLevel.cpp"
         "PrisonEscape/Levels/SampleLevel.h"
     )

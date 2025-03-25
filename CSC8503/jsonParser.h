@@ -8,6 +8,7 @@
 #include "PhysicsObject.h"
 #include "RenderObject.h"
 #include "TextureLoader.h"
+#include "Assets.h"
 
 using json = nlohmann::json;
 

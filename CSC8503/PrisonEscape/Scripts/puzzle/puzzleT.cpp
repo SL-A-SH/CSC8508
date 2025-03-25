@@ -96,7 +96,7 @@ PressableDoor::PressableDoor() : Door() {
 }
 
 void PressableDoor::OnCollisionBegin(GameObject* otherObject) {
-	if (!isPressed && otherObject->GetName() == "player") {
+	if (!isPressed && otherObject->GetName() == "playerOne") {
 		isPressed = true;
 		Open();
 	}

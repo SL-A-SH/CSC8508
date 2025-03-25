@@ -2,6 +2,14 @@
 
 #include "PhysicsSystem.h"
 #include "../CSC8503/jsonParser.h"
+#include "../CSC8503/PrisonEscape/Scripts/puzzle/Button.h"
+#include "../CSC8503/PrisonEscape/Scripts/puzzle/puzzleT.h"
+#include "../CSC8503/PrisonEscape/Levels/Level.h"
+#include "../CSC8503/PrisonEscape/Scripts/Player/Player.h"
+#include "../CSC8503/PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
+
+
+
 
 namespace NCL {
 	namespace CSC8503 {
@@ -32,14 +40,15 @@ namespace NCL {
 			Player* AddPlayerToWorld(const Transform& transform, const std::string& playerName);
 			void AddComponentsToPlayer(Player& playerObj, const Transform& transform);
 
+			Vector3 GetP1Position() { return P1Position; }
+			Vector3 GetP2Position() { return P2Position; }
 
 			PatrolEnemy* AddPatrolEnemyToWorld(const std::string& patrolEnemyName,const std::vector<Vector3>& patrolPoints, Player* player);
 			void AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const Transform& transform);
 
 			PursuitEnemy* AddPursuitEnemyToWorld(const std::string& pursuitEnemyName, const std::vector<Vector3>& patrolPoints, Player* player);
 			void AddComponentsToPursuitEnemy(PursuitEnemy& enemyObj, const Transform& transform);
-
-			void loadMap();
+			void loadMap(std::string levelToLoad);
 
 		public:
 			Level* GetCurrentLevel() { return mCurrentLevel; }
@@ -56,12 +65,16 @@ namespace NCL {
 			GameTechRenderer* mRenderer;
 			PhysicsSystem* mPhysics;
 			Level* mCurrentLevel;
+			Vector3 P1Position;
+			Vector3 P2Position;
 
 			// for handling multiple buttons/boxes in a level
 			int boxNumber;
 			std::vector<GameObject*> boxes;
 			std::vector<Button*> buttons;
-			GameObject* pushableBox;
+			std::vector<Door*> buttonDoors;
+			std::vector<PressableDoor*>pressDoors;
+			std::vector<ButtonTrigger*> buttonss;
 			std::stack<Level*> mLevelStack;
 			AnimationController* mAnimator;
 
@@ -73,18 +86,26 @@ namespace NCL {
 			std::unordered_map<std::string, MeshAnimation*> mAnimationList;
 			std::unordered_map<std::string, MeshMaterial*> mMaterialList;
 			std::unordered_map<std::string, vector<int>> mMeshMaterialsList;
+			std::unordered_map<std::string, std::string> mLevelList;
 			std::map<std::string, MeshAnimation*> mPreLoadedAnimationList;
 
 			GameObject* AddWallToWorld(Vector3 wallSize, const Vector3& position, float x, float y, float z);
 			GameObject* AddFloorToWorld(Vector3 size, const Vector3& position);
 			GameObject* AddBoxToWorld(const Vector3& position, Vector3 dimensions, const std::string name, float inverseMass = 10.0f);
 			GameObject* AddButtonToWorld(Vector3 size, const Vector3& position, const std::string name, Mesh* mesh, Shader* shader, Texture* texture);
+			GameObject* AddButtonnToWorld(ButtonTrigger* button, const Vector3& position, Door* linkedDoor);
+			GameObject* AddPressableDoorToWorld(PressableDoor* door, Vector3 size, const Vector3& position, float x, float y, float z);
+			GameObject* AddDoorToWorld(Door* door, Vector3 size, const Vector3& position, float x, float y, float z);
 
 			void LogObjectPlacement(const InGameObject& obj);
 			void CreateWall(const InGameObject& obj);
 			void CreateButton(const InGameObject& obj);
+			void CreateDoorButton(const InGameObject& obj, std::unordered_map<std::string, Door*>& doorMap);
 			void CreateBox(const InGameObject& obj);
 			void CreateFloor(const InGameObject& obj);
+			void CreateNormalDoor(const InGameObject& obj);
+			Door* CreateButtonDoor(const InGameObject& obj);
+
 
 			bool isPlaying;
 		};

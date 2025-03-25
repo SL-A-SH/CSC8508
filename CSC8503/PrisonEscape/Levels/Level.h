@@ -21,10 +21,10 @@ namespace NCL {
 			virtual void Update(float dt);
 
 			virtual void Init();
-			void AddPlayerToLevel(Player* player);
 			void AddPatrolEnemyToLevel(PatrolEnemy* patrolEnemy);
 			void AddPursuitEnemyToLevel(PursuitEnemy* pursuitEnemy);
-
+			void AddPlayerToLevel(Player* player, const Vector3& position);
+			void AddEnemyToLevel(PatrolEnemy* enemy);
 			void ReceivePacket(int type, GamePacket* packet, int source) override;
 
 		protected:
