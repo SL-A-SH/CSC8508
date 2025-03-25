@@ -637,7 +637,8 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 			}
 
 			else if (obj.type.find("Player") != std::string::npos) {
-				P1Position = obj.position;
+				if (obj.type == "Player1") { P1Position = obj.position; }
+				else if (obj.type == "Player2") { P1Position = obj.position; }
 			}
 
 			else {
