@@ -302,7 +302,7 @@ void GamePlayState::SetupClient(Level* level) {
 	Player* playerOne = manager->GetPlayerOne();
 	playerOne->InitializeController();
 
-	Player* playerTwo = manager->GetPlayerOne();
+	Player* playerTwo = manager->GetPlayerTwo();
 	playerTwo->InitializeController();
 
 	level->AddPlayerToLevel(playerOne, manager->GetP1Position());
