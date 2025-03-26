@@ -50,6 +50,8 @@ GamePlayState::GamePlayState(bool multiplayer, bool asServer, GameConfigManager*
 void GamePlayState::OnAwake()
 {
 	GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("ConnectionPanel");
+	GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("LoadingPanel");
+
 
 	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("HUDPanel", [this]() { DrawHUDPanel(); });
 }
@@ -252,7 +254,7 @@ void GamePlayState::InitializeSteamMultiplayer(Level* level)
 			// Client updates playerOne
 			playerOne->GetTransform().SetPosition(pos);
 		}
-	});
+		});
 
 	// Register with Steam for enemy position updates
 	steamManager->SetEnemyPositionUpdateCallback([this, level](int enemyID, const Vector3& pos) {
@@ -263,7 +265,7 @@ void GamePlayState::InitializeSteamMultiplayer(Level* level)
 				enemy->GetTransform().SetPosition(pos);
 			}
 		}
-	});
+		});
 }
 
 bool GamePlayState::InitializeSteamNetworking() {
@@ -321,7 +323,7 @@ void GamePlayState::SetupServer(Level* level) {
 	// Set up server callbacks for client connections
 	gameConfig->networkConfig.server->SetPlayerConnectedCallback([this, level](int playerID) {
 		SetupClientPlayer(level);
-	});
+		});
 
 	// Register packet handlers for server
 	RegisterServerPacketHandlers();
