@@ -48,6 +48,8 @@ function(Create_PC_CSC8503_Files)
         "PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
         "PrisonEscape/Scripts/PursuitEnemy/PursuitEnemy.cpp"
         "PrisonEscape/Scripts/PursuitEnemy/PursuitEnemy.h"
+	"PrisonEscape/Scripts/CameraEnemy/CameraEnemy.cpp"
+        "PrisonEscape/Scripts/CameraEnemy/CameraEnemy.h"
         "PrisonEscape/Scripts/Player/Player.cpp"
         "PrisonEscape/Scripts/Player/Player.h"
         "PrisonEscape/Scripts/puzzle/Button.cpp"
