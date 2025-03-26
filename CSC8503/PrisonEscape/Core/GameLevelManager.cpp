@@ -24,8 +24,11 @@ using namespace CSC8503;
 
 GameLevelManager* GameLevelManager::manager = nullptr;
 
-GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer, bool multiplayerStatus, bool isServer)
+GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer, std::string levelToLoad, bool multiplayerStatus, bool isServer)
 {
+	if (multiplayerStatus) {
+		levelToLoad = "Level1";
+	}
 	mWorld = existingWorld;
 	mRenderer = existingRenderer;
 	mPhysics = new PhysicsSystem(*mWorld);
@@ -36,9 +39,9 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	this->isServer = isServer;
 
 	InitAssets();
-	std::cout << "The Level to load is at: " << mLevelList["Level1"] << std::endl;
+	std::cout << "The Level to load is at: " << mLevelList[levelToLoad] << std::endl;
 	boxNumber = 0;
-	loadMap(mLevelList["Level1"]);
+	loadMap(mLevelList[levelToLoad]);
 	InitAnimationObjects();
 }
 

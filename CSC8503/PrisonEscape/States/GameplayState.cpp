@@ -22,7 +22,7 @@ using namespace CSC8503;
 GamePlayState::GamePlayState(bool multiplayer, bool asServer, GameConfigManager* config)
 {
 	this->gameConfig = config;
-	manager = new GameLevelManager(GameBase::GetGameBase()->GetWorld(), GameBase::GetGameBase()->GetRenderer(), gameConfig->networkConfig.isMultiplayer, gameConfig->networkConfig.isServer);
+	manager = new GameLevelManager(GameBase::GetGameBase()->GetWorld(), GameBase::GetGameBase()->GetRenderer(), config->GetChosenLevel(), gameConfig->networkConfig.isMultiplayer, gameConfig->networkConfig.isServer);
 	Level* level = new Level();
 	level->Init();
 	manager->AddLevel(level);
