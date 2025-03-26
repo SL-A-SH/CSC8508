@@ -13,6 +13,8 @@
 #include "PrisonEscape/Core/GameLevelManager.h"
 #include "PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
 #include "PrisonEscape/Core/Networking/SteamManager.h"
+#include "PrisonEscape/Scripts/PursuitEnemy/PursuitEnemy.h"
+
 
 using namespace NCL;
 using namespace CSC8503;
@@ -274,14 +276,21 @@ void GamePlayState::InitializeSinglePlayer(Level* level) {
 	Vector3 playerPosition = level->GetPlayerOne()->GetTransform().GetPosition();
 	GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(Vector3(playerPosition.x, playerPosition.y, playerPosition.z));
 
-	// Enemy Spawning
+	// Patrol Enemy Spawning
 	
-	Transform enemyTransform;
+	Transform patrolEnemyTransform;
 	std::vector<Vector3> patrolPoints = { Vector3(50, 5, 51), Vector3(51, 5, 51), Vector3(51, 5, 50), Vector3(50, 5, 50)};
 	PatrolEnemy* patrolEnemy = manager->AddPatrolEnemyToWorld("Guard1", patrolPoints, level->GetPlayerOne());
 
-	level->AddEnemyToLevel(patrolEnemy);
+	level->AddPatrolEnemyToLevel(patrolEnemy);
 	
+	// Pursuit Enemy Spawning
+
+	Transform pursuitEnemyTransform;
+	std::vector<Vector3> pursuitPatrolPoints = { Vector3(40, 5, 41), Vector3(41, 5, 41), Vector3(41, 5, 40), Vector3(40, 5, 40) };
+	PursuitEnemy* pursuitEnemy = manager->AddPursuitEnemyToWorld("Dog1", pursuitPatrolPoints, level->GetPlayerOne());
+
+	level->AddPursuitEnemyToLevel(pursuitEnemy);
 }
 
 void GamePlayState::SetupServer(Level* level) {

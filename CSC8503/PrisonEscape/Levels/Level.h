@@ -10,6 +10,7 @@
 namespace NCL {
 	namespace CSC8503 {
 		class PatrolEnemy;
+		class PursuitEnemy;
 
 		class Player;
 		class Level : public PacketReceiver
@@ -20,9 +21,10 @@ namespace NCL {
 			virtual void Update(float dt);
 
 			virtual void Init();
+			void AddPatrolEnemyToLevel(PatrolEnemy* patrolEnemy);
+			void AddPursuitEnemyToLevel(PursuitEnemy* pursuitEnemy);
 			void AddPlayerToLevel(Player* player, const Vector3& position);
 			void AddEnemyToLevel(PatrolEnemy* enemy);
-
 			void ReceivePacket(int type, GamePacket* packet, int source) override;
 
 		protected:
@@ -34,7 +36,8 @@ namespace NCL {
 
 			Player* playerOne = nullptr;
 			Player* playerTwo = nullptr;
-			std::vector<PatrolEnemy*> enemies;
+			std::vector<PatrolEnemy*> patrolEnemies;
+			std::vector<PursuitEnemy*> pursuitEnemies;
 			Vector3 playerOneSpawn;
 
 		private:
