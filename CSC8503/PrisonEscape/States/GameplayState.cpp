@@ -117,7 +117,7 @@ PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** 
 	}
 	manager->UpdateGame(dt);
 
-	if (Window::GetKeyboard()->KeyPressed(KeyCodes::F1))
+	if (manager->GetPlayerOne()->GetHealth() == 0)
 	{
 		*newState = new GameOverState(GameOverReason::OutOfLives);
 		return PushdownResult::Push;
@@ -155,8 +155,8 @@ void GamePlayState::DrawHUDPanel() {
 	ImGui::SetCursorPos(ImVec2(25, 25));
 
 	// Define the remaining lives and max number of hearts (e.g., 5 hearts)
-	int remainingLives = 3; // Number of filled hearts
-	int maxLives = 5;       // Maximum number of hearts to display
+	int remainingLives = manager->GetPlayerOne()->GetHealth(); // Number of filled hearts
+	int maxLives = 3;       // Maximum number of hearts to display
 
 	GLuint texIDFilled = ((OGLTexture*)heartFilledTexture)->GetObjectID();  // Filled heart texture
 	GLuint texIDUnfilled = ((OGLTexture*)heartEmptyTexture)->GetObjectID(); // Unfilled heart texture
