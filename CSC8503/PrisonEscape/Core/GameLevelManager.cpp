@@ -35,7 +35,7 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 
 
 	InitAssets();
-	std::cout << "The Level to load is at: " << mLevelList["Level1"] << std::endl;
+	std::cout << "The Level to load is at: " << mLevelList["Level2"] << std::endl;
 	boxNumber = 0;
 	loadMap(mLevelList["Level2"]);
 	InitAnimationObjects();
@@ -322,8 +322,9 @@ void GameLevelManager::AddComponentsToPlayer(Player& playerObject, const Transfo
 
 //Should add enemy to the world, needs testing
 
-PatrolEnemy* GameLevelManager::AddPatrolEnemyToWorld(const std::string& enemyName,const std::vector<Vector3>& patrolPoints, Player* player) {
+PatrolEnemy* GameLevelManager::AddPatrolEnemyToWorld(const std::string& enemyName,const std::vector<Vector3>& patrolPoints, const Vector3& spawnPoint, Player* player) {
 	Transform transform;
+	transform.SetPosition(spawnPoint);
 	PatrolEnemy* mEnemyToAdd = new PatrolEnemy(mWorld, enemyName);
 	AddComponentsToPatrolEnemy(*mEnemyToAdd, transform);
 
@@ -690,8 +691,10 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 				LogObjectPlacement(obj);
 			}
 		}
-		for (const auto& enemy : enemies) {
-			//AddPatrolEnemyToWorld(enemy.name, enemy.waypoints, playerOne);
+		if (!isMultiplayer) {
+			for (const auto& enemy : enemies) {
+				AddPatrolEnemyToWorld(enemy.name, enemy.waypoints, enemy.position, playerOne);
+			}
 		}
 	}
 	else {

@@ -33,10 +33,12 @@ bool jsonParser::LoadLevel(const std::string& filename, int& level, std::vector<
 
     for (const auto& enemy : jsonData["enemies"]) {
         Enemy enemyData;
+        Vector3 waypointPos;
         enemyData.name = enemy["name"];
         enemyData.position = { enemy["position"]["x"], enemy["position"]["y"], enemy["position"]["z"] };
         for (const auto& waypoint : enemy["waypoints"]) {
-            Vector3 waypointPos = { waypoint["x"], waypoint["y"], waypoint["z"] };
+            waypointPos = { waypoint["x"], waypoint["y"], waypoint["z"] };
+            enemyData.waypoints.push_back(waypointPos);
         }
 
         enemies.push_back(enemyData);
