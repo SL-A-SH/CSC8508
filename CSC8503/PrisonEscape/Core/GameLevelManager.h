@@ -7,6 +7,7 @@
 #include "../CSC8503/PrisonEscape/Levels/Level.h"
 #include "../CSC8503/PrisonEscape/Scripts/Player/Player.h"
 #include "../CSC8503/PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
+#include "../CSC8503/PrisonEscape/Scripts/CameraEnemy/CameraEnemy.h"
 
 
 
@@ -17,6 +18,10 @@ namespace NCL {
 		constexpr float PLAYER_INVERSE_MASS = 0.5f;
 		constexpr float PATROL_ENEMY_MESH_SIZE = 3.0f;
 		constexpr float PATROL_ENEMY_INVERSE_MASS = 0.1f;
+		constexpr float PURSUIT_ENEMY_MESH_SIZE = 3.0f;
+		constexpr float PURSUIT_ENEMY_INVERSE_MASS = 0.1f;
+		constexpr float CAMERA_ENEMY_MESH_SIZE = 3.0f;
+		constexpr float CAMERA_ENEMY_INVERSE_MASS = 0.1f;
 
 		class GameWorld;
 		class Level;
@@ -48,6 +53,10 @@ namespace NCL {
 
 			PursuitEnemy* AddPursuitEnemyToWorld(const std::string& pursuitEnemyName, const std::vector<Vector3>& patrolPoints, Player* player);
 			void AddComponentsToPursuitEnemy(PursuitEnemy& enemyObj, const Transform& transform);
+
+			CameraEnemy* AddCameraEnemyToWorld(const std::string& cameraEnemyName, const Vector3& spawnPoint, Player* player);
+			void AddComponentsToCameraEnemy(CameraEnemy& enemyObj, const Transform& transform);
+
 			void loadMap(std::string levelToLoad);
 
 		public:
