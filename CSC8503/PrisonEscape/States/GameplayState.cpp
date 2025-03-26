@@ -117,7 +117,7 @@ PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** 
 	}
 	manager->UpdateGame(dt);
 
-	if (Window::GetKeyboard()->KeyPressed(KeyCodes::F1))
+	if (manager->GetPlayerOne()->GetHealth() == 0)
 	{
 		*newState = new GameOverState(GameOverReason::OutOfLives);
 		return PushdownResult::Push;
