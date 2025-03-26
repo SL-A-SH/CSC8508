@@ -31,7 +31,9 @@ namespace NCL::CSC8503 {
 		bool IsActive() const {
 			return isActive;
 		}
-
+		void SetActive(bool active) {
+			isActive = active;
+		}
 		Transform& GetTransform() {
 			return transform;
 		}

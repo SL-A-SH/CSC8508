@@ -25,6 +25,7 @@ Player::~Player()
 void Player::UpdateGame(float dt)
 {
 	UpdatePlayerMovement(dt);
+	
 }
 
 void Player::UpdatePlayerMovement(float dt)

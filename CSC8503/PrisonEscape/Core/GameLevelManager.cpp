@@ -16,6 +16,7 @@
 #include "PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
 #include "PrisonEscape/Scripts/puzzle/HidingArea.h"
 #include "PrisonEscape/Core/ImGuiManager.h"
+#include <PrisonEscape/Scripts/puzzle/HidingArea.h>
 
 using namespace NCL;
 using namespace CSC8503;
@@ -293,7 +294,7 @@ Player* GameLevelManager::AddPlayerToWorld(const Transform& transform, const std
 
 void GameLevelManager::AddComponentsToPlayer(Player& playerObject, const Transform& playerTransform) {
 
-	SphereVolume* volume = new SphereVolume(PLAYER_MESH_SIZE / 2);
+	SphereVolume* volume = new SphereVolume(1);
 	playerObject.SetBoundingVolume((CollisionVolume*)volume);
 
 	playerObject.GetTransform()
@@ -327,7 +328,12 @@ PatrolEnemy* GameLevelManager::AddPatrolEnemyToWorld(const std::string& enemyNam
 
 	return mEnemyToAdd;
 }
+void GameLevelManager::AddHidingAreaToWorld(const Vector3& position, const Vector3& size) {
+	HidingArea* hidingArea = new HidingArea(position, size);
+	mWorld->AddGameObject(hidingArea);
+	mUpdatableObjectList.push_back(hidingArea);
 
+}
 void GameLevelManager::AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const Transform& enemyTransform) {
 	SphereVolume* volume = new SphereVolume(PATROL_ENEMY_MESH_SIZE / 2);
 	enemyObj.SetBoundingVolume((CollisionVolume*)volume);

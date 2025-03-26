@@ -30,7 +30,7 @@ namespace NCL {
 
 			Player* AddPlayerToWorld(const Transform& transform, const std::string& playerName);
 			void AddComponentsToPlayer(Player& playerObj, const Transform& transform);
-
+			void AddHidingAreaToWorld(const Vector3& position, const Vector3& size);
 
 			PatrolEnemy* AddPatrolEnemyToWorld(const std::string& enemyName, const std::vector<Vector3>& patrolPoints, Player* player);
 			void AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const Transform& transform);

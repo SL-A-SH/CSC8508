@@ -34,7 +34,7 @@ namespace NCL {
 			GameObject* AddDoorToWorld(Door* door, const Vector3& position);
 
 			GameObject* AddPressableDoorToWorld(PressableDoor* door, const Vector3& position);
-
+			void AddHidingAreaToWorld(const Vector3& position, const Vector3& size);
 			GameObject* AddButtonToWorld(ButtonTrigger* button, const Vector3& position, Door* linkedDoor);
 
 			GameObject* CreateRandomColorCube(Vector3 position);

@@ -28,7 +28,7 @@ void LevelT::Init()
 	Level::Init();
 	CreateCollidingCube(Vector3(10, 3, 0));
 	CreateCollidingCube(Vector3(15, 3, 0));
-
+	AddHidingAreaToWorld(Vector3(20, 3, 0), Vector3(1, 1, 1));
 	Door* door = new Door();
 	door->SetTextures(doorCloseTex, doorOpenTex);
 	AddDoorToWorld(door, Vector3(10, 5, 10));
@@ -111,4 +111,19 @@ GameObject* LevelT::AddPressableDoorToWorld(PressableDoor* door, const Vector3& 
 
 	GameBase::GetGameBase()->GetWorld()->AddGameObject(door);
 	return door;
+}
+void LevelT::AddHidingAreaToWorld(const Vector3& position, const Vector3& size) {
+	Vector3 AreaSize(size);
+	HidingArea* hidingArea = new HidingArea(position, size);
+	hidingArea->GetTransform().SetScale(AreaSize * 2.0f).SetPosition(position);
+	hidingArea->SetRenderObject(new RenderObject(&hidingArea->GetTransform(), cubeMesh, basicTex, basicShader));
+	hidingArea->SetPhysicsObject(new PhysicsObject(&hidingArea->GetTransform(), hidingArea->GetBoundingVolume()));
+
+	hidingArea->GetPhysicsObject()->SetInverseMass(0);
+	hidingArea->GetPhysicsObject()->InitCubeInertia();
+
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(hidingArea);
+
+
+
 }

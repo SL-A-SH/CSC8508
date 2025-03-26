@@ -16,7 +16,7 @@ namespace NCL {
 			void UpdatePlayerMovement(float dt);
 
 			void InitializeController();
-
+			
 
 		protected:
 			KeyboardMouseController* controller;

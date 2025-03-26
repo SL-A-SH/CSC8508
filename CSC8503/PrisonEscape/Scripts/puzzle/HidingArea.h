@@ -1,7 +1,9 @@
 #pragma once
 #include "GameObject.h"
 #include "Vector.h"
-
+#include "CollisionVolume.h"
+#include "CollisionDetection.h"
+#include "PrisonEscape/Scripts/player/Player.h"
 namespace NCL {
     namespace CSC8503 {
         class HidingArea : public GameObject {
@@ -11,7 +13,9 @@ namespace NCL {
 
             void Update(float dt) ;
 
-            bool IsPlayerInside(const Vector3& playerPosition) const;
+			
+            void OnCollisionBegin(GameObject* otherObject) override;
+			void OnCollisionEnd(GameObject* otherObject) override;
 
         private:
             Vector3 hidingAreaPosition;

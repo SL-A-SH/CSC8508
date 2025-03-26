@@ -1,6 +1,7 @@
 #include "HidingArea.h"
 #include "CollisionVolume.h"
 #include "CollisionDetection.h"
+
 using namespace NCL;
 using namespace CSC8503;
 
@@ -18,8 +19,16 @@ void HidingArea::Update(float dt) {
     // Update logic for the hiding area if needed
 }
 
-bool HidingArea::IsPlayerInside(const Vector3& playerPosition) const {
-    return (playerPosition.x >= hidingAreaPosition.x && playerPosition.x <= hidingAreaPosition.x + hidingAreaSize.x &&
-        playerPosition.y >= hidingAreaPosition.y && playerPosition.y <= hidingAreaPosition.y + hidingAreaSize.y &&
-        playerPosition.z >= hidingAreaPosition.z && playerPosition.z <= hidingAreaPosition.z + hidingAreaSize.z);
+void HidingArea::OnCollisionBegin(GameObject* otherObject) {
+	// Check if the object is a player
+	if (otherObject->GetName() == "playerOne") {
+		otherObject->SetActive(false);
+	}
+}
+
+void HidingArea::OnCollisionEnd(GameObject* otherObject) {
+	// Check if the object is a player
+	if (otherObject->GetName() == "playerOne") {
+		otherObject->SetActive(true);
+	}
 }
