@@ -216,3 +216,25 @@ void AudioManager::SelectOutputDevice(int driverIndex) {
 		std::cout << "Output device set to driver " << driverIndex << std::endl;
 	}
 }
+void AudioManager::LoadSounds() {
+	soundFile1 = "PrisonEscape/Assets/SFX/Shotgun.wav";
+	soundFile2 = "PrisonEscape/Assets/SFX/button.mp3";
+	soundFile3 = "PrisonEscape/Assets/SFX/coin_toss.mp3";
+	soundFile4 = "PrisonEscape/Assets/SFX/grunt-1.mp3";
+	soundFile5 = "PrisonEscape/Assets/SFX/old-radio.mp3";
+	soundFile6 = "PrisonEscape/Assets/SFX/opening-metal.mp3";
+	soundFile7 = "PrisonEscape/Assets/SFX/Prison-Escape-v1.mp3";
+	soundFile8 = "PrisonEscape/Assets/SFX/walking-on-wooden-floor.mp3";
+	soundFile9 = "PrisonEscape/Assets/SFX/tension-suspense.mp3";
+
+
+	LoadSound(soundFile1);
+	LoadSound(soundFile2);
+	LoadSound(soundFile3);
+	LoadSound(soundFile4);
+	LoadSound(soundFile5);
+	LoadSound(soundFile6);
+	LoadSound(soundFile7);
+	LoadSound(soundFile8);
+	LoadSound(soundFile9);
+}

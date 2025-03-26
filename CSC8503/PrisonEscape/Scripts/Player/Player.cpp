@@ -6,6 +6,7 @@
 #include "PrisonEscape/Core/GameConfigManager.h"
 #include "PrisonEscape/Core/ImGuiManager.h"
 
+AudioManager* GameBase::audioManager = nullptr;
 Player::Player(GameWorld* world, const std::string& name) : GameObject()
 {
 	useGravity = true;
@@ -124,6 +125,7 @@ void Player::UpdatePlayerMovement(float dt)
     
     if (isIdle) {
         SetObjectAnimationState(Idle);
+
     }
     else if (!isIdle) {
         SetObjectAnimationState(Walk);
