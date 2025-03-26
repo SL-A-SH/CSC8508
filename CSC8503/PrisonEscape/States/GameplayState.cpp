@@ -92,6 +92,8 @@ PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** 
 					gameConfig->networkConfig.server->SendGlobalPacket(posPacket);
 				}
 
+				SendEnemyPositions();
+
 				gameConfig->networkConfig.server->UpdateServer();
 			}
 			else if (gameConfig->networkConfig.client)
@@ -325,11 +327,39 @@ void GamePlayState::SetupClientPlayer(Level* level) {
 void GamePlayState::RegisterServerPacketHandlers() {
 	gameConfig->networkConfig.server->RegisterPacketHandler(Player_ID_Assignment, manager->GetCurrentLevel());
 	gameConfig->networkConfig.server->RegisterPacketHandler(Player_Position, manager->GetCurrentLevel());
+
+	gameConfig->networkConfig.server->RegisterPacketHandler(Enemy_Position, manager->GetCurrentLevel());
 }
 
 void GamePlayState::RegisterClientPacketHandlers() {
 	gameConfig->networkConfig.client->RegisterPacketHandler(Player_Position, manager->GetCurrentLevel());
 	gameConfig->networkConfig.client->RegisterPacketHandler(Player_ID_Assignment, manager->GetCurrentLevel());
+
+	gameConfig->networkConfig.client->RegisterPacketHandler(Enemy_Position, manager->GetCurrentLevel());
+}
+
+void GamePlayState::SendEnemyPositions()
+{
+	if (!gameConfig->networkConfig.isMultiplayer || !gameConfig->networkConfig.isServer) {
+		return; // Only the server should send enemy positions
+	}
+
+	Level* level = manager->GetCurrentLevel();
+	if (level) {
+		// Send positions for all enemies
+		for (int i = 0; i < manager->GetEnemies().size(); i++) {
+			PatrolEnemy* enemy = manager->GetEnemies()[i];
+			if (enemy) {
+				Vector3 pos = enemy->GetTransform().GetPosition();
+
+				if (gameConfig->networkConfig.server) {
+					// Regular networking
+					EnemyPositionPacket posPacket(i, pos.x, pos.y, pos.z);
+					gameConfig->networkConfig.server->SendGlobalPacket(posPacket);
+				}
+			}
+		}
+	}
 }
 
 void GamePlayState::DrawFriendsPanel()

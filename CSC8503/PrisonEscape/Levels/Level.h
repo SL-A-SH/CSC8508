@@ -36,6 +36,7 @@ namespace NCL {
 
 			Player* playerOne = nullptr;
 			Player* playerTwo = nullptr;
+
 			std::vector<PatrolEnemy*> patrolEnemies;
 			std::vector<PursuitEnemy*> pursuitEnemies;
 			Vector3 playerOneSpawn;
@@ -51,6 +52,7 @@ namespace NCL {
 		public:
 			Player* GetPlayerOne() const { return playerOne; }
 			Player* GetPlayerTwo() const { return playerTwo; }
+			const std::vector<PatrolEnemy*>& GetEnemies() const { return patrolEnemies; }
 
 #pragma region UI
 

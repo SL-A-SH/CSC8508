@@ -731,7 +731,8 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 		}
 
 		for (const auto& enemy : enemies) {
-			AddPatrolEnemyToWorld(enemy.name, enemy.waypoints, enemy.position, playerOne);
+			PatrolEnemy* enemyToAdd = AddPatrolEnemyToWorld(enemy.name, enemy.waypoints, enemy.position, playerOne);
+			patrolEnemies.push_back(enemyToAdd);
 		}
 
 	}

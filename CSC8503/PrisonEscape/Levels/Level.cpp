@@ -55,6 +55,17 @@ void Level::ReceivePacket(int type, GamePacket* payload, int source) {
 			}
 		}
 	}
+	else if (type == Enemy_Position) {
+		EnemyPositionPacket* posPacket = (EnemyPositionPacket*)payload;
+
+		int enemyIndex = posPacket->enemyID;
+		if (enemyIndex >= 0 && enemyIndex < patrolEnemies.size()) {
+			// Update the enemy position from the packet
+			patrolEnemies[enemyIndex]->GetTransform().SetPosition(
+				Vector3(posPacket->posX, posPacket->posY, posPacket->posZ)
+			);
+		}
+	}
 	else if (type == Player_ID_Assignment) {
 		PlayerIDPacket* idPacket = (PlayerIDPacket*)payload;
 

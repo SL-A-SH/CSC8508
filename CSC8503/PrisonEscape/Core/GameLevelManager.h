@@ -70,6 +70,9 @@ namespace NCL {
 
 			Player* GetPlayerOne() { return playerOne; }
 			Player* GetPlayerTwo() { return playerTwo; }
+			const std::vector<PatrolEnemy*>& GetEnemies() const { return patrolEnemies; }
+
+			std::vector<PatrolEnemy*> patrolEnemies;
 
 		private:
 			GameWorld* mWorld;
