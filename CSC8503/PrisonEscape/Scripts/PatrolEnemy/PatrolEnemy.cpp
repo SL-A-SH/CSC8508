@@ -67,7 +67,6 @@ void PatrolEnemy::InitBehaviourTree() {
 
     BehaviourAction* patrolAction = new BehaviourAction("PATROL",
         [&](float dt, BehaviourState state) -> BehaviourState {
-            std::cout << "patrol\n";
             if (currentState != PATROL) {
                 return Failure;
             }
@@ -104,7 +103,6 @@ void PatrolEnemy::InitBehaviourTree() {
 
     BehaviourAction* sleepAction = new BehaviourAction("SLEEP",
         [&](float dt, BehaviourState state) -> BehaviourState {
-            std::cout << "sleeping\n";
             if (currentState != SLEEP) {
                 return Failure;
             }
@@ -119,7 +117,6 @@ void PatrolEnemy::InitBehaviourTree() {
 
     BehaviourAction* catchAction = new BehaviourAction("CAUGHT",
         [&](float dt, BehaviourState state) -> BehaviourState {
-            std::cout << "catching";
             if (currentState != CAUGHT) {
                 return Failure;
             }
