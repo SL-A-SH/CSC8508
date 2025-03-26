@@ -35,7 +35,7 @@ namespace NCL {
 
 		class GameLevelManager {
 		public:
-			GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer, bool multiplayerStatus);
+			GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer, bool multiplayerStatus, bool isServer);
 			~GameLevelManager();
 			virtual void UpdateGame(float dt);
 
@@ -123,6 +123,7 @@ namespace NCL {
 
 			
 			bool isMultiplayer;
+			bool isServer;
 			bool isPlaying;
 		};
 	}

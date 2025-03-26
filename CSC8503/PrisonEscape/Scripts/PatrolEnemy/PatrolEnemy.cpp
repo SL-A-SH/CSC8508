@@ -21,6 +21,10 @@ PatrolEnemy::~PatrolEnemy() {
 }
 
 void PatrolEnemy::UpdateGame(float dt) {
+    if (clientControlled) {
+        return;
+    }
+
     std::string stateStr;
     switch (currentState) {
     case PATROL:  stateStr = "PATROL"; break;

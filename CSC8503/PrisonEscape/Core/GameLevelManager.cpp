@@ -24,7 +24,7 @@ using namespace CSC8503;
 
 GameLevelManager* GameLevelManager::manager = nullptr;
 
-GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer, bool multiplayerStatus)
+GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer, bool multiplayerStatus, bool isServer)
 {
 	mWorld = existingWorld;
 	mRenderer = existingRenderer;
@@ -33,7 +33,7 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	mPhysics->UseGravity(true);
 	manager = this;
 	isMultiplayer = multiplayerStatus;
-
+	this->isServer = isServer;
 
 	InitAssets();
 	std::cout << "The Level to load is at: " << mLevelList["Level2"] << std::endl;
@@ -101,7 +101,6 @@ void GameLevelManager::UpdateGame(float dt)
 		}
 	}
 
-	Debug::Print("LEVELS", Vector2(25, 30), Debug::WHITE);
 	for (Button* button : buttons) {
 		if (!button->IsPressed()) {
 			button->pressDetection(boxes);
@@ -327,6 +326,11 @@ PatrolEnemy* GameLevelManager::AddPatrolEnemyToWorld(const std::string& enemyNam
 	Transform transform;
 	transform.SetPosition(spawnPoint);
 	PatrolEnemy* mEnemyToAdd = new PatrolEnemy(mWorld, enemyName);
+
+	if (isMultiplayer && !this->isServer) {
+		mEnemyToAdd->SetClientControlled(true);
+	}
+	
 	AddComponentsToPatrolEnemy(*mEnemyToAdd, transform);
 
 	mEnemyToAdd->SetPatrolPoints(patrolPoints);
@@ -725,11 +729,11 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 				LogObjectPlacement(obj);
 			}
 		}
-		if (!isMultiplayer) {
-			for (const auto& enemy : enemies) {
-				AddPatrolEnemyToWorld(enemy.name, enemy.waypoints, enemy.position, playerOne);
-			}
+
+		for (const auto& enemy : enemies) {
+			AddPatrolEnemyToWorld(enemy.name, enemy.waypoints, enemy.position, playerOne);
 		}
+
 	}
 	else {
 		std::cerr << "Can't load level \n";

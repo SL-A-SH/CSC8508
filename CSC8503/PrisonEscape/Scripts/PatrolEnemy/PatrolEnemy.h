@@ -28,6 +28,10 @@ namespace NCL {
                 }
             }
 
+            void SetClientControlled(bool isClient) {
+                clientControlled = isClient;
+            }
+
             bool visible;
 
         protected:
@@ -55,6 +59,9 @@ namespace NCL {
                 CAUGHT
             };
             AIState currentState;
+
+        private:
+            bool clientControlled = false;
         };
     }
 }
