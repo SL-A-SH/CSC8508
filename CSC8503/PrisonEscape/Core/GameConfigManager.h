@@ -25,10 +25,16 @@ namespace NCL {
 			void CreateServer();
 			void CreateClient();
 
+			void SetChosenLevel(std::string levelName) { chosenLevel = levelName; }
+			std::string GetChosenLevel() { return chosenLevel; }
+
+
 			NetworkConfig networkConfig;
 
 			void SetSteamCallback();
 			std::function<void(uint64_t)> steamInviteCallback;
+
+			std::string chosenLevel;
 		};
 	}
 }

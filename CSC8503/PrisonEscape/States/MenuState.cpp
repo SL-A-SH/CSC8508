@@ -255,8 +255,11 @@ void MenuState::DrawLevelSelectPanel()
 				gameConfig->networkConfig.isMultiplayer = false;
 
 				if (this->gameConfig) {
-					*newState = new GamePlayState(false, false, gameConfig, "Level1");
+					GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("LevelSelectPanel");
+					gameConfig->SetChosenLevel("Level1");
+					*newState = new GamePlayState(false, false, gameConfig);
 					this->gameConfig = nullptr; // Transfer ownership
+
 				}
 
 			};
@@ -268,7 +271,9 @@ void MenuState::DrawLevelSelectPanel()
 				gameConfig->networkConfig.isMultiplayer = false;
 
 				if (this->gameConfig) {
-					*newState = new GamePlayState(false, false, gameConfig, "Level2");
+					GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("LevelSelectPanel");
+					gameConfig->SetChosenLevel("Level2");
+					*newState = new GamePlayState(false, false, gameConfig);
 					this->gameConfig = nullptr; // Transfer ownership
 				}
 
