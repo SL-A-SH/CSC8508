@@ -23,7 +23,7 @@ using namespace CSC8503;
 
 GameLevelManager* GameLevelManager::manager = nullptr;
 
-GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer)
+GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer, bool multiplayerStatus)
 {
 	mWorld = existingWorld;
 	mRenderer = existingRenderer;
@@ -31,11 +31,13 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	mAnimator = new AnimationController(*mWorld, mPreLoadedAnimationList);
 	mPhysics->UseGravity(true);
 	manager = this;
+	isMultiplayer = multiplayerStatus;
+
 
 	InitAssets();
-	std::cout << "The Level to load is at: " << mLevelList["Level1"] << std::endl;
+	std::cout << "The Level to load is at: " << mLevelList["Level2"] << std::endl;
 	boxNumber = 0;
-	loadMap(mLevelList["Level1"]);
+	loadMap(mLevelList["Level2"]);
 	InitAnimationObjects();
 }
 
@@ -320,8 +322,9 @@ void GameLevelManager::AddComponentsToPlayer(Player& playerObject, const Transfo
 
 //Should add enemy to the world, needs testing
 
-PatrolEnemy* GameLevelManager::AddPatrolEnemyToWorld(const std::string& enemyName,const std::vector<Vector3>& patrolPoints, Player* player) {
+PatrolEnemy* GameLevelManager::AddPatrolEnemyToWorld(const std::string& enemyName,const std::vector<Vector3>& patrolPoints, const Vector3& spawnPoint, Player* player) {
 	Transform transform;
+	transform.SetPosition(spawnPoint);
 	PatrolEnemy* mEnemyToAdd = new PatrolEnemy(mWorld, enemyName);
 	AddComponentsToPatrolEnemy(*mEnemyToAdd, transform);
 
@@ -631,10 +634,11 @@ void GameLevelManager::LogObjectPlacement(const InGameObject& obj) {
 void GameLevelManager::loadMap(std::string levelToLoad) {
 	int level;
 	std::vector<InGameObject> objects;
+	std::vector<Enemy> enemies;
 	std::unordered_map<std::string, Door*> doorMap; // storing doors by name
 	std::string levelPath = Assets::LEVELDIR + levelToLoad;
 
-	if (::jsonParser::LoadLevel(levelPath, level, objects)) {
+	if (::jsonParser::LoadLevel(levelPath, level, objects, enemies)) {
 
 		// create button doors first and store
 		for (const auto& obj : objects) {
@@ -673,12 +677,23 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 			}
 
 			else if (obj.type.find("Player") != std::string::npos) {
-				if (obj.type == "Player1") { P1Position = obj.position; }
-				else if (obj.type == "Player2") { P2Position = obj.position; }
+				if (obj.type == "Player1") {
+					Transform playerOneTransform;
+					playerOne = AddPlayerToWorld(playerOneTransform.SetPosition(obj.position), "playerOne");
+				}
+				else if (obj.type == "Player2" && isMultiplayer) {
+					Transform playerTwoTransform;
+					playerTwo = AddPlayerToWorld(playerTwoTransform.SetPosition(obj.position), "playerTwo");
+				}
 			}
 
 			else {
 				LogObjectPlacement(obj);
+			}
+		}
+		if (!isMultiplayer) {
+			for (const auto& enemy : enemies) {
+				AddPatrolEnemyToWorld(enemy.name, enemy.waypoints, enemy.position, playerOne);
 			}
 		}
 	}
