@@ -52,9 +52,8 @@ void GameBase::InitialiseGame() {
 		std::cerr << "Failed to initialize AudioManager!" << std::endl;
 	}
 
-	std::string soundFile = "PrisonEscape/Assets/SFX/Shotgun.wav";
-	audioManager->LoadSound(soundFile);
-	audioManager->PlaySound(soundFile);  // Play without loop for testing
+	audioManager->LoadSounds();
+	audioManager->PlaySound(audioManager->soundFile9, true);
 }
 
 void GameBase::UpdateGame(float dt) {
