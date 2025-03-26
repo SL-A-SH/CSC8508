@@ -217,6 +217,10 @@ void AudioManager::SelectOutputDevice(int driverIndex) {
 	}
 }
 void AudioManager::LoadSounds() {
+	soundFile9 = "PrisonEscape/Assets/SFX/tension-suspense.mp3";
+	LoadSound(soundFile9);
+}
+void AudioManager::LoadSoundsXtension() {
 	soundFile1 = "PrisonEscape/Assets/SFX/Shotgun.wav";
 	soundFile2 = "PrisonEscape/Assets/SFX/button.mp3";
 	soundFile3 = "PrisonEscape/Assets/SFX/coin_toss.mp3";
@@ -225,8 +229,8 @@ void AudioManager::LoadSounds() {
 	soundFile6 = "PrisonEscape/Assets/SFX/opening-metal.mp3";
 	soundFile7 = "PrisonEscape/Assets/SFX/Prison-Escape-v1.mp3";
 	soundFile8 = "PrisonEscape/Assets/SFX/walking-on-wooden-floor.mp3";
-	soundFile9 = "PrisonEscape/Assets/SFX/tension-suspense.mp3";
-
+	soundFile10 = "PrisonEscape/Assets/SFX/grunt-2.mp3";
+	soundFile11 = "PrisonEscape/Assets/SFX/heavy-breathing.mp3";
 
 	LoadSound(soundFile1);
 	LoadSound(soundFile2);
@@ -236,7 +240,9 @@ void AudioManager::LoadSounds() {
 	LoadSound(soundFile6);
 	LoadSound(soundFile7);
 	LoadSound(soundFile8);
-	LoadSound(soundFile9);
+	LoadSound(soundFile10);
+	LoadSound(soundFile11);
+	
 }
 bool AudioManager::IsPlaying(const std::string& filePath) {
 	auto it = channels.find(filePath);

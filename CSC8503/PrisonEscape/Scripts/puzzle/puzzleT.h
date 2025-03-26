@@ -2,7 +2,7 @@
 
 #include "GameObject.h"
 #include "GameWorld.h"
-
+#include "../CSC8503/PrisonEscape/Core/AudioManager.h"
 namespace NCL {
 	namespace CSC8503 {
 
@@ -28,6 +28,7 @@ namespace NCL {
 			bool isOpen;
 			Texture* openTexture;
 			Texture* closeTexture;
+			AudioManager* audioManager;
 		};
 
 		class ButtonTrigger : public GameObject {
@@ -41,6 +42,7 @@ namespace NCL {
 		private:
 			bool isPressed;
 			Door* linkedDoor;
+			
 		};
 
 		class PressableDoor : public Door {

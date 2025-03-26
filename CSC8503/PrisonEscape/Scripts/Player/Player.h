@@ -21,7 +21,6 @@ namespace NCL {
 
 		protected:
 			KeyboardMouseController* controller;
-
 			bool useGravity;
 			bool cameraAttached = false;
 			
@@ -35,7 +34,7 @@ namespace NCL {
 			float playerSpeed = 10.0f;
 			int health;
 			Vector3 playerSpawn;
-			AudioManager* audioManager; // Add this
+			AudioManager* audioManager; 
 
 		public:
 			std::string GetName() { return mName; }

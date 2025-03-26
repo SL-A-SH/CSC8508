@@ -19,9 +19,9 @@ Player::Player(GameWorld* world, const std::string& name) : GameObject()
 
     health = 3;
     
-    audioManager = new AudioManager();  // Initialize AudioManager
-    audioManager->Initialize();         // Make sure FMOD is initialized
-    audioManager->LoadSounds();         // Load all sounds
+    audioManager = new AudioManager(); 
+    audioManager->Initialize();         
+    audioManager->LoadSoundsXtension();
 }
 
 Player::~Player()
@@ -118,6 +118,7 @@ void Player::UpdatePlayerMovement(float dt)
                 movement.y += 10.0f;
                 currentVelocity.y = 35.0f;
                 lastJumpTime = currentTime;
+                audioManager->PlaySound(audioManager->soundFile10);
             }
         }
 
@@ -131,14 +132,19 @@ void Player::UpdatePlayerMovement(float dt)
     
     if (isIdle) {
         SetObjectAnimationState(Idle);
-        if (!audioManager->IsPlaying(audioManager->soundFile8)) { // Ensure sound isn't already playing
-            audioManager->PlaySound(audioManager->soundFile8);
+        if (audioManager->IsPlaying(audioManager->soundFile8)) { // Ensure sound isn't already playing
+            audioManager->StopSound(audioManager->soundFile8);
+            audioManager->PlaySound(audioManager->soundFile11);
         }
+
     }
     else if (!isIdle) {
         SetObjectAnimationState(Walk);
         
-        
+        if (!audioManager->IsPlaying(audioManager->soundFile8)) { // Ensure sound isn't already playing
+            audioManager->PlaySound(audioManager->soundFile8);
+            audioManager->StopSound(audioManager->soundFile11);
+        }
     }
 }
 

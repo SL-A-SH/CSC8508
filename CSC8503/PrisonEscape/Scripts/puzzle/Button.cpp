@@ -7,16 +7,21 @@ Button::Button() {
 	pressed = false;
 	playerActivated = false;
 	boxActivated = false;
+	audioManager = new AudioManager();
+	audioManager->Initialize();
+	audioManager->LoadSoundsXtension();
 }
 
 Button::~Button() {
 	buttonObject = nullptr;
+	delete audioManager;
 }
 
 void Button::pressDownButton() {
 	if (!pressed && buttonObject) {
 		buttonObject->GetTransform().SetPosition(buttonObject->GetTransform().GetPosition() + Vector3(0, -1.5, 0));
 		pressed = true;
+		audioManager->PlaySound(audioManager->soundFile2);
 	}
 }
 
