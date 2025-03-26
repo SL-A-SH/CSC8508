@@ -24,7 +24,7 @@ using namespace CSC8503;
 
 GameLevelManager* GameLevelManager::manager = nullptr;
 
-GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer, bool multiplayerStatus, bool isServer)
+GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer, string LevelToLoadbool, multiplayerStatus, bool isServer)
 {
 	mWorld = existingWorld;
 	mRenderer = existingRenderer;

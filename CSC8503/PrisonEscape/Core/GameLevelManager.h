@@ -35,7 +35,7 @@ namespace NCL {
 
 		class GameLevelManager {
 		public:
-			GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer, bool multiplayerStatus, bool isServer);
+			GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer, string LevelToLoad, bool multiplayerStatus, bool isServer);
 			~GameLevelManager();
 			virtual void UpdateGame(float dt);
 
@@ -65,11 +65,12 @@ namespace NCL {
 			void AddLevel(Level* newLevel) { mLevelStack.push(newLevel); }
 
 			AnimationController* GetAnimator() { return mAnimator; }
-			
+
 			static GameLevelManager* GetGameLevelManager() { return manager; }
 
 			Player* GetPlayerOne() { return playerOne; }
 			Player* GetPlayerTwo() { return playerTwo; }
+			void SetLevelToLoad(string levelName) { mLevelToLoad = levelName; }
 
 		private:
 			GameWorld* mWorld;
@@ -82,6 +83,8 @@ namespace NCL {
 
 			Player* playerOne;
 			Player* playerTwo;
+
+			string mLevelToLoad = "Level1";
 
 			// for handling multiple buttons/boxes in a level
 			int boxNumber;
