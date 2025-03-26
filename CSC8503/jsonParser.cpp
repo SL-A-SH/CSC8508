@@ -5,7 +5,7 @@
 
 using json = nlohmann::json;
 
-bool jsonParser::LoadLevel(const std::string& filename, int& level, std::vector<InGameObject>& objects) {
+bool jsonParser::LoadLevel(const std::string& filename, int& level, std::vector<InGameObject>& objects, std::vector<Enemy>& enemies) {
     std::ifstream file(filename);
     if (!file) {
         std::cerr << "Error: Could not open file " << filename << "\n";
@@ -18,6 +18,7 @@ bool jsonParser::LoadLevel(const std::string& filename, int& level, std::vector<
     level = jsonData["level"]; 
 
     objects.clear();
+    enemies.clear();
 
     for (const auto& obj : jsonData["objects"]) {
         InGameObject gameObject;
@@ -30,5 +31,15 @@ bool jsonParser::LoadLevel(const std::string& filename, int& level, std::vector<
         objects.push_back(gameObject);
     }
 
+    for (const auto& enemy : jsonData["enemies"]) {
+        Enemy enemyData;
+        enemyData.name = enemy["name"];
+        enemyData.position = { enemy["position"]["x"], enemy["position"]["y"], enemy["position"]["z"] };
+        for (const auto& waypoint : enemy["waypoints"]) {
+            Vector3 waypointPos = { waypoint["x"], waypoint["y"], waypoint["z"] };
+        }
+
+        enemies.push_back(enemyData);
+    }
     return true; 
 }

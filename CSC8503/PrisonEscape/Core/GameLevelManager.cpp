@@ -631,10 +631,11 @@ void GameLevelManager::LogObjectPlacement(const InGameObject& obj) {
 void GameLevelManager::loadMap(std::string levelToLoad) {
 	int level;
 	std::vector<InGameObject> objects;
+	std::vector<Enemy> enemies;
 	std::unordered_map<std::string, Door*> doorMap; // storing doors by name
 	std::string levelPath = Assets::LEVELDIR + levelToLoad;
 
-	if (::jsonParser::LoadLevel(levelPath, level, objects)) {
+	if (::jsonParser::LoadLevel(levelPath, level, objects, enemies)) {
 
 		// create button doors first and store
 		for (const auto& obj : objects) {
@@ -680,6 +681,9 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 			else {
 				LogObjectPlacement(obj);
 			}
+		}
+		for (const auto& enemy : enemies) {
+			AddPatrolEnemyToWorld(enemy.name, enemy.waypoints);
 		}
 	}
 	else {

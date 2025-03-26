@@ -20,15 +20,22 @@ struct InGameObject {
     Vector3 orientation;
 };
 
+struct Enemy {
+    std::string name;
+    Vector3 position;
+    std::vector<Vector3> waypoints;
+};
+
 struct LevelData {
     int level;
     std::vector<InGameObject> objects;
+    std::vector<Enemy> enemies;
 };
 
 
 class jsonParser {
 public:
-    static bool LoadLevel(const std::string& filename, int& level, std::vector<InGameObject>& objects);
+    static bool LoadLevel(const std::string& filename, int& level, std::vector<InGameObject>& objects, std::vector<Enemy>& enemies);
 };
 
 #endif 
