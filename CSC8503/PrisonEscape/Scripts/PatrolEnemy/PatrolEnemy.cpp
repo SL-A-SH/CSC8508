@@ -63,7 +63,7 @@ void PatrolEnemy::InitBehaviourTree() {
 
     BehaviourAction* patrolAction = new BehaviourAction("PATROL",
         [&](float dt, BehaviourState state) -> BehaviourState {
-
+            std::cout << "patrol\n";
             if (currentState != PATROL) {
                 return Failure;
             }
@@ -100,6 +100,7 @@ void PatrolEnemy::InitBehaviourTree() {
 
     BehaviourAction* sleepAction = new BehaviourAction("SLEEP",
         [&](float dt, BehaviourState state) -> BehaviourState {
+            std::cout << "sleeping\n";
             if (currentState != SLEEP) {
                 return Failure;
             }
@@ -114,6 +115,7 @@ void PatrolEnemy::InitBehaviourTree() {
 
     BehaviourAction* catchAction = new BehaviourAction("CAUGHT",
         [&](float dt, BehaviourState state) -> BehaviourState {
+            std::cout << "catching";
             if (currentState != CAUGHT) {
                 return Failure;
             }
@@ -122,6 +124,12 @@ void PatrolEnemy::InitBehaviourTree() {
                 std::cout << "Warning: " << std::to_string(warningTimer);
                 warningTimer -= dt;
                 return Ongoing;
+            }
+
+            if (!CanSeePlayer()) {
+                warningTimer = 2.0f;
+                currentState = PATROL;
+                return Success;
             }
 
             else {
