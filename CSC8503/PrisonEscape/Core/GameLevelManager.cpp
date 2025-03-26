@@ -15,11 +15,13 @@
 #include "PrisonEscape/Scripts/Player/Player.h"
 #include "PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
 #include "PrisonEscape/Scripts/puzzle/HidingArea.h"
+#include "PrisonEscape/Core/ImGuiManager.h"
 
 using namespace NCL;
 using namespace CSC8503;
 
 GameLevelManager* GameLevelManager::manager = nullptr;
+bool GameLevelManager::returnToMainMenu = false;
 
 GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer)
 {
@@ -147,8 +149,10 @@ void GameLevelManager::InitAssets()
 	int materialLines = 0;
 	int animationLines = 0;
 
+	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("LoadingPanel", [this]() {DrawLoadingPanel(); });
+	GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MainMenuPanel");
+	mRenderer->Render();
 	while (getline(assetsFile, line)) {
-
 		//removes the , from the file
 		for (int i = 0; i < 3; i++) {
 			assetInfo[i] = line.substr(0, line.find(","));
@@ -170,6 +174,7 @@ void GameLevelManager::InitAssets()
 				mRenderer->LoadMeshes(mMeshList, groupInfo);
 				meshesLoaded = true;
 			}
+
 
 			else if (group == "anim") {
 				std::cout << "Found Animation: " << groupInfo[1] << std::endl;
@@ -309,7 +314,7 @@ void GameLevelManager::AddComponentsToPlayer(Player& playerObject, const Transfo
 
 //Should add enemy to the world, needs testing
 
-PatrolEnemy* GameLevelManager::AddPatrolEnemyToWorld(const std::string& enemyName,const std::vector<Vector3>& patrolPoints, Player* player) {
+PatrolEnemy* GameLevelManager::AddPatrolEnemyToWorld(const std::string& enemyName, const std::vector<Vector3>& patrolPoints, Player* player) {
 	Transform transform;
 	PatrolEnemy* mEnemyToAdd = new PatrolEnemy(mWorld, enemyName);
 	AddComponentsToPatrolEnemy(*mEnemyToAdd, transform);
@@ -534,4 +539,10 @@ void GameLevelManager::loadMap() {
 	else {
 		std::cerr << "Can't load level \n";
 	}
+}
+
+
+void GameLevelManager::DrawLoadingPanel()
+{
+	ImGuiManager::DrawMessagePanel("Loading", "GameLoading", ImVec4(1, 0, 0, 1));
 }
