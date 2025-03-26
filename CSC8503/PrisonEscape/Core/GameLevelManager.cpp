@@ -16,6 +16,7 @@
 #include "PrisonEscape/Scripts/PatrolEnemy/PatrolEnemy.h"
 #include "PrisonEscape/Scripts/puzzle/HidingArea.h"
 #include "PrisonEscape/Scripts/PursuitEnemy/PursuitEnemy.h"
+#include "../CSC8503/PrisonEscape/Scripts/CameraEnemy/CameraEnemy.h"
 
 
 using namespace NCL;
@@ -372,11 +373,11 @@ PursuitEnemy* GameLevelManager::AddPursuitEnemyToWorld(const std::string& enemyN
 }
 
 void GameLevelManager::AddComponentsToPursuitEnemy(PursuitEnemy& enemyObj, const Transform& enemyTransform) {
-	SphereVolume* volume = new SphereVolume(PATROL_ENEMY_MESH_SIZE / 2);
+	SphereVolume* volume = new SphereVolume(PURSUIT_ENEMY_MESH_SIZE / 2);
 	enemyObj.SetBoundingVolume((CollisionVolume*)volume);
 
 	enemyObj.GetTransform()
-		.SetScale(Vector3(PATROL_ENEMY_MESH_SIZE, PATROL_ENEMY_MESH_SIZE, PATROL_ENEMY_MESH_SIZE))
+		.SetScale(Vector3(PURSUIT_ENEMY_MESH_SIZE, PURSUIT_ENEMY_MESH_SIZE, PURSUIT_ENEMY_MESH_SIZE))
 		.SetPosition(enemyTransform.GetPosition())
 		.SetOrientation(enemyTransform.GetOrientation());
 
@@ -386,7 +387,40 @@ void GameLevelManager::AddComponentsToPursuitEnemy(PursuitEnemy& enemyObj, const
 
 	enemyObj.GetRenderObject()->SetMaterialTextures(mMeshMaterialsList["Guard"]);
 
-	enemyObj.GetPhysicsObject()->SetInverseMass(PATROL_ENEMY_INVERSE_MASS);
+	enemyObj.GetPhysicsObject()->SetInverseMass(PURSUIT_ENEMY_INVERSE_MASS);
+	enemyObj.GetPhysicsObject()->InitSphereInertia();
+
+}
+
+CameraEnemy* GameLevelManager::AddCameraEnemyToWorld(const std::string& enemyName, const Vector3& spawnPoint, Player* player) {
+	Transform transform;
+	CameraEnemy* mEnemyToAdd = new CameraEnemy(mWorld, enemyName);
+	AddComponentsToCameraEnemy(*mEnemyToAdd, transform);
+
+	mEnemyToAdd->SetPlayerObject(player);
+
+	mWorld->AddGameObject(mEnemyToAdd);
+	mUpdatableObjectList.push_back(mEnemyToAdd);
+
+	return mEnemyToAdd;
+}
+
+void GameLevelManager::AddComponentsToCameraEnemy(CameraEnemy& enemyObj, const Transform& enemyTransform) {
+	SphereVolume* volume = new SphereVolume(CAMERA_ENEMY_MESH_SIZE / 2);
+	enemyObj.SetBoundingVolume((CollisionVolume*)volume);
+
+	enemyObj.GetTransform()
+		.SetScale(Vector3(CAMERA_ENEMY_MESH_SIZE, CAMERA_ENEMY_MESH_SIZE, CAMERA_ENEMY_MESH_SIZE))
+		.SetPosition(enemyTransform.GetPosition())
+		.SetOrientation(enemyTransform.GetOrientation());
+
+	enemyObj.SetRenderObject(new RenderObject(&enemyObj.GetTransform(), mMeshList["Guard"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+
+	enemyObj.SetPhysicsObject(new PhysicsObject(&enemyObj.GetTransform(), enemyObj.GetBoundingVolume()));
+
+	enemyObj.GetRenderObject()->SetMaterialTextures(mMeshMaterialsList["Guard"]);
+
+	enemyObj.GetPhysicsObject()->SetInverseMass(CAMERA_ENEMY_INVERSE_MASS);
 	enemyObj.GetPhysicsObject()->InitSphereInertia();
 
 }
