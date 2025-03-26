@@ -16,6 +16,7 @@ namespace NCL {
 			// Load a sound into the system
 			void LoadSound(const std::string& filePath);
 			void LoadSounds();
+			void LoadSoundsXtension();
 			// Play a sound
 			void PlaySound(const std::string& filePath, bool loop = false);
 
@@ -24,7 +25,7 @@ namespace NCL {
 
 			// Update the FMOD system (must be called periodically)
 			void Update();
-
+			bool IsPlaying(const std::string& filePath);
 			void PrintOutputDevices();
 			void SelectOutputDevice(int driverIndex);
 			std::string soundFile1;
@@ -36,6 +37,16 @@ namespace NCL {
 			std::string soundFile7;
 			std::string soundFile8;
 			std::string soundFile9;
+			std::string soundFile10;
+			std::string soundFile11;
+			std::string soundFile12;
+			std::string soundFile13;
+			std::string soundFile14;
+			std::string soundFile15;
+			std::string soundFile16;
+			std::string soundFile17;
+			std::string soundFile18;
+			std::string soundFile19;
 		private:
 			FMOD::System* system;
 			std::unordered_map<std::string, FMOD::Sound*> sounds;

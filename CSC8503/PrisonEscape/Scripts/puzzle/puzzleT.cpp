@@ -36,11 +36,17 @@ Door::Door() : GameObject("Door") {
 	openTexture = nullptr;
 	closeTexture = nullptr;
 	
+	audioManager = new AudioManager();
+	audioManager->Initialize();
+	audioManager->LoadSoundsXtension();
 }
 void Door::Open() {
 	isOpen = true;
 	GetRenderObject()->SetDefaultTexture(openTexture);
+	if (!audioManager->IsPlaying(audioManager->soundFile6)) { // Ensure sound isn't already playing
+		audioManager->PlaySound(audioManager->soundFile6);
 
+	}
 	Vector3 newPosition = GetTransform().GetPosition() + Vector3(0, 5, 0); 
 	GetTransform().SetPosition(newPosition);
 	
@@ -70,6 +76,7 @@ void Door::Update(float dt) {
 ButtonTrigger::ButtonTrigger(const std::string& name) : GameObject(name) {
 	isPressed = false;
 	linkedDoor = nullptr;
+
 }
 
 
@@ -80,6 +87,8 @@ void ButtonTrigger::OnCollisionBegin(GameObject* otherObject) {
 
 		if (linkedDoor) {
 			linkedDoor->Open();// Open the door
+			
+			
 			
 		}
 	}

@@ -5,6 +5,7 @@
 #include "Vector.h"
 #include "Mesh.h"
 #include "../CSC8503/PrisonEscape/Core/GameBase.h"
+#include "../CSC8503/PrisonEscape/Core/AudioManager.h"
 
 namespace NCL {
 	namespace CSC8503 {
@@ -27,7 +28,7 @@ namespace NCL {
 			bool pressed;
 			bool playerActivated;
 			bool boxActivated;
-
+			AudioManager* audioManager;
 
 			// "animate" the button that gets pressed down (move it down lower so it seems like its been pressed)
 			void pressDownButton();

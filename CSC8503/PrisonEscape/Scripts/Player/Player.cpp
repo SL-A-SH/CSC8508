@@ -5,6 +5,8 @@
 #include "PrisonEscape/Core/GameBase.h"
 #include "PrisonEscape/Core/GameConfigManager.h"
 #include "PrisonEscape/Core/ImGuiManager.h"
+#include "PrisonEscape/Core/AudioManager.h"
+
 
 Player::Player(GameWorld* world, const std::string& name) : GameObject()
 {
@@ -16,10 +18,15 @@ Player::Player(GameWorld* world, const std::string& name) : GameObject()
     mName = name;
 
     health = 3;
+    
+    audioManager = new AudioManager(); 
+    audioManager->Initialize();         
+    audioManager->LoadSoundsXtension();
 }
 
 Player::~Player()
 {
+    delete audioManager;
 }
 
 void Player::UpdateGame(float dt)
@@ -111,6 +118,7 @@ void Player::UpdatePlayerMovement(float dt)
                 movement.y += 10.0f;
                 currentVelocity.y = 35.0f;
                 lastJumpTime = currentTime;
+                audioManager->PlaySound(audioManager->soundFile10);
             }
         }
 
@@ -124,10 +132,19 @@ void Player::UpdatePlayerMovement(float dt)
     
     if (isIdle) {
         SetObjectAnimationState(Idle);
+        if (audioManager->IsPlaying(audioManager->soundFile8)) { // Ensure sound isn't already playing
+            audioManager->StopSound(audioManager->soundFile8);
+            audioManager->PlaySound(audioManager->soundFile11);
+        }
 
     }
     else if (!isIdle) {
         SetObjectAnimationState(Walk);
+        
+        if (!audioManager->IsPlaying(audioManager->soundFile8)) { // Ensure sound isn't already playing
+            audioManager->PlaySound(audioManager->soundFile8);
+            audioManager->StopSound(audioManager->soundFile11);
+        }
     }
 }
 

@@ -147,10 +147,16 @@ function(Create_PS5_CSC8503_Files)
     include_directories("../PS5Core/")
     include_directories("../CSC8503CoreClasses/")
     include_directories("../PS5Core")
+    include_directories("../FMODCorePS5/includes")  # Ensure this path is correct
+    include_directories("../FMODCorePS5/libs")
 
     target_link_libraries(${PROJECT_NAME} PRIVATE ${NCLCoreClasses})
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC PS5Core)
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC CSC8503CoreClasses)
+    target_link_libraries(MyPS5Game 
+        fmodL.prx 
+        fmod.prx
+    )
 
 endfunction()
 
