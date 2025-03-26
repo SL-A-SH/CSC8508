@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../NCLCoreClasses/KeyboardMouseController.h"
+#include "../CSC8503/PrisonEscape/Core/AudioManager.h"
 #include "PhysicsSystem.h"
 #include "Window.h"
 #include "Vector.h"
@@ -23,7 +24,7 @@ namespace NCL {
 
 			bool useGravity;
 			bool cameraAttached = false;
-
+			
 			Vector3 lastCameraPosition;
 			Vector3 lastCameraOrientation;
 
@@ -34,6 +35,7 @@ namespace NCL {
 			float playerSpeed = 10.0f;
 			int health;
 			Vector3 playerSpawn;
+			AudioManager* audioManager; // Add this
 
 		public:
 			std::string GetName() { return mName; }

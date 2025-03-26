@@ -24,7 +24,7 @@ namespace NCL {
 
 			// Update the FMOD system (must be called periodically)
 			void Update();
-
+			bool IsPlaying(const std::string& filePath);
 			void PrintOutputDevices();
 			void SelectOutputDevice(int driverIndex);
 			std::string soundFile1;

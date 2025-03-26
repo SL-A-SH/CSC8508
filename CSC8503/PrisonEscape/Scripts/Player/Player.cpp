@@ -5,6 +5,8 @@
 #include "PrisonEscape/Core/GameBase.h"
 #include "PrisonEscape/Core/GameConfigManager.h"
 #include "PrisonEscape/Core/ImGuiManager.h"
+#include "PrisonEscape/Core/AudioManager.h"
+
 
 Player::Player(GameWorld* world, const std::string& name) : GameObject()
 {
@@ -16,10 +18,15 @@ Player::Player(GameWorld* world, const std::string& name) : GameObject()
     mName = name;
 
     health = 3;
+    
+    audioManager = new AudioManager();  // Initialize AudioManager
+    audioManager->Initialize();         // Make sure FMOD is initialized
+    audioManager->LoadSounds();         // Load all sounds
 }
 
 Player::~Player()
 {
+    delete audioManager;
 }
 
 void Player::UpdateGame(float dt)
@@ -124,10 +131,14 @@ void Player::UpdatePlayerMovement(float dt)
     
     if (isIdle) {
         SetObjectAnimationState(Idle);
-
+        if (!audioManager->IsPlaying(audioManager->soundFile8)) { // Ensure sound isn't already playing
+            audioManager->PlaySound(audioManager->soundFile8);
+        }
     }
     else if (!isIdle) {
         SetObjectAnimationState(Walk);
+        
+        
     }
 }
 

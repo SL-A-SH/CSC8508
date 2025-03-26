@@ -238,3 +238,12 @@ void AudioManager::LoadSounds() {
 	LoadSound(soundFile8);
 	LoadSound(soundFile9);
 }
+bool AudioManager::IsPlaying(const std::string& filePath) {
+	auto it = channels.find(filePath);
+	if (it != channels.end() && it->second) {
+		bool isPlaying = false;
+		it->second->isPlaying(&isPlaying);
+		return isPlaying;
+	}
+	return false;
+}
