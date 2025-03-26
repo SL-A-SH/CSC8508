@@ -216,7 +216,7 @@ void GamePlayState::InitializeSteamMultiplayer(Level* level)
 	else
 	{
 		level->AddPlayerToLevel(playerTwo, manager->GetP2Position());
-		level->AddPlayerToLevel(playerOne, manager->GetP2Position());
+		level->AddPlayerToLevel(playerOne, manager->GetP1Position());
 		// Position playerOne off-screen initially
 		playerOne->GetTransform().SetPosition(Vector3(10, -100, 10));
 	}
@@ -309,7 +309,7 @@ void GamePlayState::SetupClient(Level* level) {
 	level->AddPlayerToLevel(playerTwo, manager->GetP2Position());
 
 	// Set the initial camera position for the client player
-	Vector3 playerPosition = level->GetPlayerTwo()->GetTransform().GetPosition();
+	Vector3 playerPosition = manager->GetP2Position();
 	GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(Vector3(playerPosition.x, playerPosition.y, playerPosition.z));
 
 	// Register packet handlers for the client
