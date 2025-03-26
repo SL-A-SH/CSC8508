@@ -22,7 +22,7 @@ using namespace CSC8503;
 GamePlayState::GamePlayState(bool multiplayer, bool asServer, GameConfigManager* config)
 {
 	this->gameConfig = config;
-	manager = new GameLevelManager(GameBase::GetGameBase()->GetWorld(), GameBase::GetGameBase()->GetRenderer());
+	manager = new GameLevelManager(GameBase::GetGameBase()->GetWorld(), GameBase::GetGameBase()->GetRenderer(), gameConfig->networkConfig.isMultiplayer);
 	Level* level = new Level();
 	level->Init();
 	manager->AddLevel(level);
@@ -71,7 +71,7 @@ PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** 
 			Level* level = manager->GetCurrentLevel();
 			if (level)
 			{
-				Player* playerToSync = steamManager->IsLobbyOwner() ? level->GetPlayerOne() : level->GetPlayerTwo();
+				Player* playerToSync = steamManager->IsLobbyOwner() ? manager->GetPlayerOne() : manager->GetPlayerTwo();
 				if (playerToSync) {
 					Vector3 pos = playerToSync->GetTransform().GetPosition();
 					steamManager->SendPlayerPosition(pos);
@@ -85,9 +85,9 @@ PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** 
 			{
 				// Server: Send PlayerOne position to clients
 				Level* level = manager->GetCurrentLevel();
-				if (level && level->GetPlayerOne())
+				if (level && manager->GetPlayerOne())
 				{
-					Vector3 pos = level->GetPlayerOne()->GetTransform().GetPosition();
+					Vector3 pos = manager->GetPlayerOne()->GetTransform().GetPosition();
 					PlayerPositionPacket posPacket(1, pos.x, pos.y, pos.z);
 					gameConfig->networkConfig.server->SendGlobalPacket(posPacket);
 				}
@@ -98,9 +98,9 @@ PushdownState::PushdownResult GamePlayState::OnUpdate(float dt, PushdownState** 
 			{
 				// Client: Send PlayerTwo position to server
 				Level* level = manager->GetCurrentLevel();
-				if (level && level->GetPlayerTwo())
+				if (level && manager->GetPlayerTwo())
 				{
-					Vector3 pos = level->GetPlayerTwo()->GetTransform().GetPosition();
+					Vector3 pos = manager->GetPlayerTwo()->GetTransform().GetPosition();
 					PlayerPositionPacket posPacket(gameConfig->networkConfig.playerID, pos.x, pos.y, pos.z);
 					gameConfig->networkConfig.client->SendPacket(posPacket);
 				}
@@ -199,12 +199,10 @@ void GamePlayState::InitializeSteamMultiplayer(Level* level)
 	bool isHost = steamManager->IsLobbyOwner();
 
 	// Create both players regardless of host status
-	Transform playerOneTransform;
-	Player* playerOne = manager->AddPlayerToWorld(playerOneTransform, "playerOne");
+	Player* playerOne = manager->GetPlayerOne();
 	playerOne->InitializeController();
 
-	Transform playerTwoTransform;
-	Player* playerTwo = manager->AddPlayerToWorld(playerTwoTransform, "playerTwo");
+	Player* playerTwo = manager->GetPlayerTwo();
 	playerTwo->InitializeController();
 
 	// Determine which player this client controls based on Steam role
@@ -267,38 +265,20 @@ void GamePlayState::InitializeSinglePlayer(Level* level) {
 	std::cout << "Single player mode..." << std::endl;
 
 	// Create and initialize player one (single-player)
-	Transform playerTransform;
-	Player* player = manager->AddPlayerToWorld(playerTransform, "playerOne");
+	Player* player = manager->GetPlayerOne();
 	player->InitializeController();
 	level->AddPlayerToLevel(player, manager->GetP1Position());
 
 	// Set the camera position for the single-player
 	Vector3 playerPosition = level->GetPlayerOne()->GetTransform().GetPosition();
 	GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetPosition(Vector3(playerPosition.x, playerPosition.y, playerPosition.z));
-
-	// Patrol Enemy Spawning
-	
-	Transform patrolEnemyTransform;
-	std::vector<Vector3> patrolPoints = { Vector3(50, 5, 51), Vector3(51, 5, 51), Vector3(51, 5, 50), Vector3(50, 5, 50)};
-	PatrolEnemy* patrolEnemy = manager->AddPatrolEnemyToWorld("Guard1", patrolPoints, level->GetPlayerOne());
-
-	level->AddPatrolEnemyToLevel(patrolEnemy);
-	
-	// Pursuit Enemy Spawning
-
-	Transform pursuitEnemyTransform;
-	std::vector<Vector3> pursuitPatrolPoints = { Vector3(40, 5, 41), Vector3(41, 5, 41), Vector3(41, 5, 40), Vector3(40, 5, 40) };
-	PursuitEnemy* pursuitEnemy = manager->AddPursuitEnemyToWorld("Dog1", pursuitPatrolPoints, level->GetPlayerOne());
-
-	level->AddPursuitEnemyToLevel(pursuitEnemy);
 }
 
 void GamePlayState::SetupServer(Level* level) {
 	std::cout << "Setting up server..." << std::endl;
 
 	// Create and initialize player one (server)
-	Transform playerOneTransform;
-	Player* playerOne = manager->AddPlayerToWorld(playerOneTransform, "playerOne");
+	Player* playerOne = manager->GetPlayerOne();
 	playerOne->InitializeController();
 	level->AddPlayerToLevel(playerOne, manager->GetP1Position());
 
@@ -319,12 +299,10 @@ void GamePlayState::SetupClient(Level* level) {
 	std::cout << "Setting up client..." << std::endl;
 
 	// Create and initialize both players (client-side)
-	Transform playerOneTransform;
-	Player* playerOne = manager->AddPlayerToWorld(playerOneTransform, "playerOne");
+	Player* playerOne = manager->GetPlayerOne();
 	playerOne->InitializeController();
 
-	Transform playerTwoTransform;
-	Player* playerTwo = manager->AddPlayerToWorld(playerTwoTransform, "playerTwo");
+	Player* playerTwo = manager->GetPlayerOne();
 	playerTwo->InitializeController();
 
 	level->AddPlayerToLevel(playerOne, manager->GetP1Position());
@@ -339,8 +317,7 @@ void GamePlayState::SetupClient(Level* level) {
 }
 
 void GamePlayState::SetupClientPlayer(Level* level) {
-	Transform playerTwoTransform;
-	Player* playerTwo = this->manager->AddPlayerToWorld(playerTwoTransform, "playerTwo");
+	Player* playerTwo = this->manager->GetPlayerTwo();
 	playerTwo->InitializeController();
 	level->AddPlayerToLevel(playerTwo, manager->GetP2Position());
 }

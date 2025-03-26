@@ -23,7 +23,7 @@ using namespace CSC8503;
 
 GameLevelManager* GameLevelManager::manager = nullptr;
 
-GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer)
+GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer, bool multiplayerStatus)
 {
 	mWorld = existingWorld;
 	mRenderer = existingRenderer;
@@ -31,11 +31,13 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	mAnimator = new AnimationController(*mWorld, mPreLoadedAnimationList);
 	mPhysics->UseGravity(true);
 	manager = this;
+	isMultiplayer = multiplayerStatus;
+
 
 	InitAssets();
 	std::cout << "The Level to load is at: " << mLevelList["Level1"] << std::endl;
 	boxNumber = 0;
-	loadMap(mLevelList["Level1"]);
+	loadMap(mLevelList["Level2"]);
 	InitAnimationObjects();
 }
 
@@ -674,8 +676,14 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 			}
 
 			else if (obj.type.find("Player") != std::string::npos) {
-				if (obj.type == "Player1") { P1Position = obj.position; }
-				else if (obj.type == "Player2") { P2Position = obj.position; }
+				if (obj.type == "Player1") {
+					Transform playerOneTransform;
+					playerOne = AddPlayerToWorld(playerOneTransform.SetPosition(obj.position), "playerOne");
+				}
+				else if (obj.type == "Player2" && isMultiplayer) {
+					Transform playerTwoTransform;
+					playerTwo = AddPlayerToWorld(playerTwoTransform.SetPosition(obj.position), "playerTwo");
+				}
 			}
 
 			else {
@@ -683,7 +691,7 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 			}
 		}
 		for (const auto& enemy : enemies) {
-			AddPatrolEnemyToWorld(enemy.name, enemy.waypoints);
+			//AddPatrolEnemyToWorld(enemy.name, enemy.waypoints, playerOne);
 		}
 	}
 	else {

@@ -29,6 +29,11 @@ void Player::UpdateGame(float dt)
 
 void Player::UpdatePlayerMovement(float dt)
 {
+    if (!controller) {
+        return;
+    }
+
+
     if (!renderObject) {
         return;
     }

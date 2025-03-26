@@ -30,7 +30,7 @@ namespace NCL {
 
 		class GameLevelManager {
 		public:
-			GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer);
+			GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer, bool multiplayerStatus);
 			~GameLevelManager();
 			virtual void UpdateGame(float dt);
 
@@ -40,8 +40,8 @@ namespace NCL {
 			Player* AddPlayerToWorld(const Transform& transform, const std::string& playerName);
 			void AddComponentsToPlayer(Player& playerObj, const Transform& transform);
 
-			Vector3 GetP1Position() { return P1Position; }
-			Vector3 GetP2Position() { return P2Position; }
+			Vector3 GetP1Position() { return playerOne->GetTransform().GetPosition(); }
+			Vector3 GetP2Position() { return playerTwo->GetTransform().GetPosition(); }
 
 			PatrolEnemy* AddPatrolEnemyToWorld(const std::string& patrolEnemyName,const std::vector<Vector3>& patrolPoints, Player* player);
 			void AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const Transform& transform);
@@ -59,6 +59,9 @@ namespace NCL {
 			
 			static GameLevelManager* GetGameLevelManager() { return manager; }
 
+			Player* GetPlayerOne() { return playerOne; }
+			Player* GetPlayerTwo() { return playerTwo; }
+
 		private:
 			GameWorld* mWorld;
 			static GameLevelManager* manager;
@@ -67,6 +70,9 @@ namespace NCL {
 			Level* mCurrentLevel;
 			Vector3 P1Position;
 			Vector3 P2Position;
+
+			Player* playerOne;
+			Player* playerTwo;
 
 			// for handling multiple buttons/boxes in a level
 			int boxNumber;
@@ -106,7 +112,8 @@ namespace NCL {
 			void CreateNormalDoor(const InGameObject& obj);
 			Door* CreateButtonDoor(const InGameObject& obj);
 
-
+			
+			bool isMultiplayer;
 			bool isPlaying;
 		};
 	}
