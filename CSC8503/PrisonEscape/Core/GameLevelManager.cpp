@@ -33,7 +33,7 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	InitAssets();
 	std::cout << "The Level to load is at: " << mLevelList["Level1"] << std::endl;
 	boxNumber = 0;
-	loadMap(mLevelList["Level2"]);
+	loadMap(mLevelList["Level1"]);
 	InitAnimationObjects();
 }
 
@@ -638,7 +638,7 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 
 			else if (obj.type.find("Player") != std::string::npos) {
 				if (obj.type == "Player1") { P1Position = obj.position; }
-				else if (obj.type == "Player2") { P1Position = obj.position; }
+				else if (obj.type == "Player2") { P2Position = obj.position; }
 			}
 
 			else {
