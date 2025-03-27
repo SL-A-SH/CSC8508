@@ -796,12 +796,14 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 				} 
 				else {
 					if (obj.type == "Player1") {
+						playerOne->SetSpawn(obj.position);
 						playerOne->GetTransform().SetPosition(obj.position);
 					}
 					else if (obj.type == "Player2" && isMultiplayer) {
+						playerTwo->SetSpawn(obj.position);
 						playerTwo->GetTransform().SetPosition(obj.position);
 					}
-				}	
+				}
 			}
 
 			else {
