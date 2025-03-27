@@ -75,6 +75,7 @@ void PatrolEnemy::InitBehaviourTree() {
                 return Success;
             }
 
+            SetObjectAnimationState(Walk);
             Vector3 targetPoint = patrolPoints[currentPatrolPoint];
             Vector3 direction = targetPoint - transform.GetPosition();
             float distance = Vector::Length(direction);
@@ -106,6 +107,7 @@ void PatrolEnemy::InitBehaviourTree() {
                 return Failure;
             }
 
+            SetObjectAnimationState(Idle);
             sleepTimer -= dt;
             if (sleepTimer <= 0.0f) {
                 currentState = PATROL;
@@ -120,6 +122,7 @@ void PatrolEnemy::InitBehaviourTree() {
                 return Failure;
             }
 
+            SetObjectAnimationState(Caught);
             if (warningTimer > 0.0f) {
                 std::cout << "Warning: " << std::to_string(warningTimer);
                 warningTimer -= dt;
