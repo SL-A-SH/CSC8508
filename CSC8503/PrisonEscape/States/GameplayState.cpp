@@ -51,6 +51,9 @@ void GamePlayState::OnAwake()
 	GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("ConnectionPanel");
 
 	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("HUDPanel", [this]() { DrawHUDPanel(); });
+
+	Window::GetWindow()->LockMouseToWindow(true);
+	Window::GetWindow()->ShowOSPointer(false);
 }
 
 GamePlayState::~GamePlayState()

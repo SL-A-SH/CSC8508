@@ -157,6 +157,4 @@ void Player::InitializeController()
     controller->MapAxis(0, "Sidestep");
     controller->MapAxis(1, "UpDown");
     controller->MapAxis(2, "Forward");
-    controller->MapAxis(3, "XLook");
-    controller->MapAxis(4, "YLook");
 }
