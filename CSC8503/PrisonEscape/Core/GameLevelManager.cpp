@@ -1021,29 +1021,27 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 
 			else if (obj.type == "Soap") {
 				CreateSoap(obj);
-				
+
 			}
 
 			else if (obj.type.find("Player") != std::string::npos) {
-				if (!playerOne && !playerTwo) {
-					if (obj.type == "Player1") {
+				if (!playerOne && obj.type == "Player1") {
 						Transform playerOneTransform;
 						playerOne = AddPlayerToWorld(playerOneTransform.SetPosition(obj.position), "playerOne");
 					}
-					else if (obj.type == "Player2" && isMultiplayer) {
+				else if (obj.type == "Player2" && isMultiplayer && !playerTwo) {
 						Transform playerTwoTransform;
+						std::cout << "PLAYER TWO CREATED";
 						playerTwo = AddPlayerToWorld(playerTwoTransform.SetPosition(obj.position), "playerTwo");
 					}
-				} 
-				else {
-					if (obj.type == "Player1") {
-						playerOne->SetSpawn(obj.position);
-						playerOne->GetTransform().SetPosition(obj.position);
-					}
-					else if (obj.type == "Player2" && isMultiplayer) {
-						playerTwo->SetSpawn(obj.position);
-						playerTwo->GetTransform().SetPosition(obj.position);
-					}
+				if (obj.type == "Player1" && playerOne) {
+					playerOne->SetSpawn(obj.position);
+					playerOne->GetTransform().SetPosition(obj.position);
+				}
+				else if (obj.type == "Player2" && playerTwo && isMultiplayer) {
+					std::cout << "Setting Player 2 Spawn!" << std::endl;
+					playerTwo->SetSpawn(obj.position);
+					playerTwo->GetTransform().SetPosition(obj.position);
 				}
 			}
 
