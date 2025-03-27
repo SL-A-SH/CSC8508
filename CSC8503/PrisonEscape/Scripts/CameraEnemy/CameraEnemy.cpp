@@ -8,8 +8,7 @@ CameraEnemy::CameraEnemy(GameWorld* world, const std::string& name) : GameObject
     GameObject::SetName(name);
     currentState = WATCHING;
     playerObject = nullptr;
-    visible = true;
-    powerOff = false;
+    power = true;
     warningTimer = 2.0f;
 	sleepTimer = 3.0f;
     InitBehaviourTree();
@@ -20,6 +19,10 @@ CameraEnemy::~CameraEnemy() {
 }
 
 void CameraEnemy::UpdateGame(float dt) {
+    if (clientControlled) {
+        return;
+    }
+
     std::string stateStr;
     switch (currentState) {
     case WATCHING:  stateStr = "WATCHING"; break;
@@ -36,7 +39,7 @@ void CameraEnemy::SetPlayerObject(Player* player) {
 bool CameraEnemy::CanSeePlayer() const {
     if (!playerObject) return false;
 
-    if (!visible) return false;
+    if (!playerObject->GetVisible()) return false;
 
     Vector3 direction = playerObject->GetTransform().GetPosition() - transform.GetPosition();
 
@@ -68,7 +71,7 @@ void CameraEnemy::InitBehaviourTree() {
                 return Success;
             }
 
-            if (powerOff) {
+            if (!power) {
                 currentState = SLEEP;
                 sleepTimer = MAX_SLEEP_TIME;
                 return Success;

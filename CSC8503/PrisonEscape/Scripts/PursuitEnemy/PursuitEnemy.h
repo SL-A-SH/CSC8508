@@ -32,7 +32,9 @@ namespace NCL {
                 }
             }
 
-            bool visible;
+            void SetClientControlled(bool isClient) {
+                clientControlled = isClient;
+            }
 
         protected:
             void InitBehaviourTree();
@@ -59,6 +61,9 @@ namespace NCL {
                 PURSUIT
             };
             AIState currentState;
+
+        private:
+            bool clientControlled = false;
         };
     }
 }

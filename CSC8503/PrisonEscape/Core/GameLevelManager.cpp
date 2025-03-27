@@ -371,6 +371,10 @@ PursuitEnemy* GameLevelManager::AddPursuitEnemyToWorld(const std::string& enemyN
 	PursuitEnemy* mEnemyToAdd = new PursuitEnemy(mWorld, enemyName);
 	AddComponentsToPursuitEnemy(*mEnemyToAdd, transform);
 
+	if (isMultiplayer && !this->isServer) {
+		mEnemyToAdd->SetClientControlled(true);
+	}
+
 	mEnemyToAdd->SetPatrolPoints(pursuitPatrolPoints);
 	mEnemyToAdd->SetPlayerObject(player);
 
@@ -404,6 +408,10 @@ CameraEnemy* GameLevelManager::AddCameraEnemyToWorld(const std::string& enemyNam
 	Transform transform;
 	CameraEnemy* mEnemyToAdd = new CameraEnemy(mWorld, enemyName);
 	AddComponentsToCameraEnemy(*mEnemyToAdd, transform);
+
+	if (isMultiplayer && !this->isServer) {
+		mEnemyToAdd->SetClientControlled(true);
+	}
 
 	mEnemyToAdd->SetPlayerObject(player);
 
