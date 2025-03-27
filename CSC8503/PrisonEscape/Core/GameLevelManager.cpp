@@ -741,7 +741,7 @@ GameObject* GameLevelManager::AddDoorToWorld(Door* door, Vector3 size, const Vec
 }
 
 GameObject* GameLevelManager::AddExitToWorld(Exit* exit, Vector3 size, const Vector3& position) {
-	AABBVolume* volume = new AABBVolume(size);
+	AABBVolume* volume = new AABBVolume(size * 0.5f);
 
 	exit->SetBoundingVolume((CollisionVolume*)volume);
 
