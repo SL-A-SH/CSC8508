@@ -36,9 +36,9 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	this->isServer = isServer;
 
 	InitAssets();
-	std::cout << "The Level to load is at: " << mLevelList["Level3"] << std::endl;
+	std::cout << "The Level to load is at: " << mLevelList["Level2"] << std::endl;
 	boxNumber = 0;
-	loadMap(mLevelList["Level3"]);
+	loadMap(mLevelList["Level2"]);
 	InitAnimationObjects();
 }
 
@@ -599,7 +599,29 @@ GameObject* GameLevelManager::AddSoapToWorld(Vector3 dimensions, const Vector3& 
 	return Soap;
 }
 
+GameObject* GameLevelManager::AddComputerToWorld(Vector3 dimensions, const Vector3& position, float x, float y, float z) {
 
+	GameObject* computer = new GameObject("Computer");
+
+	Quaternion newOrientation = Quaternion::EulerAnglesToQuaternion(x, y, z);
+	computer->GetTransform().SetOrientation(newOrientation);
+
+	AABBVolume* volume = new AABBVolume(dimensions * 0.5f);
+	computer->SetBoundingVolume((CollisionVolume*)volume);
+	computer->GetTransform()
+		.SetScale(dimensions)
+		.SetPosition(position);
+
+	computer->SetRenderObject(new RenderObject(&computer->GetTransform(), mMeshList["Cube"], mTextureList["Computer"], mShaderList["BasicShader"]));
+	computer->SetPhysicsObject(new PhysicsObject(&computer->GetTransform(), computer->GetBoundingVolume()));
+
+	computer->GetPhysicsObject()->SetInverseMass(0);
+	computer->GetPhysicsObject()->InitCubeInertia();
+
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(computer);
+
+	return computer;
+}
 
 
 GameObject* GameLevelManager::AddFloorToWorld(Vector3 size, const Vector3& position) {
@@ -813,6 +835,10 @@ void GameLevelManager::CreateTable(const InGameObject& obj) {
 	AddTableToWorld(obj.dimensions, obj.position, obj.orientation.x, obj.orientation.y, obj.orientation.z);
 }
 
+void GameLevelManager::CreateComputer(const InGameObject& obj) {
+	AddComputerToWorld(obj.dimensions, obj.position, obj.orientation.x, obj.orientation.y, obj.orientation.z);
+}
+
 void GameLevelManager::CreateFloor(const InGameObject& obj) {
 	AddFloorToWorld(obj.dimensions, obj.position);
 }
@@ -892,6 +918,10 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 			}
 			else if (obj.type == "Soap") {
 				CreateSoap(obj);
+			}
+
+			else if (obj.type == "Computer") {
+				CreateComputer(obj);
 			}
 
 			else if (obj.type.find("Wall") != std::string::npos) {
