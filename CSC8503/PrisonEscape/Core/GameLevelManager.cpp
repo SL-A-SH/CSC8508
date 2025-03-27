@@ -38,6 +38,10 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	this->isServer = isServer;
 
 	InitAssets();
+	// std::cout << "The Level to load is at: " << mLevelList["Level3"] << std::endl;
+	// boxNumber = 0;
+	// loadMap(mLevelList["Level3"]);
+	
 	std::cout << "The Level to load is at: " << mLevelList[levelToLoad] << std::endl;
 	boxNumber = 0;
 	loadMap(mLevelList[levelToLoad]);
@@ -455,7 +459,7 @@ GameObject* GameLevelManager::AddWallToWorld(Vector3 dimensions, const Vector3& 
 		.SetScale(dimensions)
 		.SetPosition(position);
 
-	wall->SetRenderObject(new RenderObject(&wall->GetTransform(), mMeshList["Cube"], mTextureList["WallTexture"], mShaderList["BasicShader"]));
+	wall->SetRenderObject(new RenderObject(&wall->GetTransform(), mMeshList["Cube"], mTextureList["Bricks"], mShaderList["BasicShader"]));
 	wall->SetPhysicsObject(new PhysicsObject(&wall->GetTransform(), wall->GetBoundingVolume()));
 
 	wall->GetPhysicsObject()->SetInverseMass(0);
@@ -465,6 +469,200 @@ GameObject* GameLevelManager::AddWallToWorld(Vector3 dimensions, const Vector3& 
 
 	return wall;
 }
+GameObject* GameLevelManager::AddJailWallToWorld(Vector3 dimensions, const Vector3& position, float x, float y, float z) {
+
+	GameObject* wall = new GameObject("Wall");
+
+	Quaternion newOrientation = Quaternion::EulerAnglesToQuaternion(x, y, z);
+	wall->GetTransform().SetOrientation(newOrientation);
+
+	AABBVolume* volume = new AABBVolume(dimensions * 0.5f);
+	wall->SetBoundingVolume((CollisionVolume*)volume);
+	wall->GetTransform()
+		.SetScale(dimensions)
+		.SetPosition(position);
+
+	wall->SetRenderObject(new RenderObject(&wall->GetTransform(), mMeshList["Cube"], mTextureList["Jail"], mShaderList["BasicShader"]));
+	wall->SetPhysicsObject(new PhysicsObject(&wall->GetTransform(), wall->GetBoundingVolume()));
+
+	wall->GetPhysicsObject()->SetInverseMass(0);
+	wall->GetPhysicsObject()->InitCubeInertia();
+
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(wall);
+
+	return wall;
+}
+
+GameObject* GameLevelManager::AddExitToWorld(Vector3 dimensions, const Vector3& position, float x, float y, float z) {
+
+	GameObject* exit = new GameObject("Exit");
+
+	Quaternion newOrientation = Quaternion::EulerAnglesToQuaternion(x, y, z);
+	exit->GetTransform().SetOrientation(newOrientation);
+
+	AABBVolume* volume = new AABBVolume(dimensions * 0.5f);
+	exit->SetBoundingVolume((CollisionVolume*)volume);
+	exit->GetTransform()
+		.SetScale(dimensions)
+		.SetPosition(position);
+
+	exit->SetRenderObject(new RenderObject(&exit->GetTransform(), mMeshList["Cube"], mTextureList["Exit"], mShaderList["BasicShader"]));
+	exit->SetPhysicsObject(new PhysicsObject(&exit->GetTransform(), exit->GetBoundingVolume()));
+
+	exit->GetPhysicsObject()->SetInverseMass(0);
+	exit->GetPhysicsObject()->InitCubeInertia();
+
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(exit);
+
+	return exit;
+}
+
+GameObject* GameLevelManager::AddChairToWorld(Vector3 dimensions, const Vector3& position, float x, float y, float z) {
+
+	GameObject* Chair = new GameObject("Chair");
+
+	Quaternion newOrientation = Quaternion::EulerAnglesToQuaternion(x, y, z);
+	Chair->GetTransform().SetOrientation(newOrientation);
+
+	AABBVolume* volume = new AABBVolume(dimensions * 0.5f);
+	Chair->SetBoundingVolume((CollisionVolume*)volume);
+	Chair->GetTransform()
+		.SetScale(dimensions)
+		.SetPosition(position);
+
+	Chair->SetRenderObject(new RenderObject(&Chair->GetTransform(), mMeshList["Chair"], mTextureList["Chair2"], mShaderList["BasicShader"]));
+	Chair->SetPhysicsObject(new PhysicsObject(&Chair->GetTransform(), Chair->GetBoundingVolume()));
+
+	Chair->GetPhysicsObject()->SetInverseMass(0);
+	Chair->GetPhysicsObject()->InitCubeInertia();
+
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(Chair);
+
+	return Chair;
+}
+
+GameObject* GameLevelManager::AddDeskToWorld(Vector3 dimensions, const Vector3& position, float x, float y, float z) {
+
+	GameObject* Desk = new GameObject("Desk");
+
+	Quaternion newOrientation = Quaternion::EulerAnglesToQuaternion(x, y, z);
+	Desk->GetTransform().SetOrientation(newOrientation);
+
+	AABBVolume* volume = new AABBVolume(dimensions * 1.0f);
+	Desk->SetBoundingVolume((CollisionVolume*)volume);
+	Desk->GetTransform()
+		.SetScale(dimensions)
+		.SetPosition(position);
+
+	
+
+	Desk->SetRenderObject(new RenderObject(&Desk->GetTransform(), mMeshList["Desk"], mTextureList["Desk2"], mShaderList["BasicShader"]));
+	Desk->SetPhysicsObject(new PhysicsObject(&Desk->GetTransform(), Desk->GetBoundingVolume()));
+
+	Desk->GetPhysicsObject()->SetInverseMass(0);
+	Desk->GetPhysicsObject()->InitCubeInertia();
+
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(Desk);
+
+	return Desk;
+}
+
+GameObject* GameLevelManager::AddTableToWorld(Vector3 dimensions, const Vector3& position, float x, float y, float z) {
+
+	GameObject* Table = new GameObject("Table");
+
+	Quaternion newOrientation = Quaternion::EulerAnglesToQuaternion(x, y, z);
+	Table->GetTransform().SetOrientation(newOrientation);
+
+	AABBVolume* volume = new AABBVolume(dimensions * 1.0f);
+	Table->SetBoundingVolume((CollisionVolume*)volume);
+	Table->GetTransform()
+		.SetScale(dimensions)
+		.SetPosition(position);
+
+	Table->SetRenderObject(new RenderObject(&Table->GetTransform(), mMeshList["Table"], mTextureList["Wood"], mShaderList["BasicShader"]));
+	Table->SetPhysicsObject(new PhysicsObject(&Table->GetTransform(), Table->GetBoundingVolume()));
+
+	Table->GetPhysicsObject()->SetInverseMass(0);
+	Table->GetPhysicsObject()->InitCubeInertia();
+
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(Table);
+
+	return Table;
+}
+
+GameObject* GameLevelManager::AddCoinToWorld(Vector3 dimensions, const Vector3& position, float x, float y, float z) {
+
+	GameObject* Coin = new GameObject("Coin");
+
+	Quaternion newOrientation = Quaternion::EulerAnglesToQuaternion(x, y, z);
+	Coin->GetTransform().SetOrientation(newOrientation);
+
+	AABBVolume* volume = new AABBVolume(dimensions * 1.0f);
+	Coin->SetBoundingVolume((CollisionVolume*)volume);
+	Coin->GetTransform()
+		.SetScale(dimensions)
+		.SetPosition(position);
+
+	Coin->SetRenderObject(new RenderObject(&Coin->GetTransform(), mMeshList["Sphere"], mTextureList["Coin"], mShaderList["BasicShader"]));
+	Coin->SetPhysicsObject(new PhysicsObject(&Coin->GetTransform(), Coin->GetBoundingVolume()));
+
+	Coin->GetPhysicsObject()->SetInverseMass(0);
+	Coin->GetPhysicsObject()->InitCubeInertia();
+
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(Coin);
+
+	return Coin;
+}
+
+GameObject* GameLevelManager::AddSoapToWorld(Vector3 dimensions, const Vector3& position, float x, float y, float z) {
+
+	GameObject* Soap = new GameObject("Soap");
+
+	Quaternion newOrientation = Quaternion::EulerAnglesToQuaternion(x, y, z);
+	Soap->GetTransform().SetOrientation(newOrientation);
+
+	AABBVolume* volume = new AABBVolume(dimensions * 1.0f);
+	Soap->SetBoundingVolume((CollisionVolume*)volume);
+	Soap->GetTransform()
+		.SetScale(dimensions)
+		.SetPosition(position);
+
+	Soap->SetRenderObject(new RenderObject(&Soap->GetTransform(), mMeshList["Sphere"], mTextureList["Chair2"], mShaderList["BasicShader"]));
+	Soap->SetPhysicsObject(new PhysicsObject(&Soap->GetTransform(), Soap->GetBoundingVolume()));
+
+	Soap->GetPhysicsObject()->SetInverseMass(0);
+	Soap->GetPhysicsObject()->InitCubeInertia();
+
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(Soap);
+
+	return Soap;
+}
+
+GameObject* GameLevelManager::AddComputerToWorld(Vector3 dimensions, const Vector3& position, float x, float y, float z) {
+
+	GameObject* computer = new GameObject("Computer");
+
+	Quaternion newOrientation = Quaternion::EulerAnglesToQuaternion(x, y, z);
+	computer->GetTransform().SetOrientation(newOrientation);
+
+	AABBVolume* volume = new AABBVolume(dimensions * 0.5f);
+	computer->SetBoundingVolume((CollisionVolume*)volume);
+	computer->GetTransform()
+		.SetScale(dimensions)
+		.SetPosition(position);
+
+	computer->SetRenderObject(new RenderObject(&computer->GetTransform(), mMeshList["Cube"], mTextureList["Computer"], mShaderList["BasicShader"]));
+	computer->SetPhysicsObject(new PhysicsObject(&computer->GetTransform(), computer->GetBoundingVolume()));
+
+	computer->GetPhysicsObject()->SetInverseMass(0);
+	computer->GetPhysicsObject()->InitCubeInertia();
+
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(computer);
+
+	return computer;
+}
+
 
 GameObject* GameLevelManager::AddFloorToWorld(Vector3 size, const Vector3& position) {
 
@@ -477,7 +675,7 @@ GameObject* GameLevelManager::AddFloorToWorld(Vector3 size, const Vector3& posit
 		.SetScale(size)
 		.SetPosition(position);
 
-	floor->SetRenderObject(new RenderObject(&floor->GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+	floor->SetRenderObject(new RenderObject(&floor->GetTransform(), mMeshList["Cube"], mTextureList["Concrete"], mShaderList["BasicShader"]));
 	floor->SetPhysicsObject(new PhysicsObject(&floor->GetTransform(), floor->GetBoundingVolume()));
 
 	floor->GetPhysicsObject()->SetInverseMass(0);
@@ -500,7 +698,7 @@ GameObject* GameLevelManager::AddBoxToWorld(const Vector3& position, Vector3 dim
 		.SetPosition(position);
 
 
-	cube->SetRenderObject(new RenderObject(&cube->GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+	cube->SetRenderObject(new RenderObject(&cube->GetTransform(), mMeshList["Cube"], mTextureList["Box"], mShaderList["BasicShader"]));
 	cube->SetPhysicsObject(new PhysicsObject(&cube->GetTransform(), cube->GetBoundingVolume()));
 
 	cube->GetPhysicsObject()->SetInverseMass(inverseMass);
@@ -559,7 +757,7 @@ GameObject* GameLevelManager::AddDoorToWorld(Door* door, Vector3 size, const Vec
 	door->SetBoundingVolume((CollisionVolume*)volume);
 
 	door->GetTransform().SetScale(size).SetPosition(position);
-	door->SetRenderObject(new RenderObject(&door->GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+	door->SetRenderObject(new RenderObject(&door->GetTransform(), mMeshList["Cube"], mTextureList["ButtonDoor"], mShaderList["BasicShader"]));
 	door->SetPhysicsObject(new PhysicsObject(&door->GetTransform(), door->GetBoundingVolume()));
 	door->GetPhysicsObject()->SetLayer(LayerMask::Doors);
 	door->GetPhysicsObject()->SetInverseMass(0);
@@ -596,7 +794,7 @@ GameObject* GameLevelManager::AddPressableDoorToWorld(PressableDoor* door, Vecto
 	door->SetBoundingVolume((CollisionVolume*)volume);
 
 	door->GetTransform().SetScale(size).SetPosition(position);
-	door->SetRenderObject(new RenderObject(&door->GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+	door->SetRenderObject(new RenderObject(&door->GetTransform(), mMeshList["Cube"], mTextureList["BasicDoor"], mShaderList["BasicShader"]));
 	door->SetPhysicsObject(new PhysicsObject(&door->GetTransform(), door->GetBoundingVolume()));
 	door->GetPhysicsObject()->SetLayer(LayerMask::Doors);
 	door->GetPhysicsObject()->SetInverseMass(0);
@@ -668,6 +866,37 @@ void GameLevelManager::CreateBox(const InGameObject& obj) {
 void GameLevelManager::CreateWall(const InGameObject& obj) {
 	AddWallToWorld(obj.dimensions, obj.position, obj.orientation.x, obj.orientation.y, obj.orientation.z);
 }
+void GameLevelManager::CreateJailWall(const InGameObject& obj) {
+	AddJailWallToWorld(obj.dimensions, obj.position, obj.orientation.x, obj.orientation.y, obj.orientation.z);
+}
+
+void GameLevelManager::CreateChair(const InGameObject& obj) {
+	AddChairToWorld(obj.dimensions, obj.position, obj.orientation.x, obj.orientation.y, obj.orientation.z);
+}
+
+void GameLevelManager::CreateDesk(const InGameObject& obj) {
+	AddDeskToWorld(obj.dimensions, obj.position, obj.orientation.x, obj.orientation.y, obj.orientation.z);
+}
+
+void GameLevelManager::CreateCoin(const InGameObject& obj) {
+	AddCoinToWorld(obj.dimensions, obj.position, obj.orientation.x, obj.orientation.y, obj.orientation.z);
+}
+
+void GameLevelManager::CreateSoap(const InGameObject& obj) {
+	AddSoapToWorld(obj.dimensions, obj.position, obj.orientation.x, obj.orientation.y, obj.orientation.z);
+}
+
+void GameLevelManager::CreateTable(const InGameObject& obj) {
+	AddTableToWorld(obj.dimensions, obj.position, obj.orientation.x, obj.orientation.y, obj.orientation.z);
+}
+
+void GameLevelManager::CreateComputer(const InGameObject& obj) {
+	AddComputerToWorld(obj.dimensions, obj.position, obj.orientation.x, obj.orientation.y, obj.orientation.z);
+}
+
+void GameLevelManager::CreateExit(const InGameObject& obj) {
+	AddExitToWorld(obj.dimensions, obj.position, obj.orientation.x, obj.orientation.y, obj.orientation.z);
+}
 
 void GameLevelManager::CreateFloor(const InGameObject& obj) {
 	AddFloorToWorld(obj.dimensions, obj.position);
@@ -735,9 +964,36 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 			else if (obj.type == "Box") {
 				CreateBox(obj);
 			}
+			else if (obj.type == "Chair") {
+				CreateChair(obj);
+			}
+			else if (obj.type == "Desk") {
+				CreateDesk(obj);
+			}
+
+			else if (obj.type == "Table") {
+				CreateTable(obj);
+			}
+
+			else if (obj.type == "Coin") {
+				CreateCoin(obj);
+			}
+			else if (obj.type == "Soap") {
+				CreateSoap(obj);
+			}
+
+			else if (obj.type == "Computer") {
+				CreateComputer(obj);
+			}
+			else if (obj.type == "Exit") {
+				CreateExit(obj);
+			}
 
 			else if (obj.type.find("Wall") != std::string::npos) {
 				CreateWall(obj);
+			}
+			else if (obj.type.find("Jail") != std::string::npos) {
+				CreateJailWall(obj);
 			}
 
 			else if (obj.type == "Floor") {

@@ -108,6 +108,14 @@ namespace NCL {
 			std::map<std::string, MeshAnimation*> mPreLoadedAnimationList;
 
 			GameObject* AddWallToWorld(Vector3 wallSize, const Vector3& position, float x, float y, float z);
+			GameObject* AddJailWallToWorld(Vector3 wallSize, const Vector3& position, float x, float y, float z);
+			GameObject* AddChairToWorld(Vector3 wallSize, const Vector3& position, float x, float y, float z);
+			GameObject* AddDeskToWorld(Vector3 wallSize, const Vector3& position, float x, float y, float z);
+			GameObject* AddCoinToWorld(Vector3 wallSize, const Vector3& position, float x, float y, float z);
+			GameObject* AddSoapToWorld(Vector3 wallSize, const Vector3& position, float x, float y, float z);
+			GameObject* AddTableToWorld(Vector3 wallSize, const Vector3& position, float x, float y, float z);
+			GameObject* AddComputerToWorld(Vector3 wallSize, const Vector3& position, float x, float y, float z);
+			GameObject* AddExitToWorld(Vector3 wallSize, const Vector3& position, float x, float y, float z);
 			GameObject* AddFloorToWorld(Vector3 size, const Vector3& position);
 			GameObject* AddBoxToWorld(const Vector3& position, Vector3 dimensions, const std::string name, float inverseMass = 10.0f);
 			GameObject* AddButtonToWorld(Vector3 size, const Vector3& position, const std::string name, Mesh* mesh, Shader* shader, Texture* texture);
@@ -118,6 +126,14 @@ namespace NCL {
 			void AddHidingAreaToWorld(const Vector3& position, const Vector3& size, const std::string name);
 			void LogObjectPlacement(const InGameObject& obj);
 			void CreateWall(const InGameObject& obj);
+			void CreateJailWall(const InGameObject& obj);
+			void CreateChair(const InGameObject& obj);
+			void CreateDesk(const InGameObject& obj);
+			void CreateComputer(const InGameObject& obj);
+			void CreateCoin(const InGameObject& obj);
+			void CreateSoap(const InGameObject& obj);
+			void CreateExit(const InGameObject& obj);
+			void CreateTable(const InGameObject& obj);
 			void CreateButton(const InGameObject& obj);
 			void CreateDoorButton(const InGameObject& obj, std::unordered_map<std::string, Door*>& doorMap);
 			void CreateBox(const InGameObject& obj);

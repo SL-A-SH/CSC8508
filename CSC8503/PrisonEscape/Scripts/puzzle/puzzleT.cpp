@@ -47,7 +47,7 @@ void Door::Open() {
 		audioManager->PlaySound(audioManager->soundFile6);
 
 	}
-	Vector3 newPosition = GetTransform().GetPosition() + Vector3(0, 5, 0); 
+	Vector3 newPosition = GetTransform().GetPosition() + Vector3(0, -15, 0); 
 	GetTransform().SetPosition(newPosition);
 	
 }
