@@ -802,7 +802,8 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 			}
 
 			else if (obj.type == "Soap") {
-				continue;
+				CreateSoap(obj);
+				
 			}
 
 			else if (obj.type.find("Player") != std::string::npos) {

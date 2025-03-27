@@ -118,7 +118,7 @@ void Exit::OnCollisionBegin(GameObject* otherObject) {
 		if (levelManager) {
 			levelManager->ClearLevel(); 
 			std::cout << "player name: " + levelManager->GetPlayerOne()->GetName() + "\n";
-			levelManager->loadMap("level1.json"); 
+			levelManager->loadMap("levelTest.json"); 
 		}
 	}
 }
@@ -127,8 +127,9 @@ void Soap::OnCollisionBegin(GameObject* otherObject) {
 	
 	Player* player = dynamic_cast<Player*>(otherObject);
 	if (player) {
-		player->sprintMultiplier += 0.5f;  // Increase sprint speed by 50%
+		player->sprintMultiplier += 1.0f;  // Increase sprint speed by 50%
 		std::cout << "Player's sprint speed increased!" << std::endl;
+		GameBase::GetGameBase()->GetWorld()->RemoveGameObject(this);
 	}
 
 }

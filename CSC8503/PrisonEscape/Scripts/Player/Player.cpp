@@ -96,66 +96,66 @@ void Player::UpdatePlayerMovement(float dt)
         SetVisible(true);
         SetActive(true);
     }
-        sprintMultiplier = 1.0f;
-        Vector3 movement(0, 0, 0);
+    sprintMultiplier = 1.0f;
+    Vector3 movement(0, 0, 0);
+    if (forward != 0.0f) {
+        movement += forwardVec * forward * GetPlayerSpeed() * sprintMultiplier;
+    }
+
+    if (Player::isActive) {
         if (forward != 0.0f) {
             movement += forwardVec * forward * GetPlayerSpeed() * sprintMultiplier;
         }
-
-        if (Player::isActive) {
-            if (forward != 0.0f) {
-                movement += forwardVec * forward * GetPlayerSpeed() * sprintMultiplier;
-            }
-            if (sidestep != 0.0f) {
-                movement += rightVec * sidestep * GetPlayerSpeed() * sprintMultiplier;
-            }
+        if (sidestep != 0.0f) {
+            movement += rightVec * sidestep * GetPlayerSpeed() * sprintMultiplier;
         }
-        if (movement.Length() > 0.0f) {
-            float angle = atan2(-movement.x, -movement.z);
-            Quaternion targetOrientation = Quaternion::EulerAnglesToQuaternion(0, angle * 180.0f / M_PI, 0);
-            Quaternion currentOrientation = GetTransform().GetOrientation();
-            Quaternion newOrientation = Quaternion::Slerp(currentOrientation, targetOrientation, dt * 5.0f); // Adjust the interpolation speed as needed
-            GetTransform().SetOrientation(newOrientation);
-        }
+    }
+    if (movement.Length() > 0.0f) {
+        float angle = atan2(-movement.x, -movement.z);
+        Quaternion targetOrientation = Quaternion::EulerAnglesToQuaternion(0, angle * 180.0f / M_PI, 0);
+        Quaternion currentOrientation = GetTransform().GetOrientation();
+        Quaternion newOrientation = Quaternion::Slerp(currentOrientation, targetOrientation, dt * 5.0f); // Adjust the interpolation speed as needed
+        GetTransform().SetOrientation(newOrientation);
+    }
 
-        if (useGravity)
-        {
-            if (fabs(currentVelocity.y) < 1.0f) {
-                static float lastJumpTime = -2.2f;
-                float currentTime = Window::GetTimer().GetTotalTimeSeconds();
+    if (useGravity)
+    {
+        if (fabs(currentVelocity.y) < 1.0f) {
+            static float lastJumpTime = -2.2f;
+            float currentTime = Window::GetTimer().GetTotalTimeSeconds();
 
-                if (Window::GetKeyboard()->KeyPressed(KeyCodes::SPACE) && (currentTime - lastJumpTime >= 2.2f))
-                {
-                    movement.y += 8.0f;
-                    currentVelocity.y = 20.0f;
-                    lastJumpTime = currentTime;
-                    audioManager->PlaySound(audioManager->soundFile10);
-                }
-            }
-
-            currentVelocity.y -= 25.0f * dt;
-            GetPhysicsObject()->SetLinearVelocity(Vector3(movement.x, currentVelocity.y, movement.z));
-        }
-        else
-        {
-            GetPhysicsObject()->SetLinearVelocity(movement);
-        }
-
-        if (isIdle) {
-            SetObjectAnimationState(Idle);
-            if (!audioManager->IsPlaying(audioManager->soundFile11)) { // Ensure sound isn't already playing
-                audioManager->StopSound(audioManager->soundFile8);
-                audioManager->PlaySound(audioManager->soundFile11);
-            }
-
-        }
-        else if (!isIdle) {
-            SetObjectAnimationState(Walk);
-            if (!audioManager->IsPlaying(audioManager->soundFile8)) { // Ensure sound isn't already playing
-                audioManager->PlaySound(audioManager->soundFile8);
-                audioManager->StopSound(audioManager->soundFile11);
+            if (Window::GetKeyboard()->KeyPressed(KeyCodes::SPACE) && (currentTime - lastJumpTime >= 2.2f))
+            {
+                movement.y += 8.0f;
+                currentVelocity.y = 20.0f;
+                lastJumpTime = currentTime;
+                audioManager->PlaySound(audioManager->soundFile10);
             }
         }
+
+        currentVelocity.y -= 25.0f * dt;
+        GetPhysicsObject()->SetLinearVelocity(Vector3(movement.x, currentVelocity.y, movement.z));
+    }
+    else
+    {
+        GetPhysicsObject()->SetLinearVelocity(movement);
+    }
+
+    if (isIdle) {
+        SetObjectAnimationState(Idle);
+        if (!audioManager->IsPlaying(audioManager->soundFile11)) { // Ensure sound isn't already playing
+            audioManager->StopSound(audioManager->soundFile8);
+            audioManager->PlaySound(audioManager->soundFile11);
+        }
+
+    }
+    else if (!isIdle) {
+        SetObjectAnimationState(Walk);
+        if (!audioManager->IsPlaying(audioManager->soundFile8)) { // Ensure sound isn't already playing
+            audioManager->PlaySound(audioManager->soundFile8);
+            audioManager->StopSound(audioManager->soundFile11);
+        }
+    }
     
 }
 void Player::LockCameraAndMovement(){
