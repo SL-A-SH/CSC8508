@@ -36,9 +36,9 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	this->isServer = isServer;
 
 	InitAssets();
-	std::cout << "The Level to load is at: " << mLevelList["Level1"] << std::endl;
+	std::cout << "The Level to load is at: " << mLevelList["Level2"] << std::endl;
 	boxNumber = 0;
-	loadMap(mLevelList["Level1"]);
+	loadMap(mLevelList["Level2"]);
 	InitAnimationObjects();
 }
 
@@ -490,7 +490,7 @@ GameObject* GameLevelManager::AddChairToWorld(Vector3 dimensions, const Vector3&
 		.SetScale(dimensions)
 		.SetPosition(position);
 
-	Chair->SetRenderObject(new RenderObject(&Chair->GetTransform(), mMeshList["Chair"], mTextureList["Wood"], mShaderList["BasicShader"]));
+	Chair->SetRenderObject(new RenderObject(&Chair->GetTransform(), mMeshList["Chair"], mTextureList["Chair2"], mShaderList["BasicShader"]));
 	Chair->SetPhysicsObject(new PhysicsObject(&Chair->GetTransform(), Chair->GetBoundingVolume()));
 
 	Chair->GetPhysicsObject()->SetInverseMass(0);
