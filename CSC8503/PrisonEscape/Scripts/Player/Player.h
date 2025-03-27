@@ -51,7 +51,7 @@ namespace NCL {
 			void SetVisible(bool v) { visible = v; }
 
 			int GetScore() const { return score; }
-			int SetScore(int s) { score = s; }
+			void SetScore(int s) { score = s; }
 
 			Vector3 GetSpawn() const { return playerSpawn; }
 			void SetSpawn(Vector3 s) { playerSpawn = s; }
