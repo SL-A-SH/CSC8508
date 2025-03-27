@@ -71,7 +71,7 @@ void CameraEnemy::InitBehaviourTree() {
                 return Success;
             }
 
-            if (powerOff) {
+            if (!power) {
                 currentState = SLEEP;
                 sleepTimer = MAX_SLEEP_TIME;
                 return Success;
