@@ -52,7 +52,7 @@ namespace NCL {
 			PatrolEnemy* AddPatrolEnemyToWorld(const std::string& patrolEnemyName, const std::vector<Vector3>& patrolPoints, const Vector3& spawnPoint, Player* player);
 			void AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const Transform& transform);
 
-			PursuitEnemy* AddPursuitEnemyToWorld(const std::string& pursuitEnemyName, const std::vector<Vector3>& patrolPoints, Player* player);
+			PursuitEnemy* AddPursuitEnemyToWorld(const std::string& pursuitEnemyName, const Vector3& position, const std::vector<Vector3>& patrolPoints, Player* player);
 			void AddComponentsToPursuitEnemy(PursuitEnemy& enemyObj, const Transform& transform);
 
 			CameraEnemy* AddCameraEnemyToWorld(const std::string& cameraEnemyName, const Vector3& spawnPoint, Player* player);

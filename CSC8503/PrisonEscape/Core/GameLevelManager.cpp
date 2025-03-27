@@ -29,7 +29,7 @@ GameLevelManager* GameLevelManager::manager = nullptr;
 GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer, std::string levelToLoad, bool multiplayerStatus, bool isServer)
 {
 	if (multiplayerStatus) {
-		levelToLoad = "Level1";
+		levelToLoad = "Level2";
 	}
 	mWorld = existingWorld;
 	mRenderer = existingRenderer;
@@ -41,7 +41,7 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	this->isServer = isServer;
 
 	InitAssets();
-	// std::cout << "The Level to load is at: " << mLevelList["Level3"] << std::endl;¬¬¬¬
+	// std::cout << "The Level to load is at: " << mLevelList["Level3"] << std::endl;ï¿½ï¿½ï¿½ï¿½
 	// boxNumber = 0;
 	// loadMap(mLevelList["Level3"]);
 	
@@ -368,20 +368,30 @@ void GameLevelManager::AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const T
 		.SetPosition(enemyTransform.GetPosition())
 		.SetOrientation(enemyTransform.GetOrientation());
 
-	enemyObj.SetRenderObject(new RenderObject(&enemyObj.GetTransform(), mMeshList["Guard"], mTextureList["DefaultTexture"], mShaderList["Animation"]));
-	enemyObj.GetRenderObject()->SetAnimObject(new AnimationObject(AnimationObject::AnimationType::enemy, mAnimationList["PatrolWalk"]));
+	if (enemyObj.GetName().find("Camera") != std::string::npos) {
+		enemyObj.SetRenderObject(new RenderObject(&enemyObj.GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+		enemyObj.SetPhysicsObject(new PhysicsObject(&enemyObj.GetTransform(), enemyObj.GetBoundingVolume()));
+		enemyObj.GetPhysicsObject()->SetInverseMass(0);
+	}
+	else {
+		enemyObj.SetRenderObject(new RenderObject(&enemyObj.GetTransform(), mMeshList["Guard"], mTextureList["DefaultTexture"], mShaderList["Animation"]));
+		enemyObj.GetRenderObject()->SetAnimObject(new AnimationObject(AnimationObject::AnimationType::enemy, mAnimationList["PatrolWalk"]));
 
-	enemyObj.SetPhysicsObject(new PhysicsObject(&enemyObj.GetTransform(), enemyObj.GetBoundingVolume()));
+		enemyObj.SetPhysicsObject(new PhysicsObject(&enemyObj.GetTransform(), enemyObj.GetBoundingVolume()));
 
-	enemyObj.GetRenderObject()->SetMaterialTextures(mMeshMaterialsList["Guard"]);
+		enemyObj.GetRenderObject()->SetMaterialTextures(mMeshMaterialsList["Guard"]);
+		enemyObj.GetPhysicsObject()->SetInverseMass(PATROL_ENEMY_INVERSE_MASS);
+	}
 
-	enemyObj.GetPhysicsObject()->SetInverseMass(PATROL_ENEMY_INVERSE_MASS);
+
 	enemyObj.GetPhysicsObject()->InitSphereInertia();
 
 }
 
-PursuitEnemy* GameLevelManager::AddPursuitEnemyToWorld(const std::string& enemyName, const std::vector<Vector3>& pursuitPatrolPoints, Player* player) {
+PursuitEnemy* GameLevelManager::AddPursuitEnemyToWorld(const std::string& enemyName, const Vector3& position, const std::vector<Vector3>& pursuitPatrolPoints, Player* player) {
 	Transform transform;
+	transform.SetPosition(position);
+
 	PursuitEnemy* mEnemyToAdd = new PursuitEnemy(mWorld, enemyName);
 	AddComponentsToPursuitEnemy(*mEnemyToAdd, transform);
 
@@ -407,7 +417,7 @@ void GameLevelManager::AddComponentsToPursuitEnemy(PursuitEnemy& enemyObj, const
 		.SetPosition(enemyTransform.GetPosition())
 		.SetOrientation(enemyTransform.GetOrientation());
 
-	enemyObj.SetRenderObject(new RenderObject(&enemyObj.GetTransform(), mMeshList["Guard"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+	enemyObj.SetRenderObject(new RenderObject(&enemyObj.GetTransform(), mMeshList["Goat"], mTextureList["Chair2"], mShaderList["BasicShader"]));
 
 	enemyObj.SetPhysicsObject(new PhysicsObject(&enemyObj.GetTransform(), enemyObj.GetBoundingVolume()));
 
@@ -731,7 +741,7 @@ GameObject* GameLevelManager::AddDoorToWorld(Door* door, Vector3 size, const Vec
 }
 
 GameObject* GameLevelManager::AddExitToWorld(Exit* exit, Vector3 size, const Vector3& position) {
-	AABBVolume* volume = new AABBVolume(size);
+	AABBVolume* volume = new AABBVolume(size * 0.5f);
 
 	exit->SetBoundingVolume((CollisionVolume*)volume);
 
@@ -1043,7 +1053,11 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 		}
 
 		for (const auto& enemy : enemies) {
-			AddPatrolEnemyToWorld("PatrolEnemy", enemy.waypoints, enemy.position, playerOne);
+			if (enemy.name.find("EnemyP") != std::string::npos) {
+				AddPursuitEnemyToWorld(enemy.name, enemy.position, enemy.waypoints, playerOne);
+			} else {
+				AddPatrolEnemyToWorld(enemy.name, enemy.waypoints, enemy.position, playerOne);
+			}
 		}
 	}
 	else {
