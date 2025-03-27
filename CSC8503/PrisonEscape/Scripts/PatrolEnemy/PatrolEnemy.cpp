@@ -10,7 +10,6 @@ PatrolEnemy::PatrolEnemy(GameWorld* world, const std::string& name) : GameObject
     patrolCounter = 0;
     currentState = PATROL;
     playerObject = nullptr;
-    visible = true;
     warningTimer = 2.0f;
 	sleepTimer = 3.0f;
     InitBehaviourTree();
@@ -45,7 +44,7 @@ void PatrolEnemy::SetPlayerObject(Player* player) {
 bool PatrolEnemy::CanSeePlayer() const {
     if (!playerObject) return false;
 
-    if (!visible) return false;
+    if (!playerObject->GetVisible()) return false;
 
     Vector3 direction = playerObject->GetTransform().GetPosition() - transform.GetPosition();
 

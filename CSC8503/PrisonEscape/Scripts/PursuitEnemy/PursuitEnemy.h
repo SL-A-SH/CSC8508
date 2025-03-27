@@ -36,8 +36,6 @@ namespace NCL {
                 clientControlled = isClient;
             }
 
-            bool visible;
-
         protected:
             void InitBehaviourTree();
             bool CanSeePlayer() const;

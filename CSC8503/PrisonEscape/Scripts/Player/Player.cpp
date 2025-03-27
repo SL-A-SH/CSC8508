@@ -18,6 +18,7 @@ Player::Player(GameWorld* world, const std::string& name) : GameObject()
     mName = name;
 
     health = 3;
+    visible = true;
     
     audioManager = new AudioManager(); 
     audioManager->Initialize();         
@@ -33,6 +34,8 @@ void Player::UpdateGame(float dt)
 {
 	UpdatePlayerMovement(dt);
 }
+
+
 
 void Player::UpdatePlayerMovement(float dt)
 {

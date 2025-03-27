@@ -11,7 +11,6 @@ PursuitEnemy::PursuitEnemy(GameWorld* world, const std::string& name) : GameObje
     pursuitTimer = 0.0f;
     currentState = PATROL;
     playerObject = nullptr;
-    visible = true;
     InitBehaviourTree();
 }
 
@@ -44,7 +43,7 @@ void PursuitEnemy::SetPlayerObject(Player* player) {
 bool PursuitEnemy::CanSeePlayer() const {
     if (!playerObject) return false;
 
-    if (!visible) return false;
+    if (!playerObject->GetVisible()) return false;
 
     Vector3 direction = playerObject->GetTransform().GetPosition() - transform.GetPosition();
 
