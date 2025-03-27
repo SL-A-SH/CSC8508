@@ -52,6 +52,11 @@ namespace NCL {
                 CAUGHT
             };
             AIState currentState;
+
+        private:
+            bool clientControlled = false;
         };
+
+
     }
 }

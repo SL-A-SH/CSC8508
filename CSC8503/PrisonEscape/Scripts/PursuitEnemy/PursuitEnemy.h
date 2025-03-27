@@ -59,6 +59,9 @@ namespace NCL {
                 PURSUIT
             };
             AIState currentState;
+
+        private:
+            bool clientControlled = false;
         };
     }
 }

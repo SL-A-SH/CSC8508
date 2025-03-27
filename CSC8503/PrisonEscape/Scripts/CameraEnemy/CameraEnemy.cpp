@@ -20,6 +20,10 @@ CameraEnemy::~CameraEnemy() {
 }
 
 void CameraEnemy::UpdateGame(float dt) {
+    if (clientControlled) {
+        return;
+    }
+
     std::string stateStr;
     switch (currentState) {
     case WATCHING:  stateStr = "WATCHING"; break;

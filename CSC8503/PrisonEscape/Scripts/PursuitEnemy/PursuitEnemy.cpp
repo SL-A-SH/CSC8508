@@ -20,6 +20,9 @@ PursuitEnemy::~PursuitEnemy() {
 }
 
 void PursuitEnemy::UpdateGame(float dt) {
+    if (clientControlled) {
+        return;
+    }
 
     std::string stateStr;
     switch (currentState) {
