@@ -123,7 +123,7 @@ void PatrolEnemy::InitBehaviourTree() {
             }
 
             SetObjectAnimationState(Caught);
-            if (warningTimer > 0.0f) {
+            if (warningTimer > 0.0f && playerObject->GetVisible() == true) {
                 std::cout << "Warning: " << std::to_string(warningTimer);
                 warningTimer -= dt;
                 return Ongoing;
