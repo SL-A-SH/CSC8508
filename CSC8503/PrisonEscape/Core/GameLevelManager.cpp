@@ -605,7 +605,20 @@ GameObject* GameLevelManager::AddPressableDoorToWorld(PressableDoor* door, Vecto
 	GameBase::GetGameBase()->GetWorld()->AddGameObject(door);
 	return door;
 }
+void GameLevelManager::AddHidingAreaToWorld(const Vector3& position, const Vector3& size, const std::string name) {
+	HidingArea* hidingArea = new HidingArea(position, size);
+	hidingArea->SetName(name);
+	hidingArea->GetTransform().SetScale(size); //2 inch
+	hidingArea->SetRenderObject(new RenderObject(&hidingArea->GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+	hidingArea->SetPhysicsObject(new PhysicsObject(&hidingArea->GetTransform(), hidingArea->GetBoundingVolume()));
 
+	hidingArea->GetPhysicsObject()->SetInverseMass(0);
+	hidingArea->GetPhysicsObject()->InitCubeInertia();
+
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(hidingArea);
+
+
+}
 //void GameLevelManager::CreateButton(const InGameObject& obj) {
 //	Button* newButton = new Button();
 //
@@ -644,7 +657,9 @@ void GameLevelManager::CreateDoorButton(const InGameObject& obj, std::unordered_
 		AddButtonnToWorld(newButton, obj.position, linkedDoor);
 	}
 }
-
+void GameLevelManager::CreateHidingArea(const InGameObject& obj) {
+	AddHidingAreaToWorld(obj.position, obj.dimensions,obj.type);
+}
 void GameLevelManager::CreateBox(const InGameObject& obj) {
 	GameObject* newBox = AddBoxToWorld(obj.position, obj.dimensions, obj.type + std::to_string(++boxNumber));
 	boxes.push_back(newBox);
@@ -658,12 +673,15 @@ void GameLevelManager::CreateFloor(const InGameObject& obj) {
 	AddFloorToWorld(obj.dimensions, obj.position);
 }
 
+
 void GameLevelManager::CreateNormalDoor(const InGameObject& obj) {
 	PressableDoor* newDoor = new PressableDoor();
 	newDoor->SetTextures(mTextureList["DefaultTexture"], mTextureList["DefaultTexture"]);
 	AddPressableDoorToWorld(newDoor, obj.dimensions, obj.position, obj.orientation.x, obj.orientation.y, obj.orientation.z);
 	LogObjectPlacement(obj);
 }
+
+
 
 Door* GameLevelManager::CreateButtonDoor(const InGameObject& obj) {
 	Door* newDoor = new Door();
@@ -724,6 +742,9 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 
 			else if (obj.type == "Floor") {
 				CreateFloor(obj);
+			}
+			else if (obj.type == "HidingPlace") {
+				CreateHidingArea(obj);
 			}
 
 			else if (obj.type.find("Player") != std::string::npos) {
