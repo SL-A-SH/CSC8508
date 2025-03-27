@@ -29,7 +29,7 @@ GameLevelManager* GameLevelManager::manager = nullptr;
 GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer, std::string levelToLoad, bool multiplayerStatus, bool isServer)
 {
 	if (multiplayerStatus) {
-		levelToLoad = "Level1";
+		levelToLoad = "Level2";
 	}
 	mWorld = existingWorld;
 	mRenderer = existingRenderer;
@@ -370,8 +370,10 @@ void GameLevelManager::AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const T
 
 }
 
-PursuitEnemy* GameLevelManager::AddPursuitEnemyToWorld(const std::string& enemyName, const std::vector<Vector3>& pursuitPatrolPoints, Player* player) {
+PursuitEnemy* GameLevelManager::AddPursuitEnemyToWorld(const std::string& enemyName, const Vector3& position, const std::vector<Vector3>& pursuitPatrolPoints, Player* player) {
 	Transform transform;
+	transform.SetPosition(position);
+
 	PursuitEnemy* mEnemyToAdd = new PursuitEnemy(mWorld, enemyName);
 	AddComponentsToPursuitEnemy(*mEnemyToAdd, transform);
 
@@ -835,7 +837,11 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 		}
 
 		for (const auto& enemy : enemies) {
-			AddPatrolEnemyToWorld(enemy.name, enemy.waypoints, enemy.position, playerOne);
+			if (enemy.name.find("EnemyP") != std::string::npos) {
+				AddPursuitEnemyToWorld(enemy.name, enemy.position, enemy.waypoints, playerOne);
+			} else {
+				AddPatrolEnemyToWorld(enemy.name, enemy.waypoints, enemy.position, playerOne);
+			}
 		}
 	}
 	else {
