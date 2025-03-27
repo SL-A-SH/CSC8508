@@ -717,7 +717,12 @@ void GameLevelManager::CreateExit(const InGameObject& obj) {
 	AddExitToWorld(newExit, obj.dimensions, obj.position);
 	
 }
+void GameLevelManager::CreateSoap(const InGameObject& obj) {
+	Soap* newSoap = new Soap();
 
+	AddSoapToWorld(newSoap, obj.dimensions, obj.position);
+
+}
 void GameLevelManager::CreateNormalDoor(const InGameObject& obj) {
 	PressableDoor* newDoor = new PressableDoor();
 	newDoor->SetTextures(mTextureList["DefaultTexture"], mTextureList["DefaultTexture"]);

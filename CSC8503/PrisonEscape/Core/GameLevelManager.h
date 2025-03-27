@@ -129,6 +129,7 @@ namespace NCL {
 			void CreateNormalDoor(const InGameObject& obj);
 			Door* CreateButtonDoor(const InGameObject& obj);
 			void CreateExit(const InGameObject& obj);
+			void CreateSoap(const InGameObject& obj);
 			
 			void CreateHidingArea(const InGameObject& obj);
 

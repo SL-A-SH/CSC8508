@@ -66,6 +66,7 @@ namespace NCL {
 		};
 
 		class Soap : public GameObject {
+		public:
 			Soap();
 			~Soap() = default;
 			void OnCollisionBegin(GameObject* otherObject) override;

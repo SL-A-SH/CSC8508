@@ -109,7 +109,8 @@ void PressableDoor::OnCollisionBegin(GameObject* otherObject) {
 }
 
 Exit::Exit() {}
-Soap::Soap() {}
+
+
 
 void Exit::OnCollisionBegin(GameObject* otherObject) {
 	if (dynamic_cast<Player*>(otherObject)) {
@@ -121,13 +122,13 @@ void Exit::OnCollisionBegin(GameObject* otherObject) {
 		}
 	}
 }
+Soap::Soap() {}
 void Soap::OnCollisionBegin(GameObject* otherObject) {
 	
-		Player* player = dynamic_cast<Player*>(otherObject);
-		if (player) {
-			player->sprintMultiplier += 0.5f;  // Increase sprint speed by 50%
-			std::cout << "Player's sprint speed increased!" << std::endl;
-		}
-	
-	
+	Player* player = dynamic_cast<Player*>(otherObject);
+	if (player) {
+		player->sprintMultiplier += 0.5f;  // Increase sprint speed by 50%
+		std::cout << "Player's sprint speed increased!" << std::endl;
+	}
+
 }

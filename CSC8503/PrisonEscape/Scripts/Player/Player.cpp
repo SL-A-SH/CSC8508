@@ -95,7 +95,7 @@ void Player::UpdatePlayerMovement(float dt)
     if (Window::GetKeyboard()->KeyPressed(KeyCodes::E)) {
         SetVisible(true);
         SetActive(true);
-
+    }
         sprintMultiplier = 1.0f;
         Vector3 movement(0, 0, 0);
         if (forward != 0.0f) {
@@ -156,7 +156,7 @@ void Player::UpdatePlayerMovement(float dt)
                 audioManager->StopSound(audioManager->soundFile11);
             }
         }
-    }
+    
 }
 void Player::LockCameraAndMovement(){
     if (!IsActive()) {
