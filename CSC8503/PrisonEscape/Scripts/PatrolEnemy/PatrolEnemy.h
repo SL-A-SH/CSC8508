@@ -23,6 +23,7 @@ namespace NCL {
 
             void OnCatch(Player* otherObject) {
                 if (otherObject == playerObject) {
+                    playerObject->SetObjectAnimationState(Caught);
                     playerObject->SetHealth(playerObject->GetHealth() - 1);
                     playerObject->GetRenderObject()->GetTransform()->SetPosition(playerObject->GetSpawn());
                 }

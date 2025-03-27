@@ -38,7 +38,7 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	this->isServer = isServer;
 
 	InitAssets();
-	// std::cout << "The Level to load is at: " << mLevelList["Level3"] << std::endl;
+	// std::cout << "The Level to load is at: " << mLevelList["Level3"] << std::endl;¬¬¬¬
 	// boxNumber = 0;
 	// loadMap(mLevelList["Level3"]);
 	
@@ -252,6 +252,10 @@ void GameLevelManager::InitAssets()
 	}
 	mPreLoadedAnimationList.insert(std::make_pair("PlayerIdle", mAnimationList["PlayerIdle"]));
 	mPreLoadedAnimationList.insert(std::make_pair("PlayerWalk", mAnimationList["PlayerWalk"]));
+	mPreLoadedAnimationList.insert(std::make_pair("PatrolWalk", mAnimationList["PatrolWalk"]));
+	mPreLoadedAnimationList.insert(std::make_pair("PatrolIdle", mAnimationList["PatrolIdle"]));
+	mPreLoadedAnimationList.insert(std::make_pair("PatrolCaught", mAnimationList["PatrolCaught"]));
+	mPreLoadedAnimationList.insert(std::make_pair("PlayerCaught", mAnimationList["PlayerCaught"]));
 
 	if (materialLoadThread.joinable()) {
 		materialLoadThread.join();
@@ -346,6 +350,7 @@ PatrolEnemy* GameLevelManager::AddPatrolEnemyToWorld(const std::string& enemyNam
 
 	mWorld->AddGameObject(mEnemyToAdd);
 	mUpdatableObjectList.push_back(mEnemyToAdd);
+	mAnimator->SetObjectList(mUpdatableObjectList);
 
 	return mEnemyToAdd;
 }
@@ -359,7 +364,8 @@ void GameLevelManager::AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const T
 		.SetPosition(enemyTransform.GetPosition())
 		.SetOrientation(enemyTransform.GetOrientation());
 
-	enemyObj.SetRenderObject(new RenderObject(&enemyObj.GetTransform(), mMeshList["Guard"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+	enemyObj.SetRenderObject(new RenderObject(&enemyObj.GetTransform(), mMeshList["Guard"], mTextureList["DefaultTexture"], mShaderList["Animation"]));
+	enemyObj.GetRenderObject()->SetAnimObject(new AnimationObject(AnimationObject::AnimationType::enemy, mAnimationList["PatrolWalk"]));
 
 	enemyObj.SetPhysicsObject(new PhysicsObject(&enemyObj.GetTransform(), enemyObj.GetBoundingVolume()));
 
@@ -1020,7 +1026,7 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 		}
 
 		for (const auto& enemy : enemies) {
-			AddPatrolEnemyToWorld(enemy.name, enemy.waypoints, enemy.position, playerOne);
+			AddPatrolEnemyToWorld("PatrolEnemy", enemy.waypoints, enemy.position, playerOne);
 		}
 
 	}
