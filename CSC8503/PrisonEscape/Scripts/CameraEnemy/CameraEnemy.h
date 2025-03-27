@@ -27,6 +27,10 @@ namespace NCL {
                 }
             }
 
+            void SetClientControlled(bool isClient) {
+                clientControlled = isClient;
+            }
+
             bool powerOff;
             bool visible;
 

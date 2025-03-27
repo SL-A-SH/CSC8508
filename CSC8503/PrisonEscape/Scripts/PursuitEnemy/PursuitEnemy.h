@@ -32,6 +32,10 @@ namespace NCL {
                 }
             }
 
+            void SetClientControlled(bool isClient) {
+                clientControlled = isClient;
+            }
+
             bool visible;
 
         protected:
