@@ -11,6 +11,7 @@ AnimationController::AnimationController(GameWorld& world, std::map<std::string,
 	mMesh = nullptr;
 	mAnim = nullptr;
 	InitPlayerAnimMap();
+	InitPatrolEnemyAnimMap();
 }
 
 AnimationController::~AnimationController(){}
@@ -18,6 +19,7 @@ AnimationController::~AnimationController(){}
 void AnimationController::Clear() {
 	mAnimationList.clear();
 	mPlayersList.clear();
+	mPatrolEnemyList.clear();
 }
 
 void AnimationController::Update(float dt, vector<GameObject*> animationObjects)
@@ -71,6 +73,15 @@ void AnimationController::InitPlayerAnimMap() {
 	mPlayerAnimationMap = {
 		{GameObject::AnimationState::Idle, "PlayerIdle"},
 		{GameObject::AnimationState::Walk, "PlayerWalk"},
+		{GameObject::AnimationState::Caught, "PlayerCaught"},
+	};
+}
+
+void AnimationController::InitPatrolEnemyAnimMap() {
+	mPatrolEnemyAnimationMap = {
+		{GameObject::AnimationState::Idle, "PatrolIdle"},
+		{GameObject::AnimationState::Walk, "PatrolWalk"},
+		{GameObject::AnimationState::Caught, "PatrolCaught"},
 	};
 }
 
@@ -79,13 +90,13 @@ void AnimationController::SetAnimationState(GameObject* obj, GameObject::Animati
 	obj->GetRenderObject()->GetAnimObject()->ResetCurrentFrame();
 
 	AnimationObject::AnimationType animationType = obj->GetRenderObject()->GetAnimObject()->GetAnimationType();
-	std::map<GameObject::AnimationState, std::string>& animationMap = mPlayerAnimationMap;
+	std::map<GameObject::AnimationState, std::string>& animationMap = animationType == AnimationObject::AnimationType::player ? mPlayerAnimationMap : mPatrolEnemyAnimationMap;
 
 	const std::string& animationName = animationMap[state];
 
 	MeshAnimation* animation = mPreLoadedAnimationList[animationName];
 
-	if (animationName == "GuardSprint" || animationName == "PlayerSprint") {
+	if (animationName == "PlayerSprint" || animationName == "EnemySprint") {
 		obj->GetRenderObject()->GetAnimObject()->SetRate(2.0);
 	}
 	else {
@@ -103,14 +114,15 @@ void AnimationController::UpdateCurrentFrames(float dt) {
 void AnimationController::SetObjectList(vector<GameObject*> animationObjects) {
 	std::cout << "Object List Size: " << animationObjects.size() << std::endl; // YOU
 	for (auto& obj : animationObjects) {
-		if (obj->GetName().find("playerOne") != std::string::npos || obj->GetName().find("playerTwo") != std::string::npos) {
-			std::cout << "Found Player" << std::endl;
+		if (obj->GetName().find("player") != std::string::npos) {
 			mPlayersList.emplace_back((Player*)obj);
 			AnimationObject* animObj = obj->GetRenderObject()->GetAnimObject();
 			mAnimationList.emplace_back(animObj);
 		}
-		else {
-			std::cout << "Could not find player" << std::endl;
+		else if (obj->GetName() == "PatrolEnemy") {
+			mPatrolEnemyList.emplace_back((PatrolEnemy*)obj);
+			AnimationObject* animObj = obj->GetRenderObject()->GetAnimObject();
+			mAnimationList.emplace_back(animObj);
 		}
 	}
 }

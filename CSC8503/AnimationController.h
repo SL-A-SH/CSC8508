@@ -11,6 +11,7 @@ namespace NCL {
 	{
 		class AnimationObject;
 		class Player;
+		class PatrolEnemy;
 		class AnimationController {
 		public:
 			AnimationController(GameWorld& world, std::map<std::string, MeshAnimation*>& preLoadedAnimationList);
@@ -31,6 +32,7 @@ namespace NCL {
 			GameWorld& mGameWorld;
 			vector<AnimationObject*> mAnimationList;
 			vector<Player*> mPlayersList;
+			vector<PatrolEnemy*> mPatrolEnemyList;
 
 			Mesh* mMesh;
 			MeshAnimation* mAnim;
@@ -39,8 +41,10 @@ namespace NCL {
 			std::map<std::string, MeshAnimation*>& mPreLoadedAnimationList;
 
 			std::map<GameObject::AnimationState, std::string> mPlayerAnimationMap;
+			std::map<GameObject::AnimationState, std::string> mPatrolEnemyAnimationMap;
 
 			void InitPlayerAnimMap();
+			void InitPatrolEnemyAnimMap();
 
 		};
 	}
