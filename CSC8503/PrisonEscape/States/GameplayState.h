@@ -51,6 +51,8 @@ namespace NCL {
 			NCL::Rendering::Texture* heartFilledTexture = nullptr;
 			NCL::Rendering::Texture* heartEmptyTexture = nullptr;
 
+			int score = 0;
+
 		public:
 			GameConfigManager* GetGameConfig() const { return gameConfig; }
 		};

@@ -12,7 +12,8 @@
 #include "PrisonEscape/Core/GameSettingManager.h"
 #include "PrisonEscape/Core/ImGuiManager.h"
 #include "PrisonEscape/Core/GameConfigManager.h"
-#include "PrisonEscape/Core/Networking/SteamManager.h"
+#include "PrisonEscape/Core/Networking/SteamManager.h"	
+#include "PrisonEscape/Core/GameLevelManager.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -30,7 +31,7 @@ MenuState::MenuState() :
 
 	gameConfig->steamInviteCallback = [this](uint64_t lobbyID) {
 		HandleSteamInviteAccepted(lobbyID);
-	};
+		};
 }
 
 MenuState::~MenuState()
@@ -220,15 +221,9 @@ void MenuState::DrawMainMenuPanel() {
 	std::vector<PanelButton> buttons = {
 		{"Single Player", [this]() {
 			std::cout << "Single Player" << std::endl;
-			stateChangeAction = [this](PushdownState** newState) {
-				gameConfig->networkConfig.isMultiplayer = false;
+			GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("LevelSelectPanel", [this]() {DrawLevelSelectPanel(); });
+			GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MainMenuPanel");
 
-				if (this->gameConfig) {
-					*newState = new GamePlayState(false, false, gameConfig);
-					this->gameConfig = nullptr; // Transfer ownership
-				}
-
-			};
 		}, 0.32, 0.25f},
 		{"Multiplayer", [this]() {
 			GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MainMenuPanel");
@@ -247,9 +242,52 @@ void MenuState::DrawMainMenuPanel() {
 		}, 0.32f, 0.70f}  // Adjusted positions
 	};
 
-	ImGuiManager::DrawPanel("PRISON ESCAPE", buttons);
+	ImGuiManager::DrawPanel("SLIPPPY SAM", buttons);
 }
 
+
+void MenuState::DrawLevelSelectPanel()
+{
+	std::vector<PanelButton> buttons = {
+		{"Level One", [this]() {
+
+				stateChangeAction = [this](PushdownState** newState) {
+				gameConfig->networkConfig.isMultiplayer = false;
+
+				if (this->gameConfig) {
+					GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("LevelSelectPanel");
+					gameConfig->SetChosenLevel("Level1");
+					*newState = new GamePlayState(false, false, gameConfig);
+					this->gameConfig = nullptr; // Transfer ownership
+
+				}
+
+			};
+
+		}, 0.10f, .35f},
+		{"Level Two", [this]() {
+
+				stateChangeAction = [this](PushdownState** newState) {
+				gameConfig->networkConfig.isMultiplayer = false;
+
+				if (this->gameConfig) {
+					GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("LevelSelectPanel");
+					gameConfig->SetChosenLevel("Level2");
+					*newState = new GamePlayState(false, false, gameConfig);
+					this->gameConfig = nullptr; // Transfer ownership
+				}
+
+			};
+		},0.55f, .35f}
+	};
+
+	auto backCallback = [this]() {
+		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("MainMenuPanel", [this]() {DrawMainMenuPanel(); });
+		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("LevelSelectPanel");
+		};
+
+	ImGuiManager::DrawPanel("Select Level", buttons, {}, backCallback);
+}
 
 void MenuState::DrawSettingPanel() {
 	std::vector<PanelButton> buttons = {
@@ -274,23 +312,34 @@ void MenuState::DrawSettingPanel() {
 void MenuState::DrawAudioSettingPanel() {
 	std::vector<PanelSlider> sliders = { {"Master Volume", &volume, 0, 100, 0.36f, 0.36f} };
 	GameBase::GetGameSettings()->SetVolume(volume);
+	std::vector<PanelCheckbox> checkboxes = {
+		{ "Fullscreen", &fullscreen, 0.36f, 0.46f },	 // Placed below the slider
+		{ "VSync", &vSync, 0.36f, 0.56f } // Placed below the fullscreen checkbox
+	};
+
 	auto backCallback = [this]() {
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("SettingPanel", [this]() {DrawSettingPanel(); });
 		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("AudioSettingPanel");
 		};
 
-	ImGuiManager::DrawPanel("Audio Settings", {}, sliders, backCallback);
+	ImGuiManager::DrawPanel("Audio Settings", {}, sliders, backCallback, "", checkboxes);
 }
 
 void MenuState::DrawVideoSettingPanel() {
 	std::vector<PanelSlider> sliders = { {"Brightness", &brightness, 0, 100, 0.36f, 0.36f} };
+	std::vector<PanelCheckbox> checkboxes = {
+	{ "VSync", &vSync, 0.36f, 0.56f } // Placed below the fullscreen checkbox
+	};
+
+	SetVsync(vSync);
+
 	GameBase::GetGameSettings()->SetBrightness(brightness);
 	auto backCallback = [this]() {
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("SettingPanel", [this]() {DrawSettingPanel(); });
 		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("GraphicSettingPanel");
 		};
 
-	ImGuiManager::DrawPanel("Video Settings", {}, sliders, backCallback);
+	ImGuiManager::DrawPanel("Video Settings", {}, sliders, backCallback, "", checkboxes);
 }
 
 void MenuState::DrawMultiplayerPanel() {
@@ -398,7 +447,7 @@ void MenuState::DrawJoinPanel()
 	auto backCallback = [this]() {
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("MultiplayerPanel", [this]() { DrawMultiplayerPanel(); });
 		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("JoinPanel");
-	};
+		};
 
 	ImGuiManager::DrawPanel("Join Server", buttons, {}, backCallback);
 
@@ -786,3 +835,10 @@ void MenuState::DrawInviteAcceptedPanel(uint64_t lobbyID)
 		},
 		"Join Game", "Decline");
 }
+
+void MenuState::SetVsync(bool vsync)
+{
+	vSync = vsync;
+	GameBase::GetGameBase()->GetRenderer()->SetVerticalSync(vsync ? VerticalSyncState::VSync_ON : VerticalSyncState::VSync_OFF);
+}
+

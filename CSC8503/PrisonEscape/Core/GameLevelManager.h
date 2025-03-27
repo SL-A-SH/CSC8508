@@ -35,7 +35,7 @@ namespace NCL {
 
 		class GameLevelManager {
 		public:
-			GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer, bool multiplayerStatus, bool isServer);
+			GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer, string LevelToLoad, bool multiplayerStatus, bool isServer);
 			~GameLevelManager();
 			virtual void UpdateGame(float dt);
 
@@ -48,7 +48,7 @@ namespace NCL {
 			Vector3 GetP1Position() { return playerOne->GetTransform().GetPosition(); }
 			Vector3 GetP2Position() { return playerTwo->GetTransform().GetPosition(); }
 
-			PatrolEnemy* AddPatrolEnemyToWorld(const std::string& patrolEnemyName,const std::vector<Vector3>& patrolPoints, const Vector3& spawnPoint, Player* player);
+			PatrolEnemy* AddPatrolEnemyToWorld(const std::string& patrolEnemyName, const std::vector<Vector3>& patrolPoints, const Vector3& spawnPoint, Player* player);
 			void AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const Transform& transform);
 
 			PursuitEnemy* AddPursuitEnemyToWorld(const std::string& pursuitEnemyName, const std::vector<Vector3>& patrolPoints, Player* player);
@@ -65,11 +65,12 @@ namespace NCL {
 			void AddLevel(Level* newLevel) { mLevelStack.push(newLevel); }
 
 			AnimationController* GetAnimator() { return mAnimator; }
-			
+
 			static GameLevelManager* GetGameLevelManager() { return manager; }
 
 			Player* GetPlayerOne() { return playerOne; }
 			Player* GetPlayerTwo() { return playerTwo; }
+			void SetLevelToLoad(string levelName) { mLevelToLoad = levelName; }
 
 		private:
 			GameWorld* mWorld;
@@ -82,6 +83,8 @@ namespace NCL {
 
 			Player* playerOne;
 			Player* playerTwo;
+
+			string mLevelToLoad = "Level1";
 
 			// for handling multiple buttons/boxes in a level
 			int boxNumber;
@@ -120,6 +123,7 @@ namespace NCL {
 			GameObject* AddPressableDoorToWorld(PressableDoor* door, Vector3 size, const Vector3& position, float x, float y, float z);
 			GameObject* AddDoorToWorld(Door* door, Vector3 size, const Vector3& position, float x, float y, float z);
 
+			void AddHidingAreaToWorld(const Vector3& position, const Vector3& size, const std::string name);
 			void LogObjectPlacement(const InGameObject& obj);
 			void CreateWall(const InGameObject& obj);
 			void CreateJailWall(const InGameObject& obj);
@@ -136,8 +140,10 @@ namespace NCL {
 			void CreateFloor(const InGameObject& obj);
 			void CreateNormalDoor(const InGameObject& obj);
 			Door* CreateButtonDoor(const InGameObject& obj);
+			void CreateHidingArea(const InGameObject& obj);
 
-			
+			void DrawLoadingScreen();
+
 			bool isMultiplayer;
 			bool isServer;
 			bool isPlaying;

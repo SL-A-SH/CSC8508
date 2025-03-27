@@ -10,7 +10,6 @@ PatrolEnemy::PatrolEnemy(GameWorld* world, const std::string& name) : GameObject
     patrolCounter = 0;
     currentState = PATROL;
     playerObject = nullptr;
-    visible = true;
     warningTimer = 2.0f;
 	sleepTimer = 3.0f;
     InitBehaviourTree();
@@ -45,7 +44,7 @@ void PatrolEnemy::SetPlayerObject(Player* player) {
 bool PatrolEnemy::CanSeePlayer() const {
     if (!playerObject) return false;
 
-    if (!visible) return false;
+    if (!playerObject->GetVisible()) return false;
 
     Vector3 direction = playerObject->GetTransform().GetPosition() - transform.GetPosition();
 
@@ -67,7 +66,6 @@ void PatrolEnemy::InitBehaviourTree() {
 
     BehaviourAction* patrolAction = new BehaviourAction("PATROL",
         [&](float dt, BehaviourState state) -> BehaviourState {
-            std::cout << "patrol\n";
             if (currentState != PATROL) {
                 return Failure;
             }
@@ -104,7 +102,6 @@ void PatrolEnemy::InitBehaviourTree() {
 
     BehaviourAction* sleepAction = new BehaviourAction("SLEEP",
         [&](float dt, BehaviourState state) -> BehaviourState {
-            std::cout << "sleeping\n";
             if (currentState != SLEEP) {
                 return Failure;
             }
@@ -119,7 +116,6 @@ void PatrolEnemy::InitBehaviourTree() {
 
     BehaviourAction* catchAction = new BehaviourAction("CAUGHT",
         [&](float dt, BehaviourState state) -> BehaviourState {
-            std::cout << "catching";
             if (currentState != CAUGHT) {
                 return Failure;
             }

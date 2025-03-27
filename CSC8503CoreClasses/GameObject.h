@@ -31,6 +31,9 @@ namespace NCL::CSC8503 {
 		bool IsActive() const {
 			return isActive;
 		}
+		void SetActive(bool active) {
+			isActive = active;
+		}
 
 		Transform& GetTransform() {
 			return transform;
@@ -55,7 +58,8 @@ namespace NCL::CSC8503 {
 		void SetPhysicsObject(PhysicsObject* newObject) {
 			physicsObject = newObject;
 		}
-
+		bool GetVisible() const { return visible; }
+		void SetVisible(bool v) { visible = v; }
 		const std::string& GetName() const {
 			return name;
 		}
@@ -98,7 +102,7 @@ namespace NCL::CSC8503 {
 		PhysicsObject*		physicsObject;
 		RenderObject*		renderObject;
 		NetworkObject*		networkObject;
-
+		bool visible;
 		bool		isActive;
 		int			worldID;
 		std::string	name;

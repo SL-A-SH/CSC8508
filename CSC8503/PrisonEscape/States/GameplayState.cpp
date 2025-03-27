@@ -22,7 +22,7 @@ using namespace CSC8503;
 GamePlayState::GamePlayState(bool multiplayer, bool asServer, GameConfigManager* config)
 {
 	this->gameConfig = config;
-	manager = new GameLevelManager(GameBase::GetGameBase()->GetWorld(), GameBase::GetGameBase()->GetRenderer(), gameConfig->networkConfig.isMultiplayer, gameConfig->networkConfig.isServer);
+	manager = new GameLevelManager(GameBase::GetGameBase()->GetWorld(), GameBase::GetGameBase()->GetRenderer(), config->GetChosenLevel(), gameConfig->networkConfig.isMultiplayer, gameConfig->networkConfig.isServer);
 	Level* level = new Level();
 	level->Init();
 	manager->AddLevel(level);
@@ -51,6 +51,9 @@ void GamePlayState::OnAwake()
 	GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("ConnectionPanel");
 
 	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("HUDPanel", [this]() { DrawHUDPanel(); });
+
+	Window::GetWindow()->LockMouseToWindow(true);
+	Window::GetWindow()->ShowOSPointer(false);
 }
 
 GamePlayState::~GamePlayState()
@@ -188,7 +191,7 @@ void GamePlayState::DrawHUDPanel() {
 	ImGui::SetCursorPos(ImVec2(25, 75)); // Set cursor to below the hearts
 
 	// Display Timer
-	ImGui::Text("Time: %.2f s", 20.0f);
+	ImGui::Text(("Score: " + std::to_string(score)).c_str(), 20.0f);
 
 
 

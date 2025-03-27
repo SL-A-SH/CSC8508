@@ -17,6 +17,7 @@ namespace NCL {
 			void OnAwake() override;
 
 			void DrawMainMenuPanel();
+			void DrawLevelSelectPanel();
 			void DrawSettingPanel();
 			void DrawAudioSettingPanel();
 			void DrawVideoSettingPanel();
@@ -34,6 +35,7 @@ namespace NCL {
 			void HandleSteamInvite(uint64_t friendSteamID);
 			void HandleSteamInviteAccepted(uint64_t lobbyID);
 			void JoinSteamLobby(uint64_t lobbyID);
+			void SetVsync(bool vsync);
 
 		private:
 			enum class ConnectionStage {
@@ -47,6 +49,8 @@ namespace NCL {
 			std::function<void(PushdownState**)> stateChangeAction = nullptr;
 			int volume = 50;
 			int brightness = 50;
+			bool fullscreen = false;
+			bool vSync = false;
 
 			// Network connection state
 			char ipAddressInput[64] = "127.0.0.1";

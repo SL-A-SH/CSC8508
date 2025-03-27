@@ -25,19 +25,16 @@ void ImGuiManager::Initialize() {
 	messageFont = imguiIO.Fonts->AddFontFromFileTTF("../Assets/Fonts/BebasNeue-Regular.ttf", 24.0f, NULL, imguiIO.Fonts->GetGlyphRangesDefault());
 	imguiIO.Fonts->Build();
 }
-
 void ImGuiManager::DrawPanel(
 	const std::string& title,
 	const std::vector<PanelButton>& buttons,
 	const std::vector<PanelSlider>& sliders,
 	std::function<void()> backCallback,
-	const std::string& footer
+	const std::string& footer, const std::vector<PanelCheckbox>& checkboxes
 ) {
 	ImVec2 windowSize = ImGui::GetWindowSize();
 
-
 	DrawHeader(title);
-
 
 	for (const auto& button : buttons) {
 		DrawButton(button.label, button.callback, button.xPosition, button.yPosition);
@@ -47,12 +44,17 @@ void ImGuiManager::DrawPanel(
 		DrawSlider(slider.label, slider.value, slider.min, slider.max, slider.xPosition, slider.yPosition);
 	}
 
+	for (auto& checkbox : checkboxes) {  // Checkbox rendering
+		DrawCheckbox(checkbox.label, checkbox.checked, checkbox.xPosition, checkbox.yPosition);
+	}
+
 	if (backCallback) {
 		DrawBackButton(backCallback);
 	}
 
 	DrawFooter(footer);
 }
+
 
 void ImGuiManager::DrawMessagePanel(
 	const std::string& title,
@@ -240,3 +242,13 @@ void ImGuiManager::DrawFooter(const std::string& text) {
 	ImGui::Text("%s", text.c_str());
 	ImGui::PopFont();
 }
+
+void ImGuiManager::DrawCheckbox(const std::string& label, bool* checked, float x, float y) {
+	if (checked) {  // Ensure the pointer is valid before dereferencing
+		ImVec2 windowSize = ImGui::GetWindowSize();
+
+		ImGui::SetCursorPos(ImVec2(windowSize.x * x, windowSize.y * y));
+		ImGui::Checkbox(label.c_str(), checked);
+	}
+}
+
