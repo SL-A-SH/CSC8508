@@ -17,7 +17,7 @@ namespace NCL {
 			void UpdatePlayerMovement(float dt);
 
 			void InitializeController();
-
+			void LockCameraAndMovement();
 
 		protected:
 			KeyboardMouseController* controller;

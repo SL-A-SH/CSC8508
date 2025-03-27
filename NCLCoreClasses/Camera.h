@@ -16,18 +16,18 @@ namespace NCL {
 	class Camera {
 	public:
 		Camera(void) {
-			pitch		= 0.0f;
-			yaw			= 0.0f;
+			pitch = 0.0f;
+			yaw = 0.0f;
 
-			nearPlane	= 1.0f;
-			farPlane	= 1000.0f;
-			speed		= 100.0f;
+			nearPlane = 1.0f;
+			farPlane = 1000.0f;
+			speed = 100.0f;
 		};
 
 		Camera(float pitch, float yaw, const Vector3& position) : Camera() {
-			this->pitch		= pitch;
-			this->yaw		= yaw;
-			this->position	= position;
+			this->pitch = pitch;
+			this->yaw = yaw;
+			this->position = position;
 		}
 
 		~Camera(void) = default;
@@ -46,7 +46,7 @@ namespace NCL {
 			nearPlane = val;
 			return *this;
 		}
-		
+
 		Camera& SetFarPlane(float val) {
 			farPlane = val;
 			return *this;
@@ -66,20 +66,20 @@ namespace NCL {
 		//Gets position in world space
 		Vector3 GetPosition() const { return position; }
 		//Sets position in world space
-		Camera&	SetPosition(const Vector3& val) { position = val;  return *this; }
+		Camera& SetPosition(const Vector3& val) { position = val;  return *this; }
 
 		//Gets yaw, in degrees
-		float	GetYaw()   const	{ return yaw; }
+		float	GetYaw()   const { return yaw; }
 		//Sets yaw, in degrees
-		Camera&	SetYaw(float y)		{ yaw = y;  return *this; }
+		Camera& SetYaw(float y) { yaw = y;  return *this; }
 
 		//Gets pitch, in degrees
-		float	GetPitch() const	{ return pitch; }
+		float	GetPitch() const { return pitch; }
 		//Sets pitch, in degrees
-		Camera& SetPitch(float p)	{ pitch = p; return *this; }
+		Camera& SetPitch(float p) { pitch = p; return *this; }
 
-		float	GetSpeed() const	{ return speed; }
-		Camera& SetSpeed(float s)	{ speed = s; return *this; }
+		float	GetSpeed() const { return speed; }
+		Camera& SetSpeed(float s) { speed = s; return *this; }
 
 	protected:
 		float	nearPlane;
@@ -96,10 +96,10 @@ namespace NCL {
 	class OrhographicCamera : public Camera {
 	public:
 		OrhographicCamera() {
-			left	= 0;
-			right	= 0;
-			top		= 0;
-			bottom	= 0;
+			left = 0;
+			right = 0;
+			top = 0;
+			bottom = 0;
 		}
 		~OrhographicCamera() = default;
 
@@ -115,7 +115,7 @@ namespace NCL {
 	class PerspectiveCamera : public Camera {
 	public:
 		PerspectiveCamera() {
-			fov = 45.0f;
+			fov = 30.0f;
 		}
 		~PerspectiveCamera() = default;
 

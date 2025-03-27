@@ -191,7 +191,12 @@ void Debug::DrawDebugMenu() {
 				ImGui::Separator();
 			}
 		}
-
+		if (ImGui::CollapsingHeader("Debug Buttons")) {
+			if (ImGui::Button("Load Level")) {
+				//TODO RYAN 
+				Debug::PrintDebugInfo({ "Loading level...", Vector4(1, 1, 1, 1) });
+			}
+		}
 
 		ImGui::End(); // Close the window
 	}

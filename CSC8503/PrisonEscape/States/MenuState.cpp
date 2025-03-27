@@ -242,7 +242,7 @@ void MenuState::DrawMainMenuPanel() {
 		}, 0.32f, 0.70f}  // Adjusted positions
 	};
 
-	ImGuiManager::DrawPanel("PRISON ESCAPE", buttons);
+	ImGuiManager::DrawPanel("SLIPPPY SAM", buttons);
 }
 
 
@@ -312,29 +312,26 @@ void MenuState::DrawSettingPanel() {
 void MenuState::DrawAudioSettingPanel() {
 	std::vector<PanelSlider> sliders = { {"Master Volume", &volume, 0, 100, 0.36f, 0.36f} };
 	GameBase::GetGameSettings()->SetVolume(volume);
+	std::vector<PanelCheckbox> checkboxes = {
+		{ "Fullscreen", &fullscreen, 0.36f, 0.46f },	 // Placed below the slider
+		{ "VSync", &vSync, 0.36f, 0.56f } // Placed below the fullscreen checkbox
+	};
+
 	auto backCallback = [this]() {
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("SettingPanel", [this]() {DrawSettingPanel(); });
 		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("AudioSettingPanel");
 		};
 
-	ImGuiManager::DrawPanel("Audio Settings", {}, sliders, backCallback);
+	ImGuiManager::DrawPanel("Audio Settings", {}, sliders, backCallback, "", checkboxes);
 }
 
 void MenuState::DrawVideoSettingPanel() {
 	std::vector<PanelSlider> sliders = { {"Brightness", &brightness, 0, 100, 0.36f, 0.36f} };
 	std::vector<PanelCheckbox> checkboxes = {
-	{ "VSync", &vSync, 0.36f, 0.46f } // Placed below the slider
+	{ "VSync", &vSync, 0.36f, 0.56f } // Placed below the fullscreen checkbox
 	};
 
-	if (vSync == true)
-	{
-		GameBase::GetGameBase()->GetRenderer()->SetVerticalSync(VerticalSyncState::VSync_ON);
-	}
-	else
-	{
-		GameBase::GetGameBase()->GetRenderer()->SetVerticalSync(VerticalSyncState::VSync_OFF);
-	}
-	Debug::PrintDebugInfo({ "Vysnc : " + std::to_string(vSync), Debug::RED });
+	SetVsync(vSync);
 
 	GameBase::GetGameSettings()->SetBrightness(brightness);
 	auto backCallback = [this]() {
@@ -450,7 +447,7 @@ void MenuState::DrawJoinPanel()
 	auto backCallback = [this]() {
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("MultiplayerPanel", [this]() { DrawMultiplayerPanel(); });
 		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("JoinPanel");
-	};
+		};
 
 	ImGuiManager::DrawPanel("Join Server", buttons, {}, backCallback);
 
@@ -838,3 +835,10 @@ void MenuState::DrawInviteAcceptedPanel(uint64_t lobbyID)
 		},
 		"Join Game", "Decline");
 }
+
+void MenuState::SetVsync(bool vsync)
+{
+	vSync = vsync;
+	GameBase::GetGameBase()->GetRenderer()->SetVerticalSync(vsync ? VerticalSyncState::VSync_ON : VerticalSyncState::VSync_OFF);
+}
+

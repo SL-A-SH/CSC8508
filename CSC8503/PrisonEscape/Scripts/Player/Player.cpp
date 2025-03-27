@@ -32,8 +32,8 @@ Player::~Player()
 }
 
 void Player::UpdateGame(float dt)
-{
-	UpdatePlayerMovement(dt);
+{   
+    UpdatePlayerMovement(dt);    
 }
 
 
@@ -68,7 +68,7 @@ void Player::UpdatePlayerMovement(float dt)
     Vector3 playerPosition = GetTransform().GetPosition();
     Camera& mainCamera = GameBase::GetGameBase()->GetWorld()->GetMainCamera();
 
-    Vector3 cameraOffset(0, 60.0f, 50.0f);
+    Vector3 cameraOffset(5.f, 40, 50.0f);
     mainCamera.SetPosition(playerPosition + cameraOffset);
 
     float forward = controller->GetAxis(2);
@@ -95,19 +95,24 @@ void Player::UpdatePlayerMovement(float dt)
     if (Window::GetKeyboard()->KeyDown(KeyCodes::SHIFT)) {
         sprintMultiplier = 3.0f; // Adjust the multiplier as needed
     }
-
-    Vector3 movement(0, 0, 0);
-    if (forward != 0.0f) {
-        movement += forwardVec * forward * GetPlayerSpeed() * sprintMultiplier;
+    if (Window::GetKeyboard()->KeyPressed(KeyCodes::E)) {
+       SetVisible(true);
+       SetActive(true);
     }
-    if (sidestep != 0.0f) {
-        movement += rightVec * sidestep * GetPlayerSpeed() * sprintMultiplier;
+    Vector3 movement(0, 0, 0);
+    if(Player::isActive){
+        if (forward != 0.0f) {
+            movement += forwardVec * forward * GetPlayerSpeed() * sprintMultiplier;
+        }
+        if (sidestep != 0.0f) {
+            movement += rightVec * sidestep * GetPlayerSpeed() * sprintMultiplier;
+        }
     }
     if (movement.Length() > 0.0f) {
         float angle = atan2(-movement.x, -movement.z);
         Quaternion targetOrientation = Quaternion::EulerAnglesToQuaternion(0, angle * 180.0f / M_PI, 0);
         Quaternion currentOrientation = GetTransform().GetOrientation();
-        Quaternion newOrientation = Quaternion::Slerp(currentOrientation, targetOrientation, dt * 2.0f); // Adjust the interpolation speed as needed
+        Quaternion newOrientation = Quaternion::Slerp(currentOrientation, targetOrientation, dt * 5.0f); // Adjust the interpolation speed as needed
         GetTransform().SetOrientation(newOrientation);
     }
 
@@ -151,7 +156,22 @@ void Player::UpdatePlayerMovement(float dt)
         }
     }
 }
+void Player::LockCameraAndMovement() {
+    if (!IsActive()) {
+        // Lock the camera
+        //GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetController(nullptr);
 
+        // Lock the movement
+        GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, 0));
+        GetPhysicsObject()->SetAngularVelocity(Vector3(0, 0, 0));
+    }
+    else {
+        // Unlock the camera
+        GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetController(*controller);
+
+        // Unlock the movement (no specific action needed, movement will be handled in UpdatePlayerMovement)
+    }
+}
 void Player::InitializeController()
 {
     controller = new KeyboardMouseController(*Window::GetKeyboard(), *Window::GetMouse());

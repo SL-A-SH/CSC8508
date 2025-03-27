@@ -35,6 +35,7 @@ namespace NCL {
 			void HandleSteamInvite(uint64_t friendSteamID);
 			void HandleSteamInviteAccepted(uint64_t lobbyID);
 			void JoinSteamLobby(uint64_t lobbyID);
+			void SetVsync(bool vsync);
 
 		private:
 			enum class ConnectionStage {
