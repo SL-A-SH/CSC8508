@@ -368,14 +368,22 @@ void GameLevelManager::AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const T
 		.SetPosition(enemyTransform.GetPosition())
 		.SetOrientation(enemyTransform.GetOrientation());
 
-	enemyObj.SetRenderObject(new RenderObject(&enemyObj.GetTransform(), mMeshList["Guard"], mTextureList["DefaultTexture"], mShaderList["Animation"]));
-	enemyObj.GetRenderObject()->SetAnimObject(new AnimationObject(AnimationObject::AnimationType::enemy, mAnimationList["PatrolWalk"]));
+	if (enemyObj.GetName().find("Camera") != std::string::npos) {
+		enemyObj.SetRenderObject(new RenderObject(&enemyObj.GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+		enemyObj.SetPhysicsObject(new PhysicsObject(&enemyObj.GetTransform(), enemyObj.GetBoundingVolume()));
+		enemyObj.GetPhysicsObject()->SetInverseMass(0);
+	}
+	else {
+		enemyObj.SetRenderObject(new RenderObject(&enemyObj.GetTransform(), mMeshList["Guard"], mTextureList["DefaultTexture"], mShaderList["Animation"]));
+		enemyObj.GetRenderObject()->SetAnimObject(new AnimationObject(AnimationObject::AnimationType::enemy, mAnimationList["PatrolWalk"]));
 
-	enemyObj.SetPhysicsObject(new PhysicsObject(&enemyObj.GetTransform(), enemyObj.GetBoundingVolume()));
+		enemyObj.SetPhysicsObject(new PhysicsObject(&enemyObj.GetTransform(), enemyObj.GetBoundingVolume()));
 
-	enemyObj.GetRenderObject()->SetMaterialTextures(mMeshMaterialsList["Guard"]);
+		enemyObj.GetRenderObject()->SetMaterialTextures(mMeshMaterialsList["Guard"]);
+		enemyObj.GetPhysicsObject()->SetInverseMass(PATROL_ENEMY_INVERSE_MASS);
+	}
 
-	enemyObj.GetPhysicsObject()->SetInverseMass(PATROL_ENEMY_INVERSE_MASS);
+
 	enemyObj.GetPhysicsObject()->InitSphereInertia();
 
 }
@@ -409,7 +417,7 @@ void GameLevelManager::AddComponentsToPursuitEnemy(PursuitEnemy& enemyObj, const
 		.SetPosition(enemyTransform.GetPosition())
 		.SetOrientation(enemyTransform.GetOrientation());
 
-	enemyObj.SetRenderObject(new RenderObject(&enemyObj.GetTransform(), mMeshList["Guard"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+	enemyObj.SetRenderObject(new RenderObject(&enemyObj.GetTransform(), mMeshList["Goat"], mTextureList["Chair2"], mShaderList["BasicShader"]));
 
 	enemyObj.SetPhysicsObject(new PhysicsObject(&enemyObj.GetTransform(), enemyObj.GetBoundingVolume()));
 
