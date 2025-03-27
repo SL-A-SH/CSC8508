@@ -125,7 +125,7 @@ void Player::UpdatePlayerMovement(float dt)
             static float lastJumpTime = -2.2f;
             float currentTime = Window::GetTimer().GetTotalTimeSeconds();
 
-            if (Window::GetKeyboard()->KeyPressed(KeyCodes::SPACE) && (currentTime - lastJumpTime >= 2.2f))
+            if (Window::GetKeyboard()->KeyPressed(KeyCodes::SPACE) && (currentTime - lastJumpTime >= 2.2f) && Player::isActive)
             {
                 movement.y += 8.0f;
                 currentVelocity.y = 20.0f;
@@ -159,22 +159,7 @@ void Player::UpdatePlayerMovement(float dt)
     }
     
 }
-void Player::LockCameraAndMovement(){
-    if (!IsActive()) {
-        // Lock the camera
-        //GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetController(nullptr);
 
-        // Lock the movement
-        GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, 0));
-        GetPhysicsObject()->SetAngularVelocity(Vector3(0, 0, 0));
-    }
-    else {
-        // Unlock the camera
-        GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetController(*controller);
-
-        // Unlock the movement (no specific action needed, movement will be handled in UpdatePlayerMovement)
-    }
-}
 void Player::InitializeController()
 {
     controller = new KeyboardMouseController(*Window::GetKeyboard(), *Window::GetMouse());
