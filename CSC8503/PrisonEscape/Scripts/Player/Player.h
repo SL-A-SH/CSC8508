@@ -34,6 +34,7 @@ namespace NCL {
 			float playerSpeed = 10.0f;
 			int health;
 			bool visible;
+			int score;
 			Vector3 playerSpawn;
 			AudioManager* audioManager; 
 
@@ -48,6 +49,9 @@ namespace NCL {
 
 			bool GetVisible() const { return visible; }
 			void SetVisible(bool v) { visible = v; }
+
+			int GetScore() const { return score; }
+			int SetScore(int s) { score = s; }
 
 			Vector3 GetSpawn() const { return playerSpawn; }
 			void SetSpawn(Vector3 s) { playerSpawn = s; }
