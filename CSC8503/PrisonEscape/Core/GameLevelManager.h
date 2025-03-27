@@ -112,6 +112,7 @@ namespace NCL {
 			GameObject* AddSoapToWorld(Vector3 wallSize, const Vector3& position, float x, float y, float z);
 			GameObject* AddTableToWorld(Vector3 wallSize, const Vector3& position, float x, float y, float z);
 			GameObject* AddComputerToWorld(Vector3 wallSize, const Vector3& position, float x, float y, float z);
+			GameObject* AddExitToWorld(Vector3 wallSize, const Vector3& position, float x, float y, float z);
 			GameObject* AddFloorToWorld(Vector3 size, const Vector3& position);
 			GameObject* AddBoxToWorld(const Vector3& position, Vector3 dimensions, const std::string name, float inverseMass = 10.0f);
 			GameObject* AddButtonToWorld(Vector3 size, const Vector3& position, const std::string name, Mesh* mesh, Shader* shader, Texture* texture);
@@ -127,6 +128,7 @@ namespace NCL {
 			void CreateComputer(const InGameObject& obj);
 			void CreateCoin(const InGameObject& obj);
 			void CreateSoap(const InGameObject& obj);
+			void CreateExit(const InGameObject& obj);
 			void CreateTable(const InGameObject& obj);
 			void CreateButton(const InGameObject& obj);
 			void CreateDoorButton(const InGameObject& obj, std::unordered_map<std::string, Door*>& doorMap);
