@@ -73,6 +73,8 @@ namespace NCL {
 			Player* GetPlayerTwo() { return playerTwo; }
 			void SetLevelToLoad(string levelName) { mLevelToLoad = levelName; }
 
+			std::vector<string> LoadingScreenText = { "One Kiran Added", "Diddy Spawned", "Soaps Added", "Supreme","One PS5 Renderer Added", "I ran out of ideas", "40k debt" };
+
 		private:
 			GameWorld* mWorld;
 			static GameLevelManager* manager;
@@ -144,7 +146,7 @@ namespace NCL {
 			void CreateNormalDoor(const InGameObject& obj);
 			Door* CreateButtonDoor(const InGameObject& obj);
 
-			
+
 			void CreateHidingArea(const InGameObject& obj);
 
 			void DrawLoadingScreen();
@@ -152,6 +154,8 @@ namespace NCL {
 			bool isMultiplayer;
 			bool isServer;
 			bool isPlaying;
+
+
 		};
 	}
 }
