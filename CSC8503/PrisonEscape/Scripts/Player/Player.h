@@ -17,7 +17,7 @@ namespace NCL {
 			void UpdatePlayerMovement(float dt);
 
 			void InitializeController();
-
+			void LockCameraAndMovement();
 
 		protected:
 			KeyboardMouseController* controller;
@@ -33,6 +33,8 @@ namespace NCL {
 		private:
 			float playerSpeed = 10.0f;
 			int health;
+			bool visible;
+			int score;
 			Vector3 playerSpawn;
 			AudioManager* audioManager; 
 
@@ -44,6 +46,12 @@ namespace NCL {
 
 			int GetHealth() const { return health; }
 			void SetHealth(int h) { health = h; }
+
+			bool GetVisible() const { return visible; }
+			void SetVisible(bool v) { visible = v; }
+
+			int GetScore() const { return score; }
+			void SetScore(int s) { score = s; }
 
 			Vector3 GetSpawn() const { return playerSpawn; }
 			void SetSpawn(Vector3 s) { playerSpawn = s; }

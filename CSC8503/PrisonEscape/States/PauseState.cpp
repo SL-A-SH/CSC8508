@@ -70,9 +70,8 @@ void PauseState::DrawPauseMenuPanel() {
 		});
 
 	buttons.push_back({
-		"Exit to Main Menu", [this]() {
-			this->buttonClicked = ButtonClicked::Exit;
-			GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("PauseMenuPanel");
+		"Quit Game", [this]() {
+		GameBase::GetGameBase()->QuitGame();
 		}, .32f, gameConfig && gameConfig->networkConfig.isUsingSteam ? 0.70f : 0.65f
 		});
 

@@ -27,8 +27,12 @@ namespace NCL {
                 }
             }
 
-            bool powerOff;
-            bool visible;
+            void SetClientControlled(bool isClient) {
+                clientControlled = isClient;
+            }
+
+            bool GetPower() { return power; }
+            void SetPower(bool p) { power = p; }
 
         protected:
             void InitBehaviourTree();
@@ -42,6 +46,7 @@ namespace NCL {
 
             float warningTimer;
             float sleepTimer;
+            bool power;
 
             const float VISION_RANGE = 15.0f;
 			const float MAX_SLEEP_TIME = 3.0f;
@@ -52,6 +57,11 @@ namespace NCL {
                 CAUGHT
             };
             AIState currentState;
+
+        private:
+            bool clientControlled = false;
         };
+
+
     }
 }
