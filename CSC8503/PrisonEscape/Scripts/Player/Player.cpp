@@ -37,11 +37,8 @@ void Player::UpdateGame(float dt)
 }
 
 void Player::OnCollisionBegin(GameObject* other) {
-    std::cout << "Collision detected with: " << other->GetName() << std::endl;
-
-
     if (other->GetName() == "Coin") {
-        SetScore(GetScore() + 1);
+        SetScore(GetScore() + 10);
         GameBase::GetGameBase()->GetWorld()->RemoveGameObject(other);
         std::cout << "Score is: " << GetScore() << std::endl;
     }

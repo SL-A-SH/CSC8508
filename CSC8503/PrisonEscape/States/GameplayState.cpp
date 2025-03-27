@@ -190,8 +190,8 @@ void GamePlayState::DrawHUDPanel() {
 	// Set next cursor position for Timer text
 	ImGui::SetCursorPos(ImVec2(25, 75)); // Set cursor to below the hearts
 
-	// Display Timer
-	ImGui::Text(("Score: " + std::to_string(score)).c_str(), 20.0f);
+	// Display Score
+	ImGui::Text(("Score: " + std::to_string(manager->GetPlayerOne()->GetScore())).c_str(), 20.0f);
 
 
 
@@ -337,6 +337,7 @@ void GamePlayState::RegisterClientPacketHandlers() {
 
 void GamePlayState::DrawFriendsPanel()
 {
+	Window::GetWindow()->ShowOSPointer(true);
 	// Get the Steam manager instance
 	SteamManager* steamManager = SteamManager::GetInstance();
 
@@ -357,12 +358,13 @@ void GamePlayState::DrawFriendsPanel()
 		}
 	}
 
-
+	Window::GetWindow()->ShowOSPointer(false);
 	DrawFriendsListWindow(onlineFriends);
 }
 
 void GamePlayState::DrawFriendsListWindow(const std::vector<std::pair<std::string, uint64_t>>& onlineFriends)
 {
+	Window::GetWindow()->ShowOSPointer(true);
 	// Get the screen size
 	ImVec2 screenSize = ImGui::GetIO().DisplaySize;
 
@@ -439,7 +441,7 @@ void GamePlayState::DrawFriendsListWindow(const std::vector<std::pair<std::strin
 
 			ImGui::PopFont();
 		}
-
+		Window::GetWindow()->ShowOSPointer(false);
 		ImGui::End(); // End the ImGui window
 	}
 }
