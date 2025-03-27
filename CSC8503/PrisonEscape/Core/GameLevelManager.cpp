@@ -505,29 +505,6 @@ GameObject* GameLevelManager::AddJailWallToWorld(Vector3 dimensions, const Vecto
 	return wall;
 }
 
-GameObject* GameLevelManager::AddExitToWorld(Vector3 dimensions, const Vector3& position, float x, float y, float z) {
-
-	GameObject* exit = new GameObject("Exit");
-
-	Quaternion newOrientation = Quaternion::EulerAnglesToQuaternion(x, y, z);
-	exit->GetTransform().SetOrientation(newOrientation);
-
-	AABBVolume* volume = new AABBVolume(dimensions * 0.5f);
-	exit->SetBoundingVolume((CollisionVolume*)volume);
-	exit->GetTransform()
-		.SetScale(dimensions)
-		.SetPosition(position);
-
-	exit->SetRenderObject(new RenderObject(&exit->GetTransform(), mMeshList["Cube"], mTextureList["Exit"], mShaderList["BasicShader"]));
-	exit->SetPhysicsObject(new PhysicsObject(&exit->GetTransform(), exit->GetBoundingVolume()));
-
-	exit->GetPhysicsObject()->SetInverseMass(0);
-	exit->GetPhysicsObject()->InitCubeInertia();
-
-	GameBase::GetGameBase()->GetWorld()->AddGameObject(exit);
-
-	return exit;
-}
 
 GameObject* GameLevelManager::AddChairToWorld(Vector3 dimensions, const Vector3& position, float x, float y, float z) {
 
@@ -625,30 +602,6 @@ GameObject* GameLevelManager::AddCoinToWorld(Vector3 dimensions, const Vector3& 
 	GameBase::GetGameBase()->GetWorld()->AddGameObject(Coin);
 
 	return Coin;
-}
-
-GameObject* GameLevelManager::AddSoapToWorld(Vector3 dimensions, const Vector3& position, float x, float y, float z) {
-
-	GameObject* Soap = new GameObject("Soap");
-
-	Quaternion newOrientation = Quaternion::EulerAnglesToQuaternion(x, y, z);
-	Soap->GetTransform().SetOrientation(newOrientation);
-
-	AABBVolume* volume = new AABBVolume(dimensions * 1.0f);
-	Soap->SetBoundingVolume((CollisionVolume*)volume);
-	Soap->GetTransform()
-		.SetScale(dimensions)
-		.SetPosition(position);
-
-	Soap->SetRenderObject(new RenderObject(&Soap->GetTransform(), mMeshList["Sphere"], mTextureList["Chair2"], mShaderList["BasicShader"]));
-	Soap->SetPhysicsObject(new PhysicsObject(&Soap->GetTransform(), Soap->GetBoundingVolume()));
-
-	Soap->GetPhysicsObject()->SetInverseMass(0);
-	Soap->GetPhysicsObject()->InitCubeInertia();
-
-	GameBase::GetGameBase()->GetWorld()->AddGameObject(Soap);
-
-	return Soap;
 }
 
 GameObject* GameLevelManager::AddComputerToWorld(Vector3 dimensions, const Vector3& position, float x, float y, float z) {
@@ -786,7 +739,7 @@ GameObject* GameLevelManager::AddExitToWorld(Exit* exit, Vector3 size, const Vec
 
 	exit->GetTransform().SetScale(size).SetPosition(position);
 
-	exit->SetRenderObject(new RenderObject(&exit->GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+	exit->SetRenderObject(new RenderObject(&exit->GetTransform(), mMeshList["Cube"], mTextureList["Exit"], mShaderList["BasicShader"]));
 	exit->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));  // Red when inactive
 
 	exit->SetPhysicsObject(new PhysicsObject(&exit->GetTransform(), exit->GetBoundingVolume()));
@@ -928,10 +881,6 @@ void GameLevelManager::CreateCoin(const InGameObject& obj) {
 	AddCoinToWorld(obj.dimensions, obj.position, obj.orientation.x, obj.orientation.y, obj.orientation.z);
 }
 
-void GameLevelManager::CreateSoap(const InGameObject& obj) {
-	AddSoapToWorld(obj.dimensions, obj.position, obj.orientation.x, obj.orientation.y, obj.orientation.z);
-}
-
 void GameLevelManager::CreateTable(const InGameObject& obj) {
 	AddTableToWorld(obj.dimensions, obj.position, obj.orientation.x, obj.orientation.y, obj.orientation.z);
 }
@@ -940,9 +889,6 @@ void GameLevelManager::CreateComputer(const InGameObject& obj) {
 	AddComputerToWorld(obj.dimensions, obj.position, obj.orientation.x, obj.orientation.y, obj.orientation.z);
 }
 
-void GameLevelManager::CreateExit(const InGameObject& obj) {
-	AddExitToWorld(obj.dimensions, obj.position, obj.orientation.x, obj.orientation.y, obj.orientation.z);
-}
 
 void GameLevelManager::CreateFloor(const InGameObject& obj) {
 	AddFloorToWorld(obj.dimensions, obj.position);
