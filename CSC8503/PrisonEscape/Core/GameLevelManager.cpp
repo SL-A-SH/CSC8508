@@ -36,9 +36,9 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	this->isServer = isServer;
 
 	InitAssets();
-	std::cout << "The Level to load is at: " << mLevelList["Level2"] << std::endl;
+	std::cout << "The Level to load is at: " << mLevelList["Level3"] << std::endl;
 	boxNumber = 0;
-	loadMap(mLevelList["Level2"]);
+	loadMap(mLevelList["Level3"]);
 	InitAnimationObjects();
 }
 
