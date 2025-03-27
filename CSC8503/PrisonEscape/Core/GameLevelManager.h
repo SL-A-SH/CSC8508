@@ -32,6 +32,7 @@ namespace NCL {
 		class jsonParser;
 		class GameTechRenderer;
 		class AnimationController;
+		class Exit;
 
 		class GameLevelManager {
 		public:
@@ -63,7 +64,7 @@ namespace NCL {
 			Level* GetCurrentLevel() { return mCurrentLevel; }
 			void SetCurrentLevel(Level* level) { mCurrentLevel = level; }
 			void AddLevel(Level* newLevel) { mLevelStack.push(newLevel); }
-
+			void ClearLevel();
 			AnimationController* GetAnimator() { return mAnimator; }
 
 			static GameLevelManager* GetGameLevelManager() { return manager; }
@@ -81,8 +82,8 @@ namespace NCL {
 			Vector3 P1Position;
 			Vector3 P2Position;
 
-			Player* playerOne;
-			Player* playerTwo;
+			Player* playerOne = nullptr;
+			Player* playerTwo = nullptr;
 
 			string mLevelToLoad = "Level1";
 
@@ -123,6 +124,9 @@ namespace NCL {
 			GameObject* AddButtonnToWorld(ButtonTrigger* button, const Vector3& position, Door* linkedDoor);
 			GameObject* AddPressableDoorToWorld(PressableDoor* door, Vector3 size, const Vector3& position, float x, float y, float z);
 			GameObject* AddDoorToWorld(Door* door, Vector3 size, const Vector3& position, float x, float y, float z);
+			GameObject* AddExitToWorld(Exit* exit, Vector3 size, const Vector3& position);
+			GameObject* AddSoapToWorld(Soap* soap, Vector3 size, const Vector3& position);
+
 
 			void AddHidingAreaToWorld(const Vector3& position, const Vector3& size, const std::string name);
 			void LogObjectPlacement(const InGameObject& obj);
@@ -141,6 +145,9 @@ namespace NCL {
 			void CreateFloor(const InGameObject& obj);
 			void CreateNormalDoor(const InGameObject& obj);
 			Door* CreateButtonDoor(const InGameObject& obj);
+			void CreateExit(const InGameObject& obj);
+			void CreateSoap(const InGameObject& obj);
+			
 			void CreateHidingArea(const InGameObject& obj);
 
 			void DrawLoadingScreen();

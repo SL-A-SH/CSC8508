@@ -1,7 +1,7 @@
 #include "PuzzleT.h"
 #include "PhysicsObject.h"
 #include "RenderObject.h"
-
+#include "../CSC8503/PrisonEscape/Core/GameLevelManager.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -47,6 +47,7 @@ void Door::Open() {
 		audioManager->PlaySound(audioManager->soundFile6);
 
 	}
+
 	Vector3 newPosition = GetTransform().GetPosition() + Vector3(0, -15, 0); 
 	GetTransform().SetPosition(newPosition);
 	
@@ -72,7 +73,6 @@ void Door::Update(float dt) {
 }
 
 
-
 ButtonTrigger::ButtonTrigger(const std::string& name) : GameObject(name) {
 	isPressed = false;
 	linkedDoor = nullptr;
@@ -94,8 +94,6 @@ void ButtonTrigger::OnCollisionBegin(GameObject* otherObject) {
 	}
 }
 
-
-
 void ButtonTrigger::SetLinkedDoor(Door* door) {
 	linkedDoor = door;
 }
@@ -109,4 +107,30 @@ void PressableDoor::OnCollisionBegin(GameObject* otherObject) {
 		isPressed = true;
 		Open();
 	}
+}
+
+Exit::Exit() {}
+
+
+
+void Exit::OnCollisionBegin(GameObject* otherObject) {
+	if (dynamic_cast<Player*>(otherObject)) {
+		GameLevelManager* levelManager = GameLevelManager::GetGameLevelManager();
+		if (levelManager) {
+			levelManager->ClearLevel(); 
+			std::cout << "player name: " + levelManager->GetPlayerOne()->GetName() + "\n";
+			levelManager->loadMap("levelTest.json"); 
+		}
+	}
+}
+Soap::Soap() {}
+void Soap::OnCollisionBegin(GameObject* otherObject) {
+	
+	Player* player = dynamic_cast<Player*>(otherObject);
+	if (player) {
+		player->sprintMultiplier += 1.0f;  // Increase sprint speed by 50%
+		std::cout << "Player's sprint speed increased!" << std::endl;
+		GameBase::GetGameBase()->GetWorld()->RemoveGameObject(this);
+	}
+
 }

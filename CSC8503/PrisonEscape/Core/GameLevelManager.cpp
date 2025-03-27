@@ -17,6 +17,9 @@
 #include "PrisonEscape/Scripts/puzzle/HidingArea.h"
 #include "PrisonEscape/Scripts/PursuitEnemy/PursuitEnemy.h"
 #include "../CSC8503/PrisonEscape/Scripts/CameraEnemy/CameraEnemy.h"
+#include "../CSC8503/PrisonEscape/Scripts/puzzle/puzzleT.h"
+
+
 #include "PrisonEscape/Core/ImGuiManager.h"
 using namespace NCL;
 using namespace CSC8503;
@@ -44,6 +47,7 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	
 	std::cout << "The Level to load is at: " << mLevelList[levelToLoad] << std::endl;
 	boxNumber = 0;
+	// loadMap(mLevelList["Level2"]);
 	loadMap(mLevelList[levelToLoad]);
 	InitAnimationObjects();
 	GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("LoadingPanel");
@@ -773,6 +777,40 @@ GameObject* GameLevelManager::AddDoorToWorld(Door* door, Vector3 size, const Vec
 	return door;
 }
 
+GameObject* GameLevelManager::AddExitToWorld(Exit* exit, Vector3 size, const Vector3& position) {
+	AABBVolume* volume = new AABBVolume(size);
+
+	exit->SetBoundingVolume((CollisionVolume*)volume);
+
+	exit->GetTransform().SetScale(size).SetPosition(position);
+
+	exit->SetRenderObject(new RenderObject(&exit->GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+	exit->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));  // Red when inactive
+
+	exit->SetPhysicsObject(new PhysicsObject(&exit->GetTransform(), exit->GetBoundingVolume()));
+	exit->GetPhysicsObject()->SetInverseMass(0); // Static object
+	exit->GetPhysicsObject()->InitCubeInertia();
+
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(exit);
+	return exit;
+}
+GameObject* GameLevelManager::AddSoapToWorld(Soap* soap, Vector3 size, const Vector3& position) {
+	AABBVolume* volume = new AABBVolume(size);
+
+	soap->SetBoundingVolume((CollisionVolume*)volume);
+
+	soap->GetTransform().SetScale(size).SetPosition(position);
+
+	soap->SetRenderObject(new RenderObject(&soap->GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+	soap->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));  // Red when inactive
+
+	soap->SetPhysicsObject(new PhysicsObject(&soap->GetTransform(), soap->GetBoundingVolume()));
+	soap->GetPhysicsObject()->SetInverseMass(0); // Static object
+	soap->GetPhysicsObject()->InitCubeInertia();
+
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(soap);
+	return soap;
+}
 GameObject* GameLevelManager::AddButtonnToWorld(ButtonTrigger* button, const Vector3& position, Door* linkedDoor) {
 	Vector3 buttonSize(2.0f, 0.3f, 2.0f);
 	AABBVolume* volume = new AABBVolume(buttonSize);
@@ -908,7 +946,18 @@ void GameLevelManager::CreateFloor(const InGameObject& obj) {
 	AddFloorToWorld(obj.dimensions, obj.position);
 }
 
+void GameLevelManager::CreateExit(const InGameObject& obj) {
+	Exit* newExit = new Exit();
+	
+	AddExitToWorld(newExit, obj.dimensions, obj.position);
+	
+}
+void GameLevelManager::CreateSoap(const InGameObject& obj) {
+	Soap* newSoap = new Soap();
 
+	AddSoapToWorld(newSoap, obj.dimensions, obj.position);
+
+}
 void GameLevelManager::CreateNormalDoor(const InGameObject& obj) {
 	PressableDoor* newDoor = new PressableDoor();
 	newDoor->SetTextures(mTextureList["DefaultTexture"], mTextureList["DefaultTexture"]);
@@ -935,6 +984,7 @@ void GameLevelManager::LogObjectPlacement(const InGameObject& obj) {
 
 // map loading from json file
 void GameLevelManager::loadMap(std::string levelToLoad) {
+	
 	int level;
 	std::vector<InGameObject> objects;
 	std::vector<Enemy> enemies;
@@ -1009,14 +1059,35 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 				CreateHidingArea(obj);
 			}
 
+			else if (obj.type == "Exit") {
+				CreateExit(obj);
+			}
+
+			else if (obj.type == "Soap") {
+				CreateSoap(obj);
+				
+			}
+
 			else if (obj.type.find("Player") != std::string::npos) {
-				if (obj.type == "Player1") {
-					Transform playerOneTransform;
-					playerOne = AddPlayerToWorld(playerOneTransform.SetPosition(obj.position), "playerOne");
-				}
-				else if (obj.type == "Player2" && isMultiplayer) {
-					Transform playerTwoTransform;
-					playerTwo = AddPlayerToWorld(playerTwoTransform.SetPosition(obj.position), "playerTwo");
+				if (!playerOne && !playerTwo) {
+					if (obj.type == "Player1") {
+						Transform playerOneTransform;
+						playerOne = AddPlayerToWorld(playerOneTransform.SetPosition(obj.position), "playerOne");
+					}
+					else if (obj.type == "Player2" && isMultiplayer) {
+						Transform playerTwoTransform;
+						playerTwo = AddPlayerToWorld(playerTwoTransform.SetPosition(obj.position), "playerTwo");
+					}
+				} 
+				else {
+					if (obj.type == "Player1") {
+						playerOne->SetSpawn(obj.position);
+						playerOne->GetTransform().SetPosition(obj.position);
+					}
+					else if (obj.type == "Player2" && isMultiplayer) {
+						playerTwo->SetSpawn(obj.position);
+						playerTwo->GetTransform().SetPosition(obj.position);
+					}
 				}
 			}
 
@@ -1028,11 +1099,25 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 		for (const auto& enemy : enemies) {
 			AddPatrolEnemyToWorld("PatrolEnemy", enemy.waypoints, enemy.position, playerOne);
 		}
-
 	}
 	else {
 		std::cerr << "Can't load level \n";
 	}
+}
+void GameLevelManager::ClearLevel() {
+	// Output for debugging
+	std::cout << "Clearing the level..." << std::endl;
+
+	// Remove all updatable objects from the world
+	for (auto& obj : GameBase::GetGameBase()->GetWorld()->getGameObjects()) {
+		if (obj->GetName() == "playerOne" || obj->GetName() == "playerTwo") {
+			continue;
+		} else { 
+			GameBase::GetGameBase()->GetWorld()->RemoveGameObject(obj); 
+		}
+	}
+
+	std::cout << "Level cleared. Ready for next level." << std::endl;
 }
 
 void GameLevelManager::DrawLoadingScreen() {
