@@ -115,7 +115,8 @@ void Exit::OnCollisionBegin(GameObject* otherObject) {
 		GameLevelManager* levelManager = GameLevelManager::GetGameLevelManager();
 		if (levelManager) {
 			levelManager->ClearLevel(); // Clear current level
-			levelManager->loadMap("levelTest.json"); // Load the next level
+			std::cout << "player name: " + levelManager->GetPlayerOne()->GetName() + "\n";
+			levelManager->loadMap("level1.json"); // Load the next level
 		}
 	}
 }

@@ -67,7 +67,6 @@ void PatrolEnemy::InitBehaviourTree() {
 
     BehaviourAction* patrolAction = new BehaviourAction("PATROL",
         [&](float dt, BehaviourState state) -> BehaviourState {
-            std::cout << "patrol\n";
             if (currentState != PATROL) {
                 return Failure;
             }

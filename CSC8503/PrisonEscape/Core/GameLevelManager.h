@@ -81,8 +81,8 @@ namespace NCL {
 			Vector3 P1Position;
 			Vector3 P2Position;
 
-			Player* playerOne;
-			Player* playerTwo;
+			Player* playerOne = nullptr;
+			Player* playerTwo = nullptr;
 
 			// for handling multiple buttons/boxes in a level
 			int boxNumber;

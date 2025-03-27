@@ -3,6 +3,7 @@
 #include "Constraint.h"
 #include "CollisionDetection.h"
 #include "Camera.h"
+#include "../CSC8503/PrisonEscape/Core/GameBase.h"
 
 
 using namespace NCL;
@@ -19,7 +20,13 @@ GameWorld::~GameWorld()	{
 }
 
 void GameWorld::Clear() {
-	gameObjects.clear();
+	for (auto& obj : gameObjects) {
+		if (obj->GetName() == "playerOne" || obj->GetName() == "playerTwo") {
+			continue;
+		}
+		else { GameBase::GetGameBase()->GetWorld()->RemoveGameObject(obj); }
+	}
+	// gameObjects.clear();
 	constraints.clear();
 	worldIDCounter		= 0;
 	worldStateCounter	= 0;

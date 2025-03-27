@@ -39,7 +39,7 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	InitAssets();
 	std::cout << "The Level to load is at: " << mLevelList["Level1"] << std::endl;
 	boxNumber = 0;
-	loadMap(mLevelList["Level1"]);
+	loadMap(mLevelList["Level2"]);
 	InitAnimationObjects();
 }
 
@@ -743,8 +743,12 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 				CreateExit(obj);
 			}
 
+			else if (obj.type == "Soap") {
+				continue;
+			}
+
 			else if (obj.type.find("Player") != std::string::npos) {
-				if (!playerOne || !playerTwo) {
+				if (!playerOne && !playerTwo) {
 					if (obj.type == "Player1") {
 						Transform playerOneTransform;
 						playerOne = AddPlayerToWorld(playerOneTransform.SetPosition(obj.position), "playerOne");
@@ -772,7 +776,6 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 		for (const auto& enemy : enemies) {
 			AddPatrolEnemyToWorld(enemy.name, enemy.waypoints, enemy.position, playerOne);
 		}
-
 	}
 	else {
 		std::cerr << "Can't load level \n";
@@ -783,34 +786,41 @@ void GameLevelManager::ClearLevel() {
 	std::cout << "Clearing the level..." << std::endl;
 
 	// Remove all updatable objects from the world
-	for (auto& obj : mUpdatableObjectList) {
-		GameBase::GetGameBase()->GetWorld()->RemoveGameObject(obj);
+	for (auto& obj : GameBase::GetGameBase()->GetWorld()->getGameObjects()) {
+		if (obj->GetName() == "playerOne" || obj->GetName() == "playerTwo") {
+			continue;
+		} else { 
+			GameBase::GetGameBase()->GetWorld()->RemoveGameObject(obj); 
+		}
 	}
 
-	// Clear the updatable object list
-	mUpdatableObjectList.clear();
-
-	// Remove all other game objects and resources related to the level
-	// Clear specific lists
-	buttons.clear();
-	buttonDoors.clear();
-	pressDoors.clear();
-	boxes.clear();
-	pressDoors.clear();  // Duplicate clear, you can remove if unnecessary
-	buttonss.clear();
+	// GameBase::GetGameBase()->GetWorld()->Clear();
 
 
-	// Optionally, clear resources that might be reused or need reinitialization
-	// Clear textures, meshes, or shaders if necessary for a fresh load
-	// For example:
-	// mMeshList.clear();
-	// mTextureList.clear();
-	// mShaderList.clear();
+	//// Clear the updatable object list
+	//mUpdatableObjectList.clear();
 
-	// Clear other global game state if needed (camera, environment, etc.)
-	// Example:
-	// mCamera.Clear();  // If you have a camera object, clear its state
-	// mEnvironment.Clear();  // If you have environmental objects, clear them
+	//// Remove all other game objects and resources related to the level
+	//// Clear specific lists
+	//buttons.clear();
+	//buttonDoors.clear();
+	//pressDoors.clear();
+	//boxes.clear();
+	//pressDoors.clear();  // Duplicate clear, you can remove if unnecessary
+	//buttonss.clear();
+
+
+	//// Optionally, clear resources that might be reused or need reinitialization
+	//// Clear textures, meshes, or shaders if necessary for a fresh load
+	//// For example:
+	//// mMeshList.clear();
+	//// mTextureList.clear();
+	//// mShaderList.clear();
+
+	//// Clear other global game state if needed (camera, environment, etc.)
+	//// Example:
+	//// mCamera.Clear();  // If you have a camera object, clear its state
+	//// mEnvironment.Clear();  // If you have environmental objects, clear them
 
 	std::cout << "Level cleared. Ready for next level." << std::endl;
 }
