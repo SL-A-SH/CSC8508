@@ -78,6 +78,7 @@ void PatrolEnemy::InitBehaviourTree() {
             SetObjectAnimationState(Walk);
             Vector3 targetPoint = patrolPoints[currentPatrolPoint];
             Vector3 direction = targetPoint - transform.GetPosition();
+           
             float distance = Vector::Length(direction);
 
             if (distance < 1.0f) {
@@ -97,7 +98,13 @@ void PatrolEnemy::InitBehaviourTree() {
 
             Vector3 currentVel = GetPhysicsObject()->GetLinearVelocity();
             GetPhysicsObject()->AddForce(-currentVel * 10.0f);
-
+            if (direction.Length() > 0.0f) {
+                float angle = atan2(-direction.x, -direction.z);
+                Quaternion targetOrientation = Quaternion::EulerAnglesToQuaternion(0, angle * 180.0f / M_PI, 0);
+                Quaternion currentOrientation = GetTransform().GetOrientation();
+                Quaternion newOrientation = Quaternion::Slerp(currentOrientation, targetOrientation, dt * 5.0f); // Adjust the interpolation speed as needed
+                GetTransform().SetOrientation(newOrientation);
+            }
             return Ongoing;
         });
 
