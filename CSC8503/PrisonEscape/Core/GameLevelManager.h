@@ -94,6 +94,7 @@ namespace NCL {
 			std::vector<PressableDoor*>pressDoors;
 			std::vector<ButtonTrigger*> buttonss;
 			std::stack<Level*> mLevelStack;
+
 			AnimationController* mAnimator;
 
 			vector<GameObject*> mUpdatableObjectList;
