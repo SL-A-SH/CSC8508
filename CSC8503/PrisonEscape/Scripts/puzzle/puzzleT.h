@@ -55,5 +55,14 @@ namespace NCL {
 		private:
 			bool isPressed;
 		};
+
+		class Exit : public GameObject {
+		public:
+			Exit();
+			~Exit() = default;
+
+			void OnCollisionBegin(GameObject* otherObject) override;
+			
+		};
 	}
 }

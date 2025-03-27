@@ -1,7 +1,7 @@
 #include "PuzzleT.h"
 #include "PhysicsObject.h"
 #include "RenderObject.h"
-
+#include "../CSC8503/PrisonEscape/Core/GameLevelManager.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -47,7 +47,7 @@ void Door::Open() {
 		audioManager->PlaySound(audioManager->soundFile6);
 
 	}
-	Vector3 newPosition = GetTransform().GetPosition() + Vector3(0, 5, 0); 
+	Vector3 newPosition = GetTransform().GetPosition() + Vector3(0, 10, 0); 
 	GetTransform().SetPosition(newPosition);
 	
 }
@@ -72,7 +72,6 @@ void Door::Update(float dt) {
 }
 
 
-
 ButtonTrigger::ButtonTrigger(const std::string& name) : GameObject(name) {
 	isPressed = false;
 	linkedDoor = nullptr;
@@ -94,8 +93,6 @@ void ButtonTrigger::OnCollisionBegin(GameObject* otherObject) {
 	}
 }
 
-
-
 void ButtonTrigger::SetLinkedDoor(Door* door) {
 	linkedDoor = door;
 }
@@ -108,5 +105,17 @@ void PressableDoor::OnCollisionBegin(GameObject* otherObject) {
 	if (!isPressed && (otherObject->GetName() == "playerOne" || otherObject->GetName() == "playerTwo")) {
 		isPressed = true;
 		Open();
+	}
+}
+
+Exit::Exit() {}
+
+void Exit::OnCollisionBegin(GameObject* otherObject) {
+	if (dynamic_cast<Player*>(otherObject)) { // Check if colliding object is a Player
+		GameLevelManager* levelManager = GameLevelManager::GetGameLevelManager();
+		if (levelManager) {
+			levelManager->ClearLevel(); // Clear current level
+			levelManager->loadMap("levelTest.json"); // Load the next level
+		}
 	}
 }

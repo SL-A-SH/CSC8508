@@ -32,6 +32,7 @@ namespace NCL {
 		class jsonParser;
 		class GameTechRenderer;
 		class AnimationController;
+		class Exit;
 
 		class GameLevelManager {
 		public:
@@ -63,7 +64,7 @@ namespace NCL {
 			Level* GetCurrentLevel() { return mCurrentLevel; }
 			void SetCurrentLevel(Level* level) { mCurrentLevel = level; }
 			void AddLevel(Level* newLevel) { mLevelStack.push(newLevel); }
-
+			void ClearLevel();
 			AnimationController* GetAnimator() { return mAnimator; }
 			
 			static GameLevelManager* GetGameLevelManager() { return manager; }
@@ -111,6 +112,8 @@ namespace NCL {
 			GameObject* AddButtonnToWorld(ButtonTrigger* button, const Vector3& position, Door* linkedDoor);
 			GameObject* AddPressableDoorToWorld(PressableDoor* door, Vector3 size, const Vector3& position, float x, float y, float z);
 			GameObject* AddDoorToWorld(Door* door, Vector3 size, const Vector3& position, float x, float y, float z);
+			GameObject* AddExitToWorld(Exit* exit, Vector3 size, const Vector3& position);
+
 
 			void LogObjectPlacement(const InGameObject& obj);
 			void CreateWall(const InGameObject& obj);
@@ -120,7 +123,7 @@ namespace NCL {
 			void CreateFloor(const InGameObject& obj);
 			void CreateNormalDoor(const InGameObject& obj);
 			Door* CreateButtonDoor(const InGameObject& obj);
-
+			void CreateExit(const InGameObject& obj);
 			
 			bool isMultiplayer;
 			bool isServer;

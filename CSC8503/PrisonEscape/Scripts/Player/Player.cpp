@@ -115,8 +115,8 @@ void Player::UpdatePlayerMovement(float dt)
 
             if (Window::GetKeyboard()->KeyPressed(KeyCodes::SPACE) && (currentTime - lastJumpTime >= 2.2f))
             {
-                movement.y += 10.0f;
-                currentVelocity.y = 35.0f;
+                movement.y += 8.0f;
+                currentVelocity.y = 20.0f;
                 lastJumpTime = currentTime;
                 audioManager->PlaySound(audioManager->soundFile10);
             }
@@ -132,7 +132,7 @@ void Player::UpdatePlayerMovement(float dt)
     
     if (isIdle) {
         SetObjectAnimationState(Idle);
-        if (audioManager->IsPlaying(audioManager->soundFile8)) { // Ensure sound isn't already playing
+        if (!audioManager->IsPlaying(audioManager->soundFile11)) { // Ensure sound isn't already playing
             audioManager->StopSound(audioManager->soundFile8);
             audioManager->PlaySound(audioManager->soundFile11);
         }

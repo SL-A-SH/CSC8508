@@ -247,7 +247,7 @@ void MenuState::DrawMainMenuPanel() {
 		}, 0.32f, 0.70f}  // Adjusted positions
 	};
 
-	ImGuiManager::DrawPanel("PRISON ESCAPE", buttons);
+	ImGuiManager::DrawPanel("SLIPPY SAM", buttons);
 }
 
 

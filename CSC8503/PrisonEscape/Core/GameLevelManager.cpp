@@ -17,6 +17,7 @@
 #include "PrisonEscape/Scripts/puzzle/HidingArea.h"
 #include "PrisonEscape/Scripts/PursuitEnemy/PursuitEnemy.h"
 #include "../CSC8503/PrisonEscape/Scripts/CameraEnemy/CameraEnemy.h"
+#include "../CSC8503/PrisonEscape/Scripts/puzzle/puzzleT.h"
 
 
 using namespace NCL;
@@ -557,6 +558,23 @@ GameObject* GameLevelManager::AddDoorToWorld(Door* door, Vector3 size, const Vec
 	return door;
 }
 
+GameObject* GameLevelManager::AddExitToWorld(Exit* exit, Vector3 size, const Vector3& position) {
+	AABBVolume* volume = new AABBVolume(size);
+
+	exit->SetBoundingVolume((CollisionVolume*)volume);
+
+	exit->GetTransform().SetScale(size).SetPosition(position);
+
+	exit->SetRenderObject(new RenderObject(&exit->GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+	exit->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));  // Red when inactive
+
+	exit->SetPhysicsObject(new PhysicsObject(&exit->GetTransform(), exit->GetBoundingVolume()));
+	exit->GetPhysicsObject()->SetInverseMass(0); // Static object
+	exit->GetPhysicsObject()->InitCubeInertia();
+
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(exit);
+	return exit;
+}
 GameObject* GameLevelManager::AddButtonnToWorld(ButtonTrigger* button, const Vector3& position, Door* linkedDoor) {
 	Vector3 buttonSize(2.0f, 0.3f, 2.0f);
 	AABBVolume* volume = new AABBVolume(buttonSize);
@@ -646,6 +664,12 @@ void GameLevelManager::CreateFloor(const InGameObject& obj) {
 	AddFloorToWorld(obj.dimensions, obj.position);
 }
 
+void GameLevelManager::CreateExit(const InGameObject& obj) {
+	Exit* newExit = new Exit();
+	
+	AddExitToWorld(newExit, obj.dimensions, obj.position);
+	
+}
 void GameLevelManager::CreateNormalDoor(const InGameObject& obj) {
 	PressableDoor* newDoor = new PressableDoor();
 	newDoor->SetTextures(mTextureList["DefaultTexture"], mTextureList["DefaultTexture"]);
@@ -670,6 +694,7 @@ void GameLevelManager::LogObjectPlacement(const InGameObject& obj) {
 
 // map loading from json file
 void GameLevelManager::loadMap(std::string levelToLoad) {
+	
 	int level;
 	std::vector<InGameObject> objects;
 	std::vector<Enemy> enemies;
@@ -714,15 +739,29 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 				CreateFloor(obj);
 			}
 
+			else if (obj.type == "Exit") {
+				CreateExit(obj);
+			}
+
 			else if (obj.type.find("Player") != std::string::npos) {
-				if (obj.type == "Player1") {
-					Transform playerOneTransform;
-					playerOne = AddPlayerToWorld(playerOneTransform.SetPosition(obj.position), "playerOne");
-				}
-				else if (obj.type == "Player2" && isMultiplayer) {
-					Transform playerTwoTransform;
-					playerTwo = AddPlayerToWorld(playerTwoTransform.SetPosition(obj.position), "playerTwo");
-				}
+				if (!playerOne || !playerTwo) {
+					if (obj.type == "Player1") {
+						Transform playerOneTransform;
+						playerOne = AddPlayerToWorld(playerOneTransform.SetPosition(obj.position), "playerOne");
+					}
+					else if (obj.type == "Player2" && isMultiplayer) {
+						Transform playerTwoTransform;
+						playerTwo = AddPlayerToWorld(playerTwoTransform.SetPosition(obj.position), "playerTwo");
+					}
+				} 
+				else {
+					if (obj.type == "Player1") {
+						playerOne->GetTransform().SetPosition(obj.position);
+					}
+					else if (obj.type == "Player2" && isMultiplayer) {
+						playerTwo->GetTransform().SetPosition(obj.position);
+					}
+				}	
 			}
 
 			else {
@@ -738,4 +777,40 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 	else {
 		std::cerr << "Can't load level \n";
 	}
+}
+void GameLevelManager::ClearLevel() {
+	// Output for debugging
+	std::cout << "Clearing the level..." << std::endl;
+
+	// Remove all updatable objects from the world
+	for (auto& obj : mUpdatableObjectList) {
+		GameBase::GetGameBase()->GetWorld()->RemoveGameObject(obj);
+	}
+
+	// Clear the updatable object list
+	mUpdatableObjectList.clear();
+
+	// Remove all other game objects and resources related to the level
+	// Clear specific lists
+	buttons.clear();
+	buttonDoors.clear();
+	pressDoors.clear();
+	boxes.clear();
+	pressDoors.clear();  // Duplicate clear, you can remove if unnecessary
+	buttonss.clear();
+
+
+	// Optionally, clear resources that might be reused or need reinitialization
+	// Clear textures, meshes, or shaders if necessary for a fresh load
+	// For example:
+	// mMeshList.clear();
+	// mTextureList.clear();
+	// mShaderList.clear();
+
+	// Clear other global game state if needed (camera, environment, etc.)
+	// Example:
+	// mCamera.Clear();  // If you have a camera object, clear its state
+	// mEnvironment.Clear();  // If you have environmental objects, clear them
+
+	std::cout << "Level cleared. Ready for next level." << std::endl;
 }
