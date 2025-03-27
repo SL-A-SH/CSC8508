@@ -17,8 +17,7 @@
 #include "PrisonEscape/Scripts/puzzle/HidingArea.h"
 #include "PrisonEscape/Scripts/PursuitEnemy/PursuitEnemy.h"
 #include "../CSC8503/PrisonEscape/Scripts/CameraEnemy/CameraEnemy.h"
-
-
+#include "PrisonEscape/Core/ImGuiManager.h"
 using namespace NCL;
 using namespace CSC8503;
 
@@ -43,6 +42,7 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	boxNumber = 0;
 	loadMap(mLevelList[levelToLoad]);
 	InitAnimationObjects();
+	GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("LoadingPanel");
 }
 
 GameLevelManager::~GameLevelManager()
@@ -154,8 +154,9 @@ void GameLevelManager::InitAssets()
 	int materialLines = 0;
 	int animationLines = 0;
 
+	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("LoadingPanel", [this]() {DrawLoadingScreen(); });
 	while (getline(assetsFile, line)) {
-
+		mRenderer->Render();
 		//removes the , from the file
 		for (int i = 0; i < 3; i++) {
 			assetInfo[i] = line.substr(0, line.find(","));
@@ -228,7 +229,7 @@ void GameLevelManager::InitAssets()
 					lines++;
 				}
 			}
-			
+
 
 			group = assetInfo[0];
 			groupInfo.clear();
@@ -325,7 +326,7 @@ void GameLevelManager::AddComponentsToPlayer(Player& playerObject, const Transfo
 
 //Should add enemy to the world, needs testing
 
-PatrolEnemy* GameLevelManager::AddPatrolEnemyToWorld(const std::string& enemyName,const std::vector<Vector3>& patrolPoints, const Vector3& spawnPoint, Player* player) {
+PatrolEnemy* GameLevelManager::AddPatrolEnemyToWorld(const std::string& enemyName, const std::vector<Vector3>& patrolPoints, const Vector3& spawnPoint, Player* player) {
 	Transform transform;
 	transform.SetPosition(spawnPoint);
 	PatrolEnemy* mEnemyToAdd = new PatrolEnemy(mWorld, enemyName);
@@ -333,7 +334,7 @@ PatrolEnemy* GameLevelManager::AddPatrolEnemyToWorld(const std::string& enemyNam
 	if (isMultiplayer && !this->isServer) {
 		mEnemyToAdd->SetClientControlled(true);
 	}
-	
+
 	AddComponentsToPatrolEnemy(*mEnemyToAdd, transform);
 
 	mEnemyToAdd->SetPatrolPoints(patrolPoints);
@@ -480,7 +481,7 @@ GameObject* GameLevelManager::AddFloorToWorld(Vector3 size, const Vector3& posit
 }
 
 GameObject* GameLevelManager::AddBoxToWorld(const Vector3& position, Vector3 dimensions, const std::string name, float inverseMass) {
-	
+
 	GameObject* cube = new GameObject(name);
 
 	AABBVolume* volume = new AABBVolume(dimensions * 0.5f);
@@ -623,7 +624,7 @@ GameObject* GameLevelManager::AddPressableDoorToWorld(PressableDoor* door, Vecto
 void GameLevelManager::CreateDoorButton(const InGameObject& obj, std::unordered_map<std::string, Door*>& doorMap) {
 	ButtonTrigger* newButton = new ButtonTrigger();
 
-	std::string linkedDoorName = "ButtonDoor" + obj.type.substr(6); 
+	std::string linkedDoorName = "ButtonDoor" + obj.type.substr(6);
 	std::cout << "Looking for door: " + linkedDoorName + "\n";
 	auto doorCheck = doorMap.find(linkedDoorName);
 	if (doorCheck == doorMap.end()) {
@@ -741,4 +742,9 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 	else {
 		std::cerr << "Can't load level \n";
 	}
+}
+
+void GameLevelManager::DrawLoadingScreen() {
+	ImGuiManager::DrawMessagePanel("Loading...", "Game is Loading...", ImVec4(1, 0, 1, 1), {});
+	GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("LevelSelectPanel");
 }

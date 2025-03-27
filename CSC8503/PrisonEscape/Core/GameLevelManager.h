@@ -48,7 +48,7 @@ namespace NCL {
 			Vector3 GetP1Position() { return playerOne->GetTransform().GetPosition(); }
 			Vector3 GetP2Position() { return playerTwo->GetTransform().GetPosition(); }
 
-			PatrolEnemy* AddPatrolEnemyToWorld(const std::string& patrolEnemyName,const std::vector<Vector3>& patrolPoints, const Vector3& spawnPoint, Player* player);
+			PatrolEnemy* AddPatrolEnemyToWorld(const std::string& patrolEnemyName, const std::vector<Vector3>& patrolPoints, const Vector3& spawnPoint, Player* player);
 			void AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const Transform& transform);
 
 			PursuitEnemy* AddPursuitEnemyToWorld(const std::string& pursuitEnemyName, const std::vector<Vector3>& patrolPoints, Player* player);
@@ -124,7 +124,8 @@ namespace NCL {
 			void CreateNormalDoor(const InGameObject& obj);
 			Door* CreateButtonDoor(const InGameObject& obj);
 
-			
+			void DrawLoadingScreen();
+
 			bool isMultiplayer;
 			bool isServer;
 			bool isPlaying;
