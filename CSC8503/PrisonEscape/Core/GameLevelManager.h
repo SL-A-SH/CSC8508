@@ -115,6 +115,7 @@ namespace NCL {
 			GameObject* AddPressableDoorToWorld(PressableDoor* door, Vector3 size, const Vector3& position, float x, float y, float z);
 			GameObject* AddDoorToWorld(Door* door, Vector3 size, const Vector3& position, float x, float y, float z);
 
+			void AddHidingAreaToWorld(const Vector3& position, const Vector3& size, const std::string name);
 			void LogObjectPlacement(const InGameObject& obj);
 			void CreateWall(const InGameObject& obj);
 			void CreateButton(const InGameObject& obj);
@@ -123,6 +124,7 @@ namespace NCL {
 			void CreateFloor(const InGameObject& obj);
 			void CreateNormalDoor(const InGameObject& obj);
 			Door* CreateButtonDoor(const InGameObject& obj);
+			void CreateHidingArea(const InGameObject& obj);
 
 			void DrawLoadingScreen();
 
