@@ -91,13 +91,15 @@ void Player::UpdatePlayerMovement(float dt)
         isIdle = false;
     }
 
-    float sprintMultiplier = 1.0f;
-    if (Window::GetKeyboard()->KeyDown(KeyCodes::SHIFT)) {
-        sprintMultiplier = 3.0f; // Adjust the multiplier as needed
-    }
+    
     if (Window::GetKeyboard()->KeyPressed(KeyCodes::E)) {
        SetVisible(true);
        SetActive(true);
+    
+    sprintMultiplier = 1.0f;
+    Vector3 movement(0, 0, 0);
+    if (forward != 0.0f) {
+        movement += forwardVec * forward * GetPlayerSpeed() * sprintMultiplier;
     }
     Vector3 movement(0, 0, 0);
     if(Player::isActive){
@@ -149,7 +151,6 @@ void Player::UpdatePlayerMovement(float dt)
     }
     else if (!isIdle) {
         SetObjectAnimationState(Walk);
-        
         if (!audioManager->IsPlaying(audioManager->soundFile8)) { // Ensure sound isn't already playing
             audioManager->PlaySound(audioManager->soundFile8);
             audioManager->StopSound(audioManager->soundFile11);

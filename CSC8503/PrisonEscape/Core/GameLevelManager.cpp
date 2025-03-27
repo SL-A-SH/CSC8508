@@ -590,6 +590,23 @@ GameObject* GameLevelManager::AddExitToWorld(Exit* exit, Vector3 size, const Vec
 	GameBase::GetGameBase()->GetWorld()->AddGameObject(exit);
 	return exit;
 }
+GameObject* GameLevelManager::AddSoapToWorld(Soap* soap, Vector3 size, const Vector3& position) {
+	AABBVolume* volume = new AABBVolume(size);
+
+	soap->SetBoundingVolume((CollisionVolume*)volume);
+
+	soap->GetTransform().SetScale(size).SetPosition(position);
+
+	soap->SetRenderObject(new RenderObject(&soap->GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+	soap->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));  // Red when inactive
+
+	soap->SetPhysicsObject(new PhysicsObject(&soap->GetTransform(), soap->GetBoundingVolume()));
+	soap->GetPhysicsObject()->SetInverseMass(0); // Static object
+	soap->GetPhysicsObject()->InitCubeInertia();
+
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(soap);
+	return soap;
+}
 GameObject* GameLevelManager::AddButtonnToWorld(ButtonTrigger* button, const Vector3& position, Door* linkedDoor) {
 	Vector3 buttonSize(2.0f, 0.3f, 2.0f);
 	AABBVolume* volume = new AABBVolume(buttonSize);

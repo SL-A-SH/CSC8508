@@ -116,6 +116,7 @@ namespace NCL {
 			GameObject* AddPressableDoorToWorld(PressableDoor* door, Vector3 size, const Vector3& position, float x, float y, float z);
 			GameObject* AddDoorToWorld(Door* door, Vector3 size, const Vector3& position, float x, float y, float z);
 			GameObject* AddExitToWorld(Exit* exit, Vector3 size, const Vector3& position);
+			GameObject* AddSoapToWorld(Soap* soap, Vector3 size, const Vector3& position);
 
 
 			void AddHidingAreaToWorld(const Vector3& position, const Vector3& size, const std::string name);

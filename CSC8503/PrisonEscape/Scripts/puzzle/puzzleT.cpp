@@ -109,14 +109,25 @@ void PressableDoor::OnCollisionBegin(GameObject* otherObject) {
 }
 
 Exit::Exit() {}
+Soap::Soap() {}
 
 void Exit::OnCollisionBegin(GameObject* otherObject) {
-	if (dynamic_cast<Player*>(otherObject)) { // Check if colliding object is a Player
+	if (dynamic_cast<Player*>(otherObject)) {
 		GameLevelManager* levelManager = GameLevelManager::GetGameLevelManager();
 		if (levelManager) {
-			levelManager->ClearLevel(); // Clear current level
+			levelManager->ClearLevel(); 
 			std::cout << "player name: " + levelManager->GetPlayerOne()->GetName() + "\n";
-			levelManager->loadMap("level1.json"); // Load the next level
+			levelManager->loadMap("level1.json"); 
 		}
 	}
+}
+void Soap::OnCollisionBegin(GameObject* otherObject) {
+	
+		Player* player = dynamic_cast<Player*>(otherObject);
+		if (player) {
+			player->sprintMultiplier += 0.5f;  // Increase sprint speed by 50%
+			std::cout << "Player's sprint speed increased!" << std::endl;
+		}
+	
+	
 }

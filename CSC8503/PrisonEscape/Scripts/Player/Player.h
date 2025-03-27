@@ -60,6 +60,7 @@ namespace NCL {
 
 			Vector3 rayPos;
 			Vector3 rayDir;
+			float sprintMultiplier;
 		};
 	}
 }
