@@ -36,9 +36,9 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	this->isServer = isServer;
 
 	InitAssets();
-	std::cout << "The Level to load is at: " << mLevelList["Level2"] << std::endl;
+	std::cout << "The Level to load is at: " << mLevelList["Level1"] << std::endl;
 	boxNumber = 0;
-	loadMap(mLevelList["Level2"]);
+	loadMap(mLevelList["Level1"]);
 	InitAnimationObjects();
 }
 
@@ -551,6 +551,56 @@ GameObject* GameLevelManager::AddTableToWorld(Vector3 dimensions, const Vector3&
 	return Table;
 }
 
+GameObject* GameLevelManager::AddCoinToWorld(Vector3 dimensions, const Vector3& position, float x, float y, float z) {
+
+	GameObject* Coin = new GameObject("Coin");
+
+	Quaternion newOrientation = Quaternion::EulerAnglesToQuaternion(x, y, z);
+	Coin->GetTransform().SetOrientation(newOrientation);
+
+	AABBVolume* volume = new AABBVolume(dimensions * 1.0f);
+	Coin->SetBoundingVolume((CollisionVolume*)volume);
+	Coin->GetTransform()
+		.SetScale(dimensions)
+		.SetPosition(position);
+
+	Coin->SetRenderObject(new RenderObject(&Coin->GetTransform(), mMeshList["Sphere"], mTextureList["Coin"], mShaderList["BasicShader"]));
+	Coin->SetPhysicsObject(new PhysicsObject(&Coin->GetTransform(), Coin->GetBoundingVolume()));
+
+	Coin->GetPhysicsObject()->SetInverseMass(0);
+	Coin->GetPhysicsObject()->InitCubeInertia();
+
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(Coin);
+
+	return Coin;
+}
+
+GameObject* GameLevelManager::AddSoapToWorld(Vector3 dimensions, const Vector3& position, float x, float y, float z) {
+
+	GameObject* Soap = new GameObject("Soap");
+
+	Quaternion newOrientation = Quaternion::EulerAnglesToQuaternion(x, y, z);
+	Soap->GetTransform().SetOrientation(newOrientation);
+
+	AABBVolume* volume = new AABBVolume(dimensions * 1.0f);
+	Soap->SetBoundingVolume((CollisionVolume*)volume);
+	Soap->GetTransform()
+		.SetScale(dimensions)
+		.SetPosition(position);
+
+	Soap->SetRenderObject(new RenderObject(&Soap->GetTransform(), mMeshList["Sphere"], mTextureList["Chair2"], mShaderList["BasicShader"]));
+	Soap->SetPhysicsObject(new PhysicsObject(&Soap->GetTransform(), Soap->GetBoundingVolume()));
+
+	Soap->GetPhysicsObject()->SetInverseMass(0);
+	Soap->GetPhysicsObject()->InitCubeInertia();
+
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(Soap);
+
+	return Soap;
+}
+
+
+
 
 GameObject* GameLevelManager::AddFloorToWorld(Vector3 size, const Vector3& position) {
 
@@ -751,6 +801,14 @@ void GameLevelManager::CreateDesk(const InGameObject& obj) {
 	AddDeskToWorld(obj.dimensions, obj.position, obj.orientation.x, obj.orientation.y, obj.orientation.z);
 }
 
+void GameLevelManager::CreateCoin(const InGameObject& obj) {
+	AddCoinToWorld(obj.dimensions, obj.position, obj.orientation.x, obj.orientation.y, obj.orientation.z);
+}
+
+void GameLevelManager::CreateSoap(const InGameObject& obj) {
+	AddSoapToWorld(obj.dimensions, obj.position, obj.orientation.x, obj.orientation.y, obj.orientation.z);
+}
+
 void GameLevelManager::CreateTable(const InGameObject& obj) {
 	AddTableToWorld(obj.dimensions, obj.position, obj.orientation.x, obj.orientation.y, obj.orientation.z);
 }
@@ -827,6 +885,13 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 
 			else if (obj.type == "Table") {
 				CreateTable(obj);
+			}
+
+			else if (obj.type == "Coin") {
+				CreateCoin(obj);
+			}
+			else if (obj.type == "Soap") {
+				CreateSoap(obj);
 			}
 
 			else if (obj.type.find("Wall") != std::string::npos) {
