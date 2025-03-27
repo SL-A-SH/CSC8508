@@ -36,6 +36,13 @@ void Player::UpdateGame(float dt)
     UpdatePlayerMovement(dt);    
 }
 
+void Player::OnCollisionBegin(GameObject* other) {
+    if (other->GetName() == "Coin") {
+        SetScore(GetScore() + 10);
+        GameBase::GetGameBase()->GetWorld()->RemoveGameObject(other);
+        std::cout << "Score is: " << GetScore() << std::endl;
+    }
+}
 
 
 void Player::UpdatePlayerMovement(float dt)

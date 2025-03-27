@@ -18,6 +18,7 @@
 #include "PrisonEscape/Scripts/PursuitEnemy/PursuitEnemy.h"
 #include "../CSC8503/PrisonEscape/Scripts/CameraEnemy/CameraEnemy.h"
 #include "../CSC8503/PrisonEscape/Scripts/puzzle/puzzleT.h"
+#include "../CSC8503/PrisonEscape/Scripts/Collectables/Coin.h"
 
 
 #include "PrisonEscape/Core/ImGuiManager.h"
@@ -590,26 +591,26 @@ GameObject* GameLevelManager::AddTableToWorld(Vector3 dimensions, const Vector3&
 
 GameObject* GameLevelManager::AddCoinToWorld(Vector3 dimensions, const Vector3& position, float x, float y, float z) {
 
-	GameObject* Coin = new GameObject("Coin");
+	Coin* coinToAdd = new Coin("Coin");
 
 	Quaternion newOrientation = Quaternion::EulerAnglesToQuaternion(x, y, z);
-	Coin->GetTransform().SetOrientation(newOrientation);
+	coinToAdd->GetTransform().SetOrientation(newOrientation);
 
 	AABBVolume* volume = new AABBVolume(dimensions * 1.0f);
-	Coin->SetBoundingVolume((CollisionVolume*)volume);
-	Coin->GetTransform()
+	coinToAdd->SetBoundingVolume((CollisionVolume*)volume);
+	coinToAdd->GetTransform()
 		.SetScale(dimensions)
 		.SetPosition(position);
 
-	Coin->SetRenderObject(new RenderObject(&Coin->GetTransform(), mMeshList["Sphere"], mTextureList["Coin"], mShaderList["BasicShader"]));
-	Coin->SetPhysicsObject(new PhysicsObject(&Coin->GetTransform(), Coin->GetBoundingVolume()));
+	coinToAdd->SetRenderObject(new RenderObject(&coinToAdd->GetTransform(), mMeshList["Sphere"], mTextureList["Coin"], mShaderList["BasicShader"]));
+	coinToAdd->SetPhysicsObject(new PhysicsObject(&coinToAdd->GetTransform(), coinToAdd->GetBoundingVolume()));
 
-	Coin->GetPhysicsObject()->SetInverseMass(0);
-	Coin->GetPhysicsObject()->InitCubeInertia();
+	coinToAdd->GetPhysicsObject()->SetInverseMass(0);
+	coinToAdd->GetPhysicsObject()->InitCubeInertia();
 
-	GameBase::GetGameBase()->GetWorld()->AddGameObject(Coin);
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(coinToAdd);
 
-	return Coin;
+	return coinToAdd;
 }
 
 GameObject* GameLevelManager::AddComputerToWorld(Vector3 dimensions, const Vector3& position, float x, float y, float z) {
