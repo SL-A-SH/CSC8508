@@ -101,7 +101,7 @@ void Player::UpdatePlayerMovement(float dt)
     if (forward != 0.0f) {
         movement += forwardVec * forward * GetPlayerSpeed() * sprintMultiplier;
     }
-    Vector3 movement(0, 0, 0);
+
     if(Player::isActive){
         if (forward != 0.0f) {
             movement += forwardVec * forward * GetPlayerSpeed() * sprintMultiplier;
