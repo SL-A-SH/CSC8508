@@ -45,7 +45,7 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	// std::cout << "The Level to load is at: " << mLevelList["Level3"] << std::endl;����
 	// boxNumber = 0;
 	// loadMap(mLevelList["Level3"]);
-	
+
 	std::cout << "The Level to load is at: " << mLevelList[levelToLoad] << std::endl;
 	boxNumber = 0;
 	// loadMap(mLevelList["Level2"]);
@@ -552,7 +552,7 @@ GameObject* GameLevelManager::AddDeskToWorld(Vector3 dimensions, const Vector3& 
 		.SetScale(dimensions)
 		.SetPosition(position);
 
-	
+
 
 	Desk->SetRenderObject(new RenderObject(&Desk->GetTransform(), mMeshList["Desk"], mTextureList["Desk2"], mShaderList["BasicShader"]));
 	Desk->SetPhysicsObject(new PhysicsObject(&Desk->GetTransform(), Desk->GetBoundingVolume()));
@@ -864,7 +864,7 @@ void GameLevelManager::CreateDoorButton(const InGameObject& obj, std::unordered_
 	}
 }
 void GameLevelManager::CreateHidingArea(const InGameObject& obj) {
-	AddHidingAreaToWorld(obj.position, obj.dimensions,obj.type);
+	AddHidingAreaToWorld(obj.position, obj.dimensions, obj.type);
 }
 void GameLevelManager::CreateBox(const InGameObject& obj) {
 	GameObject* newBox = AddBoxToWorld(obj.position, obj.dimensions, obj.type + std::to_string(++boxNumber));
@@ -905,9 +905,9 @@ void GameLevelManager::CreateFloor(const InGameObject& obj) {
 
 void GameLevelManager::CreateExit(const InGameObject& obj) {
 	Exit* newExit = new Exit();
-	
+
 	AddExitToWorld(newExit, obj.dimensions, obj.position);
-	
+
 }
 void GameLevelManager::CreateSoap(const InGameObject& obj) {
 	Soap* newSoap = new Soap();
@@ -941,7 +941,7 @@ void GameLevelManager::LogObjectPlacement(const InGameObject& obj) {
 
 // map loading from json file
 void GameLevelManager::loadMap(std::string levelToLoad) {
-	
+
 	int level;
 	std::vector<InGameObject> objects;
 	std::vector<Enemy> enemies;
@@ -1027,14 +1027,14 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 
 			else if (obj.type.find("Player") != std::string::npos) {
 				if (!playerOne && obj.type == "Player1") {
-						Transform playerOneTransform;
-						playerOne = AddPlayerToWorld(playerOneTransform.SetPosition(obj.position), "playerOne");
-					}
+					Transform playerOneTransform;
+					playerOne = AddPlayerToWorld(playerOneTransform.SetPosition(obj.position), "playerOne");
+				}
 				else if (obj.type == "Player2" && isMultiplayer && !playerTwo) {
-						Transform playerTwoTransform;
-						std::cout << "PLAYER TWO CREATED";
-						playerTwo = AddPlayerToWorld(playerTwoTransform.SetPosition(obj.position), "playerTwo");
-					}
+					Transform playerTwoTransform;
+					std::cout << "PLAYER TWO CREATED";
+					playerTwo = AddPlayerToWorld(playerTwoTransform.SetPosition(obj.position), "playerTwo");
+				}
 				if (obj.type == "Player1" && playerOne) {
 					playerOne->SetSpawn(obj.position);
 					playerOne->GetTransform().SetPosition(obj.position);
@@ -1071,8 +1071,9 @@ void GameLevelManager::ClearLevel() {
 	for (auto& obj : GameBase::GetGameBase()->GetWorld()->getGameObjects()) {
 		if (obj->GetName() == "playerOne" || obj->GetName() == "playerTwo") {
 			continue;
-		} else { 
-			GameBase::GetGameBase()->GetWorld()->RemoveGameObject(obj); 
+		}
+		else {
+			GameBase::GetGameBase()->GetWorld()->RemoveGameObject(obj);
 		}
 	}
 
@@ -1080,6 +1081,8 @@ void GameLevelManager::ClearLevel() {
 }
 
 void GameLevelManager::DrawLoadingScreen() {
-	ImGuiManager::DrawMessagePanel("Loading...", "Game is Loading...", ImVec4(1, 0, 1, 1), {});
+
+	string loadingText = LoadingScreenText[rand() % LoadingScreenText.size()];
+	ImGuiManager::DrawMessagePanel("Loading...", loadingText, ImVec4(1, 0, 1, 1), {});
 	GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("LevelSelectPanel");
 }
