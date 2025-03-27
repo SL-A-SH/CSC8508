@@ -1055,7 +1055,7 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 			if (enemy.name.find("EnemyP") != std::string::npos) {
 				AddPursuitEnemyToWorld(enemy.name, enemy.position, enemy.waypoints, playerOne);
 			} else {
-				AddPatrolEnemyToWorld(enemy.name, enemy.waypoints, enemy.position, playerOne);
+				AddPatrolEnemyToWorld("PatrolEnemy", enemy.waypoints, enemy.position, playerOne);
 			}
 		}
 	}
