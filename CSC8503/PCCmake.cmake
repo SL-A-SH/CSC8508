@@ -56,6 +56,8 @@ function(Create_PC_CSC8503_Files)
         "PrisonEscape/Scripts/puzzle/Button.h"
         "PrisonEscape/Scripts/puzzle/puzzleT.cpp"
         "PrisonEscape/Scripts/puzzle/puzzleT.h"
+	"PrisonEscape/Scripts/Collectables/Coin.cpp"
+	"PrisonEscape/Scripts/Collectables/Coin.h"
     )
     source_group("Prison Escape Scripts" FILES ${Prison_Escape_Scripts})
 

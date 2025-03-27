@@ -19,6 +19,7 @@ Player::Player(GameWorld* world, const std::string& name) : GameObject()
 
     health = 3;
     visible = true;
+    score = 0;
     
     audioManager = new AudioManager(); 
     audioManager->Initialize();         
