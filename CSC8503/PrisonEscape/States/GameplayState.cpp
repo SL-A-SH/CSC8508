@@ -191,7 +191,7 @@ void GamePlayState::DrawHUDPanel() {
 	ImGui::SetCursorPos(ImVec2(25, 75)); // Set cursor to below the hearts
 
 	// Display Timer
-	ImGui::Text("Time: %.2f s", 20.0f);
+	ImGui::Text(("Score: " + std::to_string(score)).c_str(), 20.0f);
 
 
 
