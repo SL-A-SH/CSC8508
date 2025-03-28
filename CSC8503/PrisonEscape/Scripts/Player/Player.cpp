@@ -36,6 +36,13 @@ void Player::UpdateGame(float dt)
     UpdatePlayerMovement(dt);    
 }
 
+void Player::OnCollisionBegin(GameObject* other) {
+    if (other->GetName() == "Coin") {
+        SetScore(GetScore() + 10);
+        GameBase::GetGameBase()->GetWorld()->RemoveGameObject(other);
+        std::cout << "Score is: " << GetScore() << std::endl;
+    }
+}
 
 
 void Player::UpdatePlayerMovement(float dt)
@@ -91,16 +98,19 @@ void Player::UpdatePlayerMovement(float dt)
         isIdle = false;
     }
 
-    float sprintMultiplier = 1.0f;
-    if (Window::GetKeyboard()->KeyDown(KeyCodes::SHIFT)) {
-        sprintMultiplier = 3.0f; // Adjust the multiplier as needed
-    }
+    
     if (Window::GetKeyboard()->KeyPressed(KeyCodes::E)) {
-       SetVisible(true);
-       SetActive(true);
+        SetVisible(true);
+        SetActive(true);
     }
+    sprintMultiplier = 1.0f;
     Vector3 movement(0, 0, 0);
-    if(Player::isActive){
+    
+    if (Player::isActive) {
+        if (forward != 0.0f) {
+            movement += forwardVec * forward * GetPlayerSpeed() * sprintMultiplier;
+        }
+
         if (forward != 0.0f) {
             movement += forwardVec * forward * GetPlayerSpeed() * sprintMultiplier;
         }
@@ -122,10 +132,10 @@ void Player::UpdatePlayerMovement(float dt)
             static float lastJumpTime = -2.2f;
             float currentTime = Window::GetTimer().GetTotalTimeSeconds();
 
-            if (Window::GetKeyboard()->KeyPressed(KeyCodes::SPACE) && (currentTime - lastJumpTime >= 2.2f))
+            if (Window::GetKeyboard()->KeyPressed(KeyCodes::SPACE) && (currentTime - lastJumpTime >= 2.2f) && Player::isActive)
             {
-                movement.y += 10.0f;
-                currentVelocity.y = 35.0f;
+                movement.y += 8.0f;
+                currentVelocity.y = 20.0f;
                 lastJumpTime = currentTime;
                 audioManager->PlaySound(audioManager->soundFile10);
             }
@@ -138,10 +148,10 @@ void Player::UpdatePlayerMovement(float dt)
     {
         GetPhysicsObject()->SetLinearVelocity(movement);
     }
-    
+
     if (isIdle) {
         SetObjectAnimationState(Idle);
-        if (audioManager->IsPlaying(audioManager->soundFile8)) { // Ensure sound isn't already playing
+        if (!audioManager->IsPlaying(audioManager->soundFile11)) { // Ensure sound isn't already playing
             audioManager->StopSound(audioManager->soundFile8);
             audioManager->PlaySound(audioManager->soundFile11);
         }
@@ -149,29 +159,14 @@ void Player::UpdatePlayerMovement(float dt)
     }
     else if (!isIdle) {
         SetObjectAnimationState(Walk);
-        
         if (!audioManager->IsPlaying(audioManager->soundFile8)) { // Ensure sound isn't already playing
             audioManager->PlaySound(audioManager->soundFile8);
             audioManager->StopSound(audioManager->soundFile11);
         }
     }
+    
 }
-void Player::LockCameraAndMovement() {
-    if (!IsActive()) {
-        // Lock the camera
-        //GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetController(nullptr);
 
-        // Lock the movement
-        GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, 0));
-        GetPhysicsObject()->SetAngularVelocity(Vector3(0, 0, 0));
-    }
-    else {
-        // Unlock the camera
-        GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetController(*controller);
-
-        // Unlock the movement (no specific action needed, movement will be handled in UpdatePlayerMovement)
-    }
-}
 void Player::InitializeController()
 {
     controller = new KeyboardMouseController(*Window::GetKeyboard(), *Window::GetMouse());

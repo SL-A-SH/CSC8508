@@ -17,6 +17,7 @@ namespace NCL::CSC8503 {
 		enum AnimationState {
 			Idle,
 			Walk,
+			Caught,
 			Default 
 		};
 

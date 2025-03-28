@@ -28,7 +28,8 @@ void PursuitEnemy::UpdateGame(float dt) {
     case PATROL:  stateStr = "PATROL"; break;
     case PURSUIT: stateStr = "PURSUIT"; break;
     }
-
+    Vector3 targetPoint = patrolPoints[currentPatrolPoint];
+    
     rootSequence->Execute(dt);
 }
 
@@ -46,7 +47,7 @@ bool PursuitEnemy::CanSeePlayer() const {
     if (!playerObject->GetVisible()) return false;
 
     Vector3 direction = playerObject->GetTransform().GetPosition() - transform.GetPosition();
-
+    
     if (Vector::Length(direction) > VISION_RANGE) return false;
 
     Ray ray(transform.GetPosition(), Vector::Normalise(direction));
@@ -72,6 +73,7 @@ void PursuitEnemy::InitBehaviourTree() {
                 currentState = PURSUIT;
                 pursuitTimer = MAX_PURSUIT_TIME;
                 return Success;
+
             }
 
             Vector3 targetPoint = patrolPoints[currentPatrolPoint];
@@ -88,7 +90,13 @@ void PursuitEnemy::InitBehaviourTree() {
 
             Vector3 currentVel = GetPhysicsObject()->GetLinearVelocity();
             GetPhysicsObject()->AddForce(-currentVel * 10.0f);
-
+            if (direction.Length() > 0.0f) {
+                float angle = atan2(-direction.x, -direction.z);
+                Quaternion targetOrientation = Quaternion::EulerAnglesToQuaternion(0, angle * 180.0f / M_PI, 0);
+                Quaternion currentOrientation = GetTransform().GetOrientation();
+                Quaternion newOrientation = Quaternion::Slerp(currentOrientation, targetOrientation, dt * 5.0f); // Adjust the interpolation speed as needed
+                GetTransform().SetOrientation(newOrientation);
+            }
             return Ongoing;
         });
 
@@ -97,7 +105,14 @@ void PursuitEnemy::InitBehaviourTree() {
             if (currentState != PURSUIT) {
                 return Failure;
             }
-
+            Vector3 direction = playerObject->GetTransform().GetPosition() - transform.GetPosition();
+            if (direction.Length() > 0.0f) {
+                float angle = atan2(-direction.x, -direction.z);
+                Quaternion targetOrientation = Quaternion::EulerAnglesToQuaternion(0, angle * 180.0f / M_PI, 0);
+                Quaternion currentOrientation = GetTransform().GetOrientation();
+                Quaternion newOrientation = Quaternion::Slerp(currentOrientation, targetOrientation, dt * 5.0f); // Adjust the interpolation speed as needed
+                GetTransform().SetOrientation(newOrientation);
+            }
             pursuitTimer -= dt;
             if (pursuitTimer <= 0.0f) {
                 currentState = PATROL;

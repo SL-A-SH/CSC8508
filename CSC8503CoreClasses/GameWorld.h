@@ -19,6 +19,8 @@ namespace NCL {
 			GameWorld();
 			~GameWorld();
 
+			std::vector<GameObject*> getGameObjects() const { return gameObjects; }
+
 			void Clear();
 			void ClearAndErase();
 
