@@ -749,7 +749,6 @@ GameObject* GameLevelManager::AddExitToWorld(Exit* exit, Vector3 size, const Vec
 	exit->GetTransform().SetScale(size).SetPosition(position);
 
 	exit->SetRenderObject(new RenderObject(&exit->GetTransform(), mMeshList["Cube"], mTextureList["Exit"], mShaderList["BasicShader"]));
-	exit->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));  // Red when inactive
 
 	exit->SetPhysicsObject(new PhysicsObject(&exit->GetTransform(), exit->GetBoundingVolume()));
 	exit->GetPhysicsObject()->SetInverseMass(0); // Static object
@@ -765,8 +764,7 @@ GameObject* GameLevelManager::AddSoapToWorld(Soap* soap, Vector3 size, const Vec
 
 	soap->GetTransform().SetScale(size).SetPosition(position);
 
-	soap->SetRenderObject(new RenderObject(&soap->GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
-	soap->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));  // Red when inactive
+	soap->SetRenderObject(new RenderObject(&soap->GetTransform(), mMeshList["Cube"], mTextureList["Soap"], mShaderList["BasicShader"]));
 
 	soap->SetPhysicsObject(new PhysicsObject(&soap->GetTransform(), soap->GetBoundingVolume()));
 	soap->GetPhysicsObject()->SetInverseMass(0); // Static object
@@ -781,8 +779,8 @@ GameObject* GameLevelManager::AddButtonnToWorld(ButtonTrigger* button, const Vec
 	button->SetBoundingVolume((CollisionVolume*)volume);
 
 	button->GetTransform().SetScale(buttonSize).SetPosition(position);
-	button->SetRenderObject(new RenderObject(&button->GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
-	button->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));  // Red when inactive
+	button->SetRenderObject(new RenderObject(&button->GetTransform(), mMeshList["Cube"], mTextureList["Button"], mShaderList["BasicShader"]));
+	button->GetRenderObject()->SetColour(Vector4(1, 0, 0, 0));  // Red when inactive
 
 	button->SetPhysicsObject(new PhysicsObject(&button->GetTransform(), button->GetBoundingVolume()));
 	button->GetPhysicsObject()->SetInverseMass(0);
@@ -815,7 +813,7 @@ void GameLevelManager::AddHidingAreaToWorld(const Vector3& position, const Vecto
 	HidingArea* hidingArea = new HidingArea(position, size);
 	hidingArea->SetName(name);
 	hidingArea->GetTransform().SetScale(size); //2 inch
-	hidingArea->SetRenderObject(new RenderObject(&hidingArea->GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+	hidingArea->SetRenderObject(new RenderObject(&hidingArea->GetTransform(), mMeshList["Cube"], mTextureList["Locker"], mShaderList["BasicShader"]));
 	hidingArea->SetPhysicsObject(new PhysicsObject(&hidingArea->GetTransform(), hidingArea->GetBoundingVolume()));
 
 	hidingArea->GetPhysicsObject()->SetInverseMass(0);
