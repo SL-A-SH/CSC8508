@@ -80,6 +80,7 @@ void PatrolEnemy::InitBehaviourTree() {
                     Quaternion newOrientation = Quaternion::Slerp(currentOrientation, targetOrientation, dt * 5.0f); // Adjust the interpolation speed as needed
                     GetTransform().SetOrientation(newOrientation);
                 }
+                GetPhysicsObject()->ClearForces();
                 currentState = CAUGHT;
 
                 return Success;
@@ -96,6 +97,7 @@ void PatrolEnemy::InitBehaviourTree() {
                 patrolCounter++;
 
                 if (patrolCounter >= patrolPoints.size()) {
+                    GetPhysicsObject()->ClearForces();
                     currentState = SLEEP;
                     sleepTimer = MAX_SLEEP_TIME;
                     patrolCounter = 0;

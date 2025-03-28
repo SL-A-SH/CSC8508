@@ -73,7 +73,6 @@ void PursuitEnemy::InitBehaviourTree() {
                 currentState = PURSUIT;
                 pursuitTimer = MAX_PURSUIT_TIME;
                 return Success;
-
             }
 
             Vector3 targetPoint = patrolPoints[currentPatrolPoint];
@@ -114,7 +113,8 @@ void PursuitEnemy::InitBehaviourTree() {
                 GetTransform().SetOrientation(newOrientation);
             }
             pursuitTimer -= dt;
-            if (pursuitTimer <= 0.0f) {
+            if (pursuitTimer <= 0.0f || !playerObject->GetVisible()) {
+                GetPhysicsObject()->ClearForces();
                 currentState = PATROL;
                 return Success;
             }
