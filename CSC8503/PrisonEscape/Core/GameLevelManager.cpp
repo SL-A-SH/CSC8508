@@ -162,10 +162,9 @@ void GameLevelManager::InitAssets()
 	int lines = 0;
 	int materialLines = 0;
 	int animationLines = 0;
-
-	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("LoadingPanel", [this]() {DrawLoadingScreen(); });
+	if(!isMultiplayer)	GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("LoadingPanel", [this]() {DrawLoadingScreen(); });
 	while (getline(assetsFile, line)) {
-		mRenderer->Render();
+		if(!isMultiplayer)		mRenderer->Render();
 		//removes the , from the file
 		for (int i = 0; i < 3; i++) {
 			assetInfo[i] = line.substr(0, line.find(","));
