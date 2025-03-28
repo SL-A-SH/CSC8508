@@ -1066,7 +1066,6 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 void GameLevelManager::ClearLevel() {
 	// Output for debugging
 	std::cout << "Clearing the level..." << std::endl;
-	mUpdatableObjectList.clear();
 	// Remove all updatable objects from the world
 	for (auto& obj : GameBase::GetGameBase()->GetWorld()->getGameObjects()) {
 		if (obj->GetName() == "playerOne" || obj->GetName() == "playerTwo") {

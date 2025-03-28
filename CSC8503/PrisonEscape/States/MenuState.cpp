@@ -326,17 +326,13 @@ void MenuState::DrawSettingPanel() {
 void MenuState::DrawAudioSettingPanel() {
 	std::vector<PanelSlider> sliders = { {"Master Volume", &volume, 0, 100, 0.36f, 0.36f} };
 	GameBase::GetGameSettings()->SetVolume(volume);
-	std::vector<PanelCheckbox> checkboxes = {
-		{ "Fullscreen", &fullscreen, 0.36f, 0.46f },	 // Placed below the slider
-		{ "VSync", &vSync, 0.36f, 0.56f } // Placed below the fullscreen checkbox
-	};
 
 	auto backCallback = [this]() {
 		GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("SettingPanel", [this]() {DrawSettingPanel(); });
 		GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("AudioSettingPanel");
 		};
 
-	ImGuiManager::DrawPanel("Audio Settings", {}, sliders, backCallback, "", checkboxes);
+	ImGuiManager::DrawPanel("Audio Settings", {}, sliders, backCallback);
 }
 
 void MenuState::DrawVideoSettingPanel() {
