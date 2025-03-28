@@ -30,7 +30,7 @@ GameLevelManager* GameLevelManager::manager = nullptr;
 GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* existingRenderer, std::string levelToLoad, bool multiplayerStatus, bool isServer)
 {
 	if (multiplayerStatus) {
-		levelToLoad = "Level2";
+		levelToLoad = "Level3";
 	}
 	mWorld = existingWorld;
 	mRenderer = existingRenderer;
