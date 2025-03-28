@@ -42,7 +42,8 @@ namespace NCL {
 
 		public:
 			std::string GetName() { return mName; }
-
+			bool isIdle;
+			bool isJumping;
 			float GetPlayerSpeed() const { return playerSpeed; }
 			void SetPlayerSpeed(float speed) { playerSpeed = speed; }
 

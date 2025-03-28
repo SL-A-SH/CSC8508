@@ -133,5 +133,8 @@ void Soap::OnCollisionBegin(GameObject* otherObject) {
 		GameBase::GetGameBase()->GetWorld()->RemoveGameObject(this);
 		player->SetScore(player->GetScore() + 250);
 	}
-
+	audioManager = new AudioManager();
+	audioManager->Initialize();
+	audioManager->LoadSoundsXtension();
+	audioManager->PlaySound(audioManager->soundFile12);
 }

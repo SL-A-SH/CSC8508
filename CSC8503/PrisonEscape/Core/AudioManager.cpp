@@ -231,6 +231,7 @@ void AudioManager::LoadSoundsXtension() {
 	soundFile8 = "PrisonEscape/Assets/SFX/walking-on-wooden-floor.mp3";
 	soundFile10 = "PrisonEscape/Assets/SFX/grunt-2.mp3";
 	soundFile11 = "PrisonEscape/Assets/SFX/heavy-breathing.mp3";
+	soundFile12 = "PrisonEscape/Assets/SFX/soap-bubbles-pop-96873.mp3";
 
 	LoadSound(soundFile1);
 	LoadSound(soundFile2);
@@ -242,6 +243,7 @@ void AudioManager::LoadSoundsXtension() {
 	LoadSound(soundFile8);
 	LoadSound(soundFile10);
 	LoadSound(soundFile11);
+	LoadSound(soundFile12);
 	
 }
 bool AudioManager::IsPlaying(const std::string& filePath) {
