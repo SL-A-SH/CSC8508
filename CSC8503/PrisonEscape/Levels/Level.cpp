@@ -25,8 +25,6 @@ Level::Level()
 
 void Level::Init()
 {
-	InitializeAssets();
-	InitializeLevel();
 	SetCameraAttributes();
 	//GameBase::GetGameBase()->GetRenderer()->AddPanelToCanvas("PauseButton", [this]() {DrawPauseButton();});
 	GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("MainMenuPanel");
@@ -64,20 +62,6 @@ void Level::ReceivePacket(int type, GamePacket* payload, int source) {
 			config->networkConfig.playerID = idPacket->playerID;
 		}
 	}
-}
-
-void Level::InitializeAssets()
-{
-	cubeMesh = GameBase::GetGameBase()->GetRenderer()->LoadMesh("cube.msh");
-	kittenMesh = GameBase::GetGameBase()->GetRenderer()->LoadMesh("kitten.msh");
-	basicTex = GameBase::GetGameBase()->GetRenderer()->LoadTexture("checkerboard.png");
-	basicShader = GameBase::GetGameBase()->GetRenderer()->LoadShader("scene.vert", "scene.frag");
-	pauseButton = GameBase::GetGameBase()->GetRenderer()->LoadTexture("pausebutton.png");
-}
-
-void Level::InitializeLevel()
-{
-
 }
 
 void Level::AddPlayerToLevel(Player* player, const Vector3& position)
