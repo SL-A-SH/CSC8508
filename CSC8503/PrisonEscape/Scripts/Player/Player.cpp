@@ -48,7 +48,7 @@ void Player::UpdatePlayerMovement(float dt)
     if (!renderObject) {
         return;
     }
-    bool isIdle = true;
+    isIdle = true;
 
     GameConfigManager* config = GameBase::GetGameBase()->GetGameConfig();
 
@@ -129,10 +129,11 @@ void Player::UpdatePlayerMovement(float dt)
                 movement.y += 8.0f;
                 currentVelocity.y = 20.0f;
                 lastJumpTime = currentTime;
-                audioManager->PlaySound(audioManager->soundFile10);
+                isJumping = true;
+                
             }
         }
-
+        
         currentVelocity.y -= 25.0f * dt;
         GetPhysicsObject()->SetLinearVelocity(Vector3(movement.x, currentVelocity.y, movement.z));
     }

@@ -1,4 +1,4 @@
-#include "GameBase.h"
+﻿#include "GameBase.h"
 #include "GameTechRenderer.h"
 #include "PushdownMachine.h"
 #include "GameWorld.h"
@@ -9,6 +9,8 @@
 #include "PrisonEscape/Core/GameConfigManager.h"
 #include "PrisonEscape/Core/GameSettingManager.h"
 #include "PrisonEscape/Core/AudioManager.h"
+#include "PrisonEscape/Scripts/Player/Player.h";
+#include "PrisonEscape/Core/GameLevelManager.h";
 
 using namespace NCL;
 using namespace CSC8503;
@@ -53,6 +55,7 @@ void GameBase::InitialiseGame() {
 	}
 
 	audioManager->LoadSounds();
+	audioManager->LoadSoundsXtension();
 	audioManager->PlaySound(audioManager->soundFile9, true);
 }
 
@@ -62,6 +65,8 @@ void GameBase::UpdateGame(float dt) {
 	renderer->Render();
 	Debug::UpdateRenderables(dt);
 	audioManager->Update();
+	CheckPlayerIdle();
+
 	if (Window::GetKeyboard()->KeyPressed(KeyCodes::H))
 	{
 		renderer->USEDEBUGMODE = !renderer->USEDEBUGMODE;
@@ -104,4 +109,28 @@ void GameBase::QuitGame() {
 
 	std::exit(0);
 	std::cout << "Game shut down successfully." << std::endl;
+}
+void GameBase::CheckPlayerIdle() {
+	GameLevelManager* levelManager = GameLevelManager::GetGameLevelManager();
+	if (!levelManager) return;
+
+	Player* player = levelManager->GetPlayerOne(); // ✅ Get player one
+	if (!player) return;
+
+	if (player->isIdle) {
+		if (!audioManager->IsPlaying(audioManager->soundFile11)) {
+			audioManager->StopSound(audioManager->soundFile8);
+			audioManager->PlaySound(audioManager->soundFile11);
+		}
+	}
+	else {
+		if (!audioManager->IsPlaying(audioManager->soundFile8)) {
+			audioManager->PlaySound(audioManager->soundFile8);
+			audioManager->StopSound(audioManager->soundFile11);
+		}
+	}
+	if (player->isJumping) {
+		audioManager->PlaySound(audioManager->soundFile10);
+		player->isJumping = false;
+	}
 }

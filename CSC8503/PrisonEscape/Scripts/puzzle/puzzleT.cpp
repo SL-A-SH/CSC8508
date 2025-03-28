@@ -132,5 +132,8 @@ void Soap::OnCollisionBegin(GameObject* otherObject) {
 		std::cout << "Player's sprint speed increased!" << std::endl;
 		GameBase::GetGameBase()->GetWorld()->RemoveGameObject(this);
 	}
-
+	audioManager = new AudioManager();
+	audioManager->Initialize();
+	audioManager->LoadSoundsXtension();
+	audioManager->PlaySound(audioManager->soundFile12);
 }

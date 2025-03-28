@@ -70,6 +70,8 @@ namespace NCL {
 			Soap();
 			~Soap() = default;
 			void OnCollisionBegin(GameObject* otherObject) override;
+		private:
+			AudioManager* audioManager;
 		};
 	}
 }

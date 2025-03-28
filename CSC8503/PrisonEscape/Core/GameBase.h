@@ -37,6 +37,7 @@ namespace NCL {
             void SetGameConfig(GameConfigManager* config) { gameConfig = config; }
             GameConfigManager* GetGameConfig() const { return gameConfig; }
             void QuitGame();
+            void CheckPlayerIdle();
         };
     }
 }
