@@ -36,6 +36,13 @@ void Player::UpdateGame(float dt)
     UpdatePlayerMovement(dt);    
 }
 
+void Player::OnCollisionBegin(GameObject* other) {
+    if (other->GetName() == "Coin") {
+        SetScore(GetScore() + 10);
+        GameBase::GetGameBase()->GetWorld()->RemoveGameObject(other);
+        std::cout << "Score is: " << GetScore() << std::endl;
+    }
+}
 
 
 void Player::UpdatePlayerMovement(float dt)
@@ -98,11 +105,12 @@ void Player::UpdatePlayerMovement(float dt)
     }
     sprintMultiplier = 1.0f;
     Vector3 movement(0, 0, 0);
-    if (forward != 0.0f) {
-        movement += forwardVec * forward * GetPlayerSpeed() * sprintMultiplier;
-    }
-
+    
     if (Player::isActive) {
+        if (forward != 0.0f) {
+            movement += forwardVec * forward * GetPlayerSpeed() * sprintMultiplier;
+        }
+
         if (forward != 0.0f) {
             movement += forwardVec * forward * GetPlayerSpeed() * sprintMultiplier;
         }
@@ -124,7 +132,7 @@ void Player::UpdatePlayerMovement(float dt)
             static float lastJumpTime = -2.2f;
             float currentTime = Window::GetTimer().GetTotalTimeSeconds();
 
-            if (Window::GetKeyboard()->KeyPressed(KeyCodes::SPACE) && (currentTime - lastJumpTime >= 2.2f))
+            if (Window::GetKeyboard()->KeyPressed(KeyCodes::SPACE) && (currentTime - lastJumpTime >= 2.2f) && Player::isActive)
             {
                 movement.y += 8.0f;
                 currentVelocity.y = 20.0f;
@@ -159,22 +167,7 @@ void Player::UpdatePlayerMovement(float dt)
     }
     
 }
-void Player::LockCameraAndMovement(){
-    if (!IsActive()) {
-        // Lock the camera
-        //GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetController(nullptr);
 
-        // Lock the movement
-        GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, 0));
-        GetPhysicsObject()->SetAngularVelocity(Vector3(0, 0, 0));
-    }
-    else {
-        // Unlock the camera
-        GameBase::GetGameBase()->GetWorld()->GetMainCamera().SetController(*controller);
-
-        // Unlock the movement (no specific action needed, movement will be handled in UpdatePlayerMovement)
-    }
-}
 void Player::InitializeController()
 {
     controller = new KeyboardMouseController(*Window::GetKeyboard(), *Window::GetMouse());

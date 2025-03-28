@@ -264,7 +264,7 @@ void MenuState::DrawLevelSelectPanel()
 
 			};
 
-		}, 0.10f, .35f},
+		}, 0.32f, .15f},
 		{"Level Two", [this]() {
 
 				stateChangeAction = [this](PushdownState** newState) {
@@ -278,7 +278,21 @@ void MenuState::DrawLevelSelectPanel()
 				}
 
 			};
-		},0.55f, .35f}
+		},0.32f, .30f},
+		{"Level Three", [this]() {
+
+				stateChangeAction = [this](PushdownState** newState) {
+				gameConfig->networkConfig.isMultiplayer = false;
+
+				if (this->gameConfig) {
+					GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("LevelSelectPanel");
+					gameConfig->SetChosenLevel("Level3");
+					*newState = new GamePlayState(false, false, gameConfig);
+					this->gameConfig = nullptr; // Transfer ownership
+				}
+
+			};
+		},0.32f, .45f}
 	};
 
 	auto backCallback = [this]() {

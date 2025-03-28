@@ -128,9 +128,10 @@ void Soap::OnCollisionBegin(GameObject* otherObject) {
 	
 	Player* player = dynamic_cast<Player*>(otherObject);
 	if (player) {
-		player->sprintMultiplier += 5.0f;  // Increase sprint speed by 50%
+		player->sprintMultiplier += 7.5f;  // Increase sprint speed by 50%
 		std::cout << "Player's sprint speed increased!" << std::endl;
 		GameBase::GetGameBase()->GetWorld()->RemoveGameObject(this);
+		player->SetScore(player->GetScore() + 250);
 	}
 	audioManager = new AudioManager();
 	audioManager->Initialize();

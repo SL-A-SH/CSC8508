@@ -19,6 +19,8 @@ namespace NCL {
 			void InitializeController();
 			void LockCameraAndMovement();
 
+			void OnCollisionBegin(GameObject* other) override;
+
 		protected:
 			KeyboardMouseController* controller;
 			bool useGravity;

@@ -31,6 +31,7 @@ void PatrolEnemy::UpdateGame(float dt) {
     case CAUGHT: stateStr = "CAUGHT"; break;
     }
     rootSequence->Execute(dt);
+
 }
 
 void PatrolEnemy::SetPatrolPoints(const std::vector<Vector3>& points) {
@@ -47,7 +48,7 @@ bool PatrolEnemy::CanSeePlayer() const {
     if (!playerObject->GetVisible()) return false;
 
     Vector3 direction = playerObject->GetTransform().GetPosition() - transform.GetPosition();
-
+    
     if (Vector::Length(direction) > VISION_RANGE) return false;
 
     Ray ray(transform.GetPosition(), Vector::Normalise(direction));
@@ -71,13 +72,24 @@ void PatrolEnemy::InitBehaviourTree() {
             }
 
             if (CanSeePlayer()) {
+                Vector3 direction = playerObject->GetTransform().GetPosition();
+                if (direction.Length() > 0.0f) {
+                    float angle = atan2(-direction.x, -direction.z);
+                    Quaternion targetOrientation = Quaternion::EulerAnglesToQuaternion(0, angle * 180.0f / M_PI, 0);
+                    Quaternion currentOrientation = GetTransform().GetOrientation();
+                    Quaternion newOrientation = Quaternion::Slerp(currentOrientation, targetOrientation, dt * 5.0f); // Adjust the interpolation speed as needed
+                    GetTransform().SetOrientation(newOrientation);
+                }
+                GetPhysicsObject()->ClearForces();
                 currentState = CAUGHT;
+
                 return Success;
             }
 
             SetObjectAnimationState(Walk);
             Vector3 targetPoint = patrolPoints[currentPatrolPoint];
             Vector3 direction = targetPoint - transform.GetPosition();
+           
             float distance = Vector::Length(direction);
 
             if (distance < 1.0f) {
@@ -85,6 +97,7 @@ void PatrolEnemy::InitBehaviourTree() {
                 patrolCounter++;
 
                 if (patrolCounter >= patrolPoints.size()) {
+                    GetPhysicsObject()->ClearForces();
                     currentState = SLEEP;
                     sleepTimer = MAX_SLEEP_TIME;
                     patrolCounter = 0;
@@ -97,7 +110,13 @@ void PatrolEnemy::InitBehaviourTree() {
 
             Vector3 currentVel = GetPhysicsObject()->GetLinearVelocity();
             GetPhysicsObject()->AddForce(-currentVel * 10.0f);
-
+            if (direction.Length() > 0.0f) {
+                float angle = atan2(-direction.x, -direction.z);
+                Quaternion targetOrientation = Quaternion::EulerAnglesToQuaternion(0, angle * 180.0f / M_PI, 0);
+                Quaternion currentOrientation = GetTransform().GetOrientation();
+                Quaternion newOrientation = Quaternion::Slerp(currentOrientation, targetOrientation, dt * 5.0f); // Adjust the interpolation speed as needed
+                GetTransform().SetOrientation(newOrientation);
+            }
             return Ongoing;
         });
 
@@ -121,9 +140,16 @@ void PatrolEnemy::InitBehaviourTree() {
             if (currentState != CAUGHT) {
                 return Failure;
             }
-
+            Vector3 direction = playerObject->GetTransform().GetPosition() - transform.GetPosition();;
+            if (direction.Length() > 0.0f) {
+                float angle = atan2(-direction.x, -direction.z);
+                Quaternion targetOrientation = Quaternion::EulerAnglesToQuaternion(0, angle * 180.0f / M_PI, 0);
+                Quaternion currentOrientation = GetTransform().GetOrientation();
+                Quaternion newOrientation = Quaternion::Slerp(currentOrientation, targetOrientation, dt * 5.0f); // Adjust the interpolation speed as needed
+                GetTransform().SetOrientation(newOrientation);
+            }
             SetObjectAnimationState(Caught);
-            if (warningTimer > 0.0f) {
+            if (warningTimer > 0.0f && playerObject->GetVisible() == true) {
                 std::cout << "Warning: " << std::to_string(warningTimer);
                 warningTimer -= dt;
                 return Ongoing;

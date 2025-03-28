@@ -18,6 +18,7 @@
 #include "PrisonEscape/Scripts/PursuitEnemy/PursuitEnemy.h"
 #include "../CSC8503/PrisonEscape/Scripts/CameraEnemy/CameraEnemy.h"
 #include "../CSC8503/PrisonEscape/Scripts/puzzle/puzzleT.h"
+#include "../CSC8503/PrisonEscape/Scripts/Collectables/Coin.h"
 
 
 #include "PrisonEscape/Core/ImGuiManager.h"
@@ -44,7 +45,7 @@ GameLevelManager::GameLevelManager(GameWorld* existingWorld, GameTechRenderer* e
 	// std::cout << "The Level to load is at: " << mLevelList["Level3"] << std::endl;����
 	// boxNumber = 0;
 	// loadMap(mLevelList["Level3"]);
-	
+
 	std::cout << "The Level to load is at: " << mLevelList[levelToLoad] << std::endl;
 	boxNumber = 0;
 	// loadMap(mLevelList["Level2"]);
@@ -369,7 +370,7 @@ void GameLevelManager::AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const T
 		.SetOrientation(enemyTransform.GetOrientation());
 
 	if (enemyObj.GetName().find("Camera") != std::string::npos) {
-		enemyObj.SetRenderObject(new RenderObject(&enemyObj.GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+		enemyObj.SetRenderObject(new RenderObject(&enemyObj.GetTransform(), mMeshList["Cube"], mTextureList["Metal2"], mShaderList["BasicShader"]));
 		enemyObj.SetPhysicsObject(new PhysicsObject(&enemyObj.GetTransform(), enemyObj.GetBoundingVolume()));
 		enemyObj.GetPhysicsObject()->SetInverseMass(0);
 	}
@@ -551,7 +552,7 @@ GameObject* GameLevelManager::AddDeskToWorld(Vector3 dimensions, const Vector3& 
 		.SetScale(dimensions)
 		.SetPosition(position);
 
-	
+
 
 	Desk->SetRenderObject(new RenderObject(&Desk->GetTransform(), mMeshList["Desk"], mTextureList["Desk2"], mShaderList["BasicShader"]));
 	Desk->SetPhysicsObject(new PhysicsObject(&Desk->GetTransform(), Desk->GetBoundingVolume()));
@@ -590,26 +591,26 @@ GameObject* GameLevelManager::AddTableToWorld(Vector3 dimensions, const Vector3&
 
 GameObject* GameLevelManager::AddCoinToWorld(Vector3 dimensions, const Vector3& position, float x, float y, float z) {
 
-	GameObject* Coin = new GameObject("Coin");
+	Coin* coinToAdd = new Coin("Coin");
 
 	Quaternion newOrientation = Quaternion::EulerAnglesToQuaternion(x, y, z);
-	Coin->GetTransform().SetOrientation(newOrientation);
+	coinToAdd->GetTransform().SetOrientation(newOrientation);
 
 	AABBVolume* volume = new AABBVolume(dimensions * 1.0f);
-	Coin->SetBoundingVolume((CollisionVolume*)volume);
-	Coin->GetTransform()
+	coinToAdd->SetBoundingVolume((CollisionVolume*)volume);
+	coinToAdd->GetTransform()
 		.SetScale(dimensions)
 		.SetPosition(position);
 
-	Coin->SetRenderObject(new RenderObject(&Coin->GetTransform(), mMeshList["Sphere"], mTextureList["Coin"], mShaderList["BasicShader"]));
-	Coin->SetPhysicsObject(new PhysicsObject(&Coin->GetTransform(), Coin->GetBoundingVolume()));
+	coinToAdd->SetRenderObject(new RenderObject(&coinToAdd->GetTransform(), mMeshList["Sphere"], mTextureList["Coin"], mShaderList["BasicShader"]));
+	coinToAdd->SetPhysicsObject(new PhysicsObject(&coinToAdd->GetTransform(), coinToAdd->GetBoundingVolume()));
 
-	Coin->GetPhysicsObject()->SetInverseMass(0);
-	Coin->GetPhysicsObject()->InitCubeInertia();
+	coinToAdd->GetPhysicsObject()->SetInverseMass(0);
+	coinToAdd->GetPhysicsObject()->InitCubeInertia();
 
-	GameBase::GetGameBase()->GetWorld()->AddGameObject(Coin);
+	GameBase::GetGameBase()->GetWorld()->AddGameObject(coinToAdd);
 
-	return Coin;
+	return coinToAdd;
 }
 
 GameObject* GameLevelManager::AddComputerToWorld(Vector3 dimensions, const Vector3& position, float x, float y, float z) {
@@ -748,7 +749,6 @@ GameObject* GameLevelManager::AddExitToWorld(Exit* exit, Vector3 size, const Vec
 	exit->GetTransform().SetScale(size).SetPosition(position);
 
 	exit->SetRenderObject(new RenderObject(&exit->GetTransform(), mMeshList["Cube"], mTextureList["Exit"], mShaderList["BasicShader"]));
-	exit->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));  // Red when inactive
 
 	exit->SetPhysicsObject(new PhysicsObject(&exit->GetTransform(), exit->GetBoundingVolume()));
 	exit->GetPhysicsObject()->SetInverseMass(0); // Static object
@@ -764,8 +764,7 @@ GameObject* GameLevelManager::AddSoapToWorld(Soap* soap, Vector3 size, const Vec
 
 	soap->GetTransform().SetScale(size).SetPosition(position);
 
-	soap->SetRenderObject(new RenderObject(&soap->GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
-	soap->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));  // Red when inactive
+	soap->SetRenderObject(new RenderObject(&soap->GetTransform(), mMeshList["Cube"], mTextureList["Soap"], mShaderList["BasicShader"]));
 
 	soap->SetPhysicsObject(new PhysicsObject(&soap->GetTransform(), soap->GetBoundingVolume()));
 	soap->GetPhysicsObject()->SetInverseMass(0); // Static object
@@ -780,8 +779,8 @@ GameObject* GameLevelManager::AddButtonnToWorld(ButtonTrigger* button, const Vec
 	button->SetBoundingVolume((CollisionVolume*)volume);
 
 	button->GetTransform().SetScale(buttonSize).SetPosition(position);
-	button->SetRenderObject(new RenderObject(&button->GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
-	button->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));  // Red when inactive
+	button->SetRenderObject(new RenderObject(&button->GetTransform(), mMeshList["Cube"], mTextureList["Button"], mShaderList["BasicShader"]));
+	button->GetRenderObject()->SetColour(Vector4(1, 0, 0, 0));  // Red when inactive
 
 	button->SetPhysicsObject(new PhysicsObject(&button->GetTransform(), button->GetBoundingVolume()));
 	button->GetPhysicsObject()->SetInverseMass(0);
@@ -814,7 +813,7 @@ void GameLevelManager::AddHidingAreaToWorld(const Vector3& position, const Vecto
 	HidingArea* hidingArea = new HidingArea(position, size);
 	hidingArea->SetName(name);
 	hidingArea->GetTransform().SetScale(size); //2 inch
-	hidingArea->SetRenderObject(new RenderObject(&hidingArea->GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+	hidingArea->SetRenderObject(new RenderObject(&hidingArea->GetTransform(), mMeshList["Cube"], mTextureList["Locker"], mShaderList["BasicShader"]));
 	hidingArea->SetPhysicsObject(new PhysicsObject(&hidingArea->GetTransform(), hidingArea->GetBoundingVolume()));
 
 	hidingArea->GetPhysicsObject()->SetInverseMass(0);
@@ -863,7 +862,7 @@ void GameLevelManager::CreateDoorButton(const InGameObject& obj, std::unordered_
 	}
 }
 void GameLevelManager::CreateHidingArea(const InGameObject& obj) {
-	AddHidingAreaToWorld(obj.position, obj.dimensions,obj.type);
+	AddHidingAreaToWorld(obj.position, obj.dimensions, obj.type);
 }
 void GameLevelManager::CreateBox(const InGameObject& obj) {
 	GameObject* newBox = AddBoxToWorld(obj.position, obj.dimensions, obj.type + std::to_string(++boxNumber));
@@ -904,9 +903,9 @@ void GameLevelManager::CreateFloor(const InGameObject& obj) {
 
 void GameLevelManager::CreateExit(const InGameObject& obj) {
 	Exit* newExit = new Exit();
-	
+
 	AddExitToWorld(newExit, obj.dimensions, obj.position);
-	
+
 }
 void GameLevelManager::CreateSoap(const InGameObject& obj) {
 	Soap* newSoap = new Soap();
@@ -940,7 +939,7 @@ void GameLevelManager::LogObjectPlacement(const InGameObject& obj) {
 
 // map loading from json file
 void GameLevelManager::loadMap(std::string levelToLoad) {
-	
+
 	int level;
 	std::vector<InGameObject> objects;
 	std::vector<Enemy> enemies;
@@ -1021,29 +1020,27 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 
 			else if (obj.type == "Soap") {
 				CreateSoap(obj);
-				
+
 			}
 
 			else if (obj.type.find("Player") != std::string::npos) {
-				if (!playerOne && !playerTwo) {
-					if (obj.type == "Player1") {
-						Transform playerOneTransform;
-						playerOne = AddPlayerToWorld(playerOneTransform.SetPosition(obj.position), "playerOne");
-					}
-					else if (obj.type == "Player2" && isMultiplayer) {
-						Transform playerTwoTransform;
-						playerTwo = AddPlayerToWorld(playerTwoTransform.SetPosition(obj.position), "playerTwo");
-					}
-				} 
-				else {
-					if (obj.type == "Player1") {
-						playerOne->SetSpawn(obj.position);
-						playerOne->GetTransform().SetPosition(obj.position);
-					}
-					else if (obj.type == "Player2" && isMultiplayer) {
-						playerTwo->SetSpawn(obj.position);
-						playerTwo->GetTransform().SetPosition(obj.position);
-					}
+				if (!playerOne && obj.type == "Player1") {
+					Transform playerOneTransform;
+					playerOne = AddPlayerToWorld(playerOneTransform.SetPosition(obj.position), "playerOne");
+				}
+				else if (obj.type == "Player2" && isMultiplayer && !playerTwo) {
+					Transform playerTwoTransform;
+					std::cout << "PLAYER TWO CREATED";
+					playerTwo = AddPlayerToWorld(playerTwoTransform.SetPosition(obj.position), "playerTwo");
+				}
+				if (obj.type == "Player1" && playerOne) {
+					playerOne->SetSpawn(obj.position);
+					playerOne->GetTransform().SetPosition(obj.position);
+				}
+				else if (obj.type == "Player2" && playerTwo && isMultiplayer) {
+					std::cout << "Setting Player 2 Spawn!" << std::endl;
+					playerTwo->SetSpawn(obj.position);
+					playerTwo->GetTransform().SetPosition(obj.position);
 				}
 			}
 
@@ -1055,8 +1052,11 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 		for (const auto& enemy : enemies) {
 			if (enemy.name.find("EnemyP") != std::string::npos) {
 				AddPursuitEnemyToWorld(enemy.name, enemy.position, enemy.waypoints, playerOne);
-			} else {
-				AddPatrolEnemyToWorld(enemy.name, enemy.waypoints, enemy.position, playerOne);
+			} else if (enemy.name.find("Camera") != std::string::npos) {
+					AddPatrolEnemyToWorld("Camera", enemy.waypoints, enemy.position, playerOne);
+				}
+			else {
+				AddPatrolEnemyToWorld("PatrolEnemy", enemy.waypoints, enemy.position, playerOne);
 			}
 		}
 	}
@@ -1067,13 +1067,15 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 void GameLevelManager::ClearLevel() {
 	// Output for debugging
 	std::cout << "Clearing the level..." << std::endl;
-
+	mUpdatableObjectList.clear();
 	// Remove all updatable objects from the world
 	for (auto& obj : GameBase::GetGameBase()->GetWorld()->getGameObjects()) {
 		if (obj->GetName() == "playerOne" || obj->GetName() == "playerTwo") {
 			continue;
-		} else { 
-			GameBase::GetGameBase()->GetWorld()->RemoveGameObject(obj); 
+		}
+		else {
+			
+			GameBase::GetGameBase()->GetWorld()->RemoveGameObject(obj);
 		}
 	}
 
@@ -1081,6 +1083,8 @@ void GameLevelManager::ClearLevel() {
 }
 
 void GameLevelManager::DrawLoadingScreen() {
-	ImGuiManager::DrawMessagePanel("Loading...", "Game is Loading...", ImVec4(1, 0, 1, 1), {});
+
+	string loadingText = LoadingScreenText[rand() % LoadingScreenText.size()];
+	ImGuiManager::DrawMessagePanel("Loading...", loadingText, ImVec4(1, 0, 1, 1), {});
 	GameBase::GetGameBase()->GetRenderer()->DeletePanelFromCanvas("LevelSelectPanel");
 }

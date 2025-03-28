@@ -24,7 +24,6 @@ namespace NCL {
 			void AddPatrolEnemyToLevel(PatrolEnemy* patrolEnemy);
 			void AddPursuitEnemyToLevel(PursuitEnemy* pursuitEnemy);
 			void AddPlayerToLevel(Player* player, const Vector3& position);
-			void AddEnemyToLevel(PatrolEnemy* enemy);
 			void ReceivePacket(int type, GamePacket* packet, int source) override;
 
 		protected:
@@ -41,8 +40,6 @@ namespace NCL {
 			Vector3 playerOneSpawn;
 
 		private:
-			void InitializeAssets();
-			void InitializeLevel();
 			void SetCameraAttributes();
 
 			GameObject* AddFloorToWorld(const Vector3& position, const Vector3& floorSize, const Vector4& color);

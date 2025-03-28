@@ -8,20 +8,11 @@ namespace NCL {
 	namespace CSC8503 {
 		class Coin : public GameObject {
 		public:
-			Coin(GameWorld* world, const std::string& name);
+			Coin(const std::string& name);
 			~Coin();
 
-			void OnCollisionBegin(GameObject* otherObject) override {
-				if (collected == false) {
-					if (otherObject == playerObject) {
-						playerObject->SetScore(playerObject->GetScore() + 1);
-						collected = true;
-					}
-				}
-			}
-
 		protected:
-			Player* playerObject;
+			int value = 1;
 			bool collected;
 		};
 	}

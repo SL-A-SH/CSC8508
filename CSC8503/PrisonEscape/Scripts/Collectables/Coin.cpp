@@ -1,7 +1,9 @@
 #include "Coin.h"
 
-Coin::Coin(GameWorld* world, const std::string& name) : GameObject() {
-	bool collected = false;
+Coin::Coin(const std::string& name) : GameObject() {
+	collected = false;
+	GameObject::SetName(name);
+
 }
 
 Coin::~Coin() {
