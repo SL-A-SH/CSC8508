@@ -42,6 +42,10 @@ void Player::OnCollisionBegin(GameObject* other) {
         GameBase::GetGameBase()->GetWorld()->RemoveGameObject(other);
         std::cout << "Score is: " << GetScore() << std::endl;
     }
+
+    if (other->GetName() == "HidingPlace") {
+        SetVisible(false);
+    }
 }
 
 
