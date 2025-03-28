@@ -114,7 +114,7 @@ void PursuitEnemy::InitBehaviourTree() {
             }
             pursuitTimer -= dt;
             if (pursuitTimer <= 0.0f || !playerObject->GetVisible()) {
-                GetPhysicsObject()->ClearForces();
+                GetPhysicsObject()->SetLinearVelocity(Vector3());
                 currentState = PATROL;
                 return Success;
             }
