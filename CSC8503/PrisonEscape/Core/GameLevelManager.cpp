@@ -370,7 +370,7 @@ void GameLevelManager::AddComponentsToPatrolEnemy(PatrolEnemy& enemyObj, const T
 		.SetOrientation(enemyTransform.GetOrientation());
 
 	if (enemyObj.GetName().find("Camera") != std::string::npos) {
-		enemyObj.SetRenderObject(new RenderObject(&enemyObj.GetTransform(), mMeshList["Cube"], mTextureList["DefaultTexture"], mShaderList["BasicShader"]));
+		enemyObj.SetRenderObject(new RenderObject(&enemyObj.GetTransform(), mMeshList["Cube"], mTextureList["Metal2"], mShaderList["BasicShader"]));
 		enemyObj.SetPhysicsObject(new PhysicsObject(&enemyObj.GetTransform(), enemyObj.GetBoundingVolume()));
 		enemyObj.GetPhysicsObject()->SetInverseMass(0);
 	}
@@ -1052,7 +1052,10 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 		for (const auto& enemy : enemies) {
 			if (enemy.name.find("EnemyP") != std::string::npos) {
 				AddPursuitEnemyToWorld(enemy.name, enemy.position, enemy.waypoints, playerOne);
-			} else {
+			} else if (enemy.name.find("Camera") != std::string::npos) {
+					AddPatrolEnemyToWorld("Camera", enemy.waypoints, enemy.position, playerOne);
+				}
+			else {
 				AddPatrolEnemyToWorld("PatrolEnemy", enemy.waypoints, enemy.position, playerOne);
 			}
 		}
@@ -1064,13 +1067,14 @@ void GameLevelManager::loadMap(std::string levelToLoad) {
 void GameLevelManager::ClearLevel() {
 	// Output for debugging
 	std::cout << "Clearing the level..." << std::endl;
-
+	mUpdatableObjectList.clear();
 	// Remove all updatable objects from the world
 	for (auto& obj : GameBase::GetGameBase()->GetWorld()->getGameObjects()) {
 		if (obj->GetName() == "playerOne" || obj->GetName() == "playerTwo") {
 			continue;
 		}
 		else {
+			
 			GameBase::GetGameBase()->GetWorld()->RemoveGameObject(obj);
 		}
 	}
